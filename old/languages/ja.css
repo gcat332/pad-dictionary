@@ -1,0 +1,702 @@
+﻿@charset "utf-8";
+label[for="languages"]::after{
+	content: "言語:";
+}
+.monster.delay::before{
+	content: "遅 延\A対 策";
+}
+.monster .level.max::after{
+	content: "最大";
+}
+.team-box-name .box-name::before
+{
+	content: "チーム";
+}
+.team-assist-label .assist-label::after
+{
+	content: "継承";
+}
+
+.search-mon-list .index-preview::before
+{
+	content: "加重:";
+}
+.edit-box .edit-box-title::before{
+	content: "変更メンバー";
+}
+.edit-box .edit-box-title.edit-box-title-assist::before{
+	content: "変更継承";
+}
+.monsterinfo-box .monster-id::before{
+	content: "No.";
+}
+.monsterinfo-groupId .monster-seriesId::before{
+	content: "シリーズ ID：";
+}
+.monsterinfo-groupId .monster-collabId::before{
+	content: "コラボ ID:";
+}
+.monsterinfo-groupId .monster-gachaId::before{
+	content: "ガチャ ID：";
+}
+.monsterinfo-box .monster-altName::before{
+	content: "タグで";
+}
+.m-level-exp::before{
+	content: "必要な経験値:";
+}
+.edit-box .setting-box .row-mon-awoken::before{
+	content: "▼覚醒";
+}
+.edit-box .setting-box .row-mon-super-awoken::before{
+	content: "▼超覚醒";
+}
+
+.row-mon-ability .m-hp-li::before,
+#dialog-dungeon-enchance label[for="dungeon-hp"]::before
+{
+	content: "HP:";
+}
+.row-mon-ability .m-atk-li::before,
+#dialog-dungeon-enchance label[for="dungeon-atk"]::before
+{
+	content: "攻撃:";
+}
+.row-mon-ability .m-rcv-li::before,
+#dialog-dungeon-enchance label[for="dungeon-rcv"]::before
+{
+	content: "回復:";
+}
+.edit-box .setting-box .monster-cost::before{
+	content: "コスト:";
+}
+.edit-box .setting-box .row-mon-latent details>summary::before{
+	content: "モンスター潜在覚醒";
+}
+
+.skill-box .skill-cd::before,
+.search-mon-list .cd-preview::before
+{
+	content: "ターン:";
+}
+.search-mon-list .cd-preview::before
+{
+	width: 34px;
+}
+.skill-box .skill-level-label::before{
+	content: "Lv.";
+}
+.row-mon-skill .type-title::before,
+.row-mon-skill .type-title::after
+{
+	content: "スキル";
+}
+.row-mon-skill .evolved-skill .type-title::before,
+.row-mon-skill .evolved-skill .type-title::after
+{
+	content: "進化スキル";
+}
+.row-mon-leader-skill .type-title::before,
+.row-mon-leader-skill .type-title::after
+{
+	content: "リーダースキル";
+}
+label[for="show-skill-original"]::after{
+	content: "原文";
+}
+label[for="merge-skill"]::after{
+	content: "マージ";
+}
+
+.edit-box .button-box .button-null::after{
+	content: "空白のままに";
+}
+.edit-box .button-box .button-delay::after{
+	content: "遅延対策";
+}
+.edit-box .button-box .button-cancel::after{
+	content: "キャンセル";
+}
+.edit-box .button-box .button-done::after{
+	content: "確認する";
+}
+.edit-box .button-box .button-done.cant-assist::after{
+	content: "継承できない";
+}
+.edit-box .button-box .button-done.only-assist::after{
+	content: "継承のみ可能";
+}
+.team-awoken-effect::before{
+	content: "チーム覚醒効果:";
+}
+.team-awoken::before{
+	content: "チーム覚醒:";
+}
+.formation-awoken::before{
+	content: "総覚醒:";
+}
+.type-name[data-type-name='4']::after{
+	content: "ドラゴン";
+}
+.type-name[data-type-name='5']::after{
+	content: "神";
+}
+.type-name[data-type-name='7']::after{
+	content: "悪魔";
+}
+.type-name[data-type-name='8']::after{
+	content: "マシン";
+}
+.type-name[data-type-name='1']::after{
+	content: "バランス";
+}
+.type-name[data-type-name='6']::after{
+	content: "攻撃";
+}
+.type-name[data-type-name='2']::after{
+	content: "体力";
+}
+.type-name[data-type-name='3']::after{
+	content: "回復";
+}
+.type-name[data-type-name='0']::after{
+	content: "進化用";
+}
+.type-name[data-type-name='12']::after{
+	content: "能力覚醒用";
+}
+.type-name[data-type-name='14']::after{
+	content: "強化合成用";
+}
+.type-name[data-type-name='15']::after{
+	content: "売却用";
+}
+.type-name[data-type-name='9']::after{
+	content: "特別保護";
+}
+label[for="datasource"]::after{
+	content: "ゲーム:";
+}
+#player-number::before{
+	content: "ジャップ:";
+}
+label[for="player-number-1"]::after{
+	content: "ソロ";
+}
+label[for="player-number-2"]::after{
+	content: "2人";
+}
+label[for="player-number-3"]::after{
+	content: "3人";
+}
+.control-box .btn-guide-link::before{
+	content: "📓図鑑モード";
+}
+#btn-clear-data::after{
+	content: "データの消去";
+}
+#draw-screenshot::after{
+	content: "スクリーンショットを描く";
+}
+label[for="screenshot-transparent"]::after{
+	content: "透明";
+}
+#btn-player-data::after{
+	content: "私の箱";
+}
+#btn-swap-team::after{
+	content: "スワプティ";
+}
+#lbl-henshin-change::after{
+	content: "変身";
+}
+#btn-remove-assist::after{
+	content: "アシストを解除";
+}
+.control-box .config-display-list summary::before{
+	content:"情報表示内容の開閉器一覧";
+}
+label[for="use-side-mode"]::after{
+	content:"編集画面でサイドバーモードを使用";
+}
+label[for="use-sticky"]::after{
+	content:"編集画面でスティッキー位置を使用する";
+}
+label[for="show-card-id"]::after{
+	content:"カード番号";
+}
+label[for="show-card-rarity"]::after{
+	content:"カードの希少性";
+}
+label[for="show-member-level"]::after{
+	content:"メンバーのレベル";
+}
+label[for="show-member-plus-point"]::after{
+	content:"メンバーのプラス・ポイント";
+}
+label[for="show-member-awoken-count"]::after{
+	content:"メンバーの覚醒数のアイコン";
+}
+label[for="show-member-skill-cd"]::after{
+	content:"メンバーのスキルCD";
+}
+label[for="show-member-ability"]::after{
+	content:"メンバーの能力";
+}
+label[for="show-member-types"]::after{
+	content:"メンバーのタイプ";
+}
+label[for="show-member-awoken"]::after{
+	content:"メンバーの覚醒一覧";
+}
+label[for="show-team-total-info"]::after{
+	content:"チームのHP情報";
+}
+label[for="show-team-awoken-count"]::after{
+	content:"チームの覚醒合計";
+}
+label[for="show-team-awoken-effect"]::after{
+	content:"チームの覚醒効果の計算";
+}
+label[for="show-meter"]::after{
+	content:"測光バーとして表示";
+}
+label[for="show-team-attrtype-count"]::after{
+	content:"チームの希少性、属性、タイプの合計";
+}
+
+label[for="change-swap-to-copy"]::after{
+	content:"ドラッグ時にコピー (またはCtrlを押したまま)";
+}
+label[for="default-level"]::after
+{
+	content: "デフォルト Lv.";
+}
+label[for="show-rich-text-tools"]::after{
+	content:"リッチテキストツールバー";
+}
+
+.tIf-total-move .general::after,
+.tIf-total-move .awoken-bind::after
+{
+	content: " 秒";
+}
+
+#dialog-hp-detail .dialog-title::before
+{
+	content: "HP 範囲減傷の詳細";
+}
+.hp-range-table .hp-range th::before
+{
+	content: "HP 範囲";
+}
+.hp-range-table .reduce-scale .reduce-probability:before
+{
+	content: "確率 ";
+}
+.hp-range-table caption::before
+{
+	content: "すべての属性の敵";
+}
+.hp-range-table[data-attr="0"] caption::before
+{
+	content: "火属性の敵";
+}
+.hp-range-table[data-attr="1"] caption::before
+{
+	content: "水属性の敵";
+}
+.hp-range-table[data-attr="2"] caption::before
+{
+	content: "木属性の敵";
+}
+.hp-range-table[data-attr="3"] caption::before
+{
+	content: "光属性の敵";
+}
+.hp-range-table[data-attr="4"] caption::before
+{
+	content: "暗属性の敵";
+}
+
+.search-box>summary::after{
+	content: "🔎モンスターの検索";
+}
+label[for="fix-main-color"]::after{
+	content: "属性の順序は、選択した順序と一致";
+}
+.search-box label[for="consider-equivalent-awoken"]::after{
+	content: "同時に同等の覚醒を検索";
+}
+.search-box label[for="include-super-awoken"]::after{
+	content: "超覚醒を含む";
+}
+.search-box label[for="show-official-awoken-sorting"]::after{
+	content: "公式の覚醒ソートを使用";
+}
+.search-box .search-list-length::before{
+	content: "結果の数:";
+}
+.search-box .sort-div::before{
+	content: "並べ替え:";
+}
+.search-box label[for="sort-reverse"]::after{
+	content: "逆序";
+}
+.search-box label[for="only-show-dungeon-enhance"]::after{
+	content: "ダンジョンによってのみ強化される";
+}
+.search-box .additional-div::before{
+	content: "追加の表示:";
+}
+.search-box label[for="add-show-awoken"]::after{
+	content: "覚醒リスト";
+}
+.search-box label[for="add-show-CD"]::after{
+	content: "スキルターン";
+}
+.search-box label[for="add-show-abilities"]::after{
+	content: "能力値";
+}
+.search-box label[for="add-show-abilities-with-awoken"]::after{
+	content: "能力値 (+覚醒)";
+}
+.attrs-div .attr[data-attr-icon='-1']::before{
+	content: "空";
+}
+.search-box .types-div::before{
+	content: "タイプ:";
+}
+.search-box .rare-div::before{
+	content: "希少性（OR）：";
+}
+.search-box .awoken-option::before{
+	content: "▼觉醒（AND）";
+}
+.search-box .rare-clear::before,
+#dialog-dungeon-enchance .dialog-clear::before
+{
+	content: "リセット";
+}
+.search-box .awoken-clear::before,
+.search-box .sawoken-clear::before,
+#attr-clear::before
+{
+	content: "クリア";
+}
+.search-box .awoken-div .all-awokens::before{
+	content: "▼覚醒";
+}
+.search-box .sawoken-detail summary::before{
+	content: "超覚醒（OR）";
+}
+.search-box .special-div::before{
+	content: "▼特別な検索";
+}
+.search-box .fast-switch::before {
+    content: "クイックスイッチ:";
+}
+label[for="can-assist"]::after{
+	content: "アシスト可能";
+}
+label[for="can-level-limit-breakthrough"]::after
+{
+	content: "レベル限界突破可能";
+}
+label[for="have-8-latent-slot"]::after
+{
+	content: "8格潜在覚醒";
+}
+label[for="not-weapon"]::after
+{
+	content: "武器ではない";
+}
+label[for="box-have"]::after
+{
+	content: "ケースに所有することを強調";
+}
+.control-div .search-start::before{
+	content: "🔍検索の開始";
+}
+.control-div .search-clear::before{
+	content: "検索を空にする";
+}
+.control-div .search-close::before{
+	content: "検索を閉じる";
+}
+.control-div .search-share::before{
+	content: "検索を分け合う";
+}
+#dialog-search-string .dialog-title::before
+{
+	content: "タグで検索";
+}
+.dialog-close::after,
+.mask-close::after
+{
+	content: "閉じる";
+}
+.dialog .dialog-content .additional-string::before
+{
+	content: "他の言語";
+}
+.search-evolution-by-this::after
+{
+	content: "このカードを進化的な素材として必要とするカード";
+}
+label[for="real-time-change-card"]::after
+{
+	content: "カードを即座に更新";
+}
+.base .evo-type::before,
+.base .evo-type::after
+{
+	content: "ベース";
+}
+.evolution .evo-type::before,
+.evolution .evo-type::after
+{
+	content: "進化";
+}
+.ult-evo .evo-type::before,
+.ult-evo .evo-type::after
+{
+	content: "究極進化";
+}
+.reincarnation .evo-type::before,
+.reincarnation .evo-type::after
+{
+	content: "転生進化";
+}
+.pixel-evo .evo-type::before,
+.pixel-evo .evo-type::after
+{
+	content: "ドット進化";
+}
+.assist-evo .evo-type::before,
+.assist-evo .evo-type::after
+{
+	content: "アシスト進化";
+}
+.super-reincarnation .evo-type::before,
+.super-reincarnation .evo-type::after
+{
+	content: "超転生進化";
+}
+.super-ult-evo .evo-type::before,
+.super-ult-evo .evo-type::after
+{
+	content: "超究極進化";
+}
+.ordeal-evo .evo-type::before,
+.ordeal-evo .evo-type::after
+{
+	content: "試練進化";
+}
+.pixel-evo .evo-type
+{
+	transform: scaleX(0.90);
+	margin: calc(-100px * (1 - 0.90) / 2);
+}
+.assist-evo .evo-type
+{
+	transform: scaleX(0.80);
+	margin: calc(-100px * (1 - 0.80) / 2);
+}
+.henshin .evo-type::before,
+.henshin .evo-type::after
+{
+	content: "変身";
+}
+.random-henshin .evo-type::before,
+.random-henshin .evo-type::after
+{
+	content: "ランダムで変身";
+}
+.random-henshin .evo-type
+{
+	transform: scaleX(0.70);
+	margin: calc(-100px * (1 - 0.70) / 2);
+}
+.henshin-loop .evo-type::before,
+.henshin-loop .evo-type::after
+{
+	content: "ループ変身";
+}
+
+.control-box .btn-qrcode::after{
+	content: "QR コード と データ交換";
+}
+
+.read-qr-box::before
+{
+	content: "QRコードを読み取る:";
+}
+.save-qr-box::before
+{
+	content: "QRコードを生成:";
+}
+
+.formation-link-from-string>a:empty::before
+{
+	content: "文字列から読み取られた列リンク";
+}
+label[for="sourceSelect"]::before
+{
+	content: "ビデオ ソースの選択:";
+}
+#qr-code-frame .save-qr-img::after
+{
+	content: "QRコードイメージを保存";
+}
+#qr-code-frame .read-qr-camera::after
+{
+	content: "カメラでスキャンする";
+}
+#qr-code-frame .read-qr-camera.running::after
+{
+	content: "カメラの使用を停止";
+}
+#qr-code-frame .read-qr-file::after
+{
+	content: "画像ファイルを読み取る";
+}
+#qr-code-frame .read-string::after {
+	content: "文字列を読み取ります";
+}
+
+#qr-code-frame .paddb-team-edit::before
+{
+	content: "チーム データを PADDB にアップロード:";
+}
+label[for="paddb-username"]::before
+{
+	content: "PADDB ユーザー ID:";
+}
+label[for="paddb-password"]::before
+{
+	content: "PADDB パスワード:";
+}
+label[for="paddb-team-id"]::before
+{
+	content: "PADDBチームリンク:";
+}
+#paddb-save-or-upload-team::before
+{
+	content: "保存";
+}
+#paddb-team-id:placeholder-shown+#paddb-save-or-upload-team::before {
+	content: "新しいチームをアップロード";
+}
+body:not(.external-link-support) #external-support::after
+{
+	content: "PADDB 関連機能を使用するセカンダリ スクリプトをインストール";
+}
+
+label[for="qr-data-type-pdf"]::before
+{
+	content: "P&D Dash Formation";
+}
+label[for="qr-data-type-pdc"]::before
+{
+	content: "パズドラダメージ計算 (PDC)";
+}
+label[for="qr-data-type-daddb"]::before
+{
+	content: "DADDB";
+}
+label[for="qr-data-type-paddb"]::before
+{
+	content: "PADDB (ソロのみ)";
+}
+#btn-set-dungeon-enchance::after
+{
+	content: "ダンジョン強化";
+}
+#dialog-dungeon-enchance .dialog-title::before
+{
+	content: "ダンジョン強化倍率設定";
+}
+.dialog-confirm::before
+{
+	content: "確認";
+}
+#dialog-dungeon-enchance .rare-list::before
+{
+	content: "有効な希少性:";
+}
+#dialog-dungeon-enchance .attr-list::before
+{
+	content: "有効な属性:";
+}
+#dialog-dungeon-enchance .type-list::before
+{
+	content: "有効なタイプ:";
+}
+#dialog-dungeon-enchance .collab-list::before
+{
+	content: "有効コラボID:";
+}
+#dialog-dungeon-enchance .gacha-list::before
+{
+	content: "有効ガチャID:";
+}
+#dialog-dungeon-enchance .benefit-list::before
+{
+	content: "陰と陽の加護:";
+}
+#dialog-dungeon-enchance .current-stage-list::before
+{
+	content: "現在の層数:";
+}
+#dialog-dungeon-enchance .broken-parts-list::before
+{
+	content: "破壊部位の数:";
+}
+#dialog-dungeon-enchance .collab-list::after,
+#dialog-dungeon-enchance .gacha-list::after
+{
+	content: "(複数のIDは\",\"で区切ります)";
+}
+#dialog-dungeon-enchance .stats-list::before
+{
+	content: "強化倍率：";
+}
+
+#player-data-frame .player-box-title::after
+{
+	content: "プレイヤー データ";
+}
+#player-data-frame .how-to-use::after
+{
+	content: "使い方";
+}
+#player-data-frame .upload-data::after
+{
+	content: "データを開きます";
+}
+.player-card .set-default::after
+{
+	content: "データをバインド";
+}
+.player-card .open-show-box::after
+{
+	content: "Box データを表示";
+}
+.player-card .lvexp::before
+{
+	content: "EXP";
+}
+.player-card .lvexp .level::before
+{
+	content: "ランク";
+	transform: scaleX(0.7);
+	margin: calc(-46px * (1 - 0.7) / 2);
+}
+.player-card .stama::before
+{
+	content: "スタミナ";
+	transform: scaleX(0.7);
+	margin: calc(-64px * (1 - 0.7) / 2);
+	width: 64px;
+}

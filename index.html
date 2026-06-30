@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PAD Card Dictionary (JP data, English)</title>
+<link rel="stylesheet" href="dict.css">
+</head>
+<body>
+<header>
+  <h1>PAD Card Dictionary <small>JP server · English</small></h1>
+  <input id="q" type="search" placeholder="Search name or #id…" autocomplete="off">
+  <label>Sort <select id="sort"></select></label>
+  <button id="dir" title="Toggle direction">↓ desc</button>
+  <button id="clear" title="Clear all filters">Clear</button>
+  <span id="count"></span>
+</header>
+
+<details id="filters" open>
+  <summary>🔍 Filters</summary>
+  <div class="frow"><span class="flabel">Attr 1 <small>main</small></span><div id="f-attr1" class="fbtns"></div></div>
+  <div class="frow"><span class="flabel">Attr 2 <small>sub</small></span><div id="f-attr2" class="fbtns"></div></div>
+  <div class="frow"><span class="flabel">Attr 3 <small>3rd</small></span><div id="f-attr3" class="fbtns"></div></div>
+  <div class="frow"><span class="flabel">Type</span><div id="f-type" class="fbtns"></div></div>
+  <div class="frow"><span class="flabel">Rarity</span><div id="f-rare" class="fbtns"></div></div>
+  <div class="frow">
+    <span class="flabel">Awoken <small>(L+ / R−)</small></span>
+    <label class="opt"><input type="checkbox" id="incl-super" checked> incl. Super</label>
+    <div id="f-awoken" class="fbtns awoken"></div>
+  </div>
+  <div class="frow">
+    <span class="flabel">Special Search</span>
+    <button id="special-mode" title="Toggle AND / OR matching">AND</button>
+    <label class="opt"><input type="checkbox" id="can-assist"> Can be assist only</label>
+    <div id="f-special" class="fbtns special"></div>
+  </div>
+  <div class="frow">
+    <span class="flabel">Saved filters</span>
+    <select id="preset"></select>
+    <button id="preset-save" title="Save current filters">＋ Save</button>
+    <button id="preset-del" title="Delete selected preset">🗑</button>
+  </div>
+</details>
+
+<main id="grid">Loading data…</main>
+<dialog id="detail"></dialog>
+<script src="dict.js"></script>
+</body>
+</html>

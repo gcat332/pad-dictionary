@@ -1,0 +1,2208 @@
+@charset "utf-8";
+
+.monster {
+	--x-pos: calc(var(--head-width) + 2px);
+	--y-pos: calc(var(--head-height) + 2px);
+	--x-pos-start: 0px;
+	--y-pos-start: 0px;
+	--card-x-index: 0;
+	--card-y-index: 0;
+	background-position-x: calc(var(--x-pos) * var(--card-x-index) * -1 - var(--x-pos-start)); /*火*/
+	background-position-y: calc(var(--y-pos) * var(--card-y-index) * -1 - var(--y-pos-start));
+}
+/*宠物在图中编号对应的坐标*/
+.monster[data-cards-pic-x='0']{--card-x-index: 0;}
+.monster[data-cards-pic-x='1']{--card-x-index: 1;}
+.monster[data-cards-pic-x='2']{--card-x-index: 2;}
+.monster[data-cards-pic-x='3']{--card-x-index: 3;}
+.monster[data-cards-pic-x='4']{--card-x-index: 4;}
+.monster[data-cards-pic-x='5']{--card-x-index: 5;}
+.monster[data-cards-pic-x='6']{--card-x-index: 6;}
+.monster[data-cards-pic-x='7']{--card-x-index: 7;}
+.monster[data-cards-pic-x='8']{--card-x-index: 8;}
+.monster[data-cards-pic-x='9']{--card-x-index: 9;}
+.monster[data-cards-pic-y='0']{--card-y-index: 0;}
+.monster[data-cards-pic-y='1']{--card-y-index: 1;}
+.monster[data-cards-pic-y='2']{--card-y-index: 2;}
+.monster[data-cards-pic-y='3']{--card-y-index: 3;}
+.monster[data-cards-pic-y='4']{--card-y-index: 4;}
+.monster[data-cards-pic-y='5']{--card-y-index: 5;}
+.monster[data-cards-pic-y='6']{--card-y-index: 6;}
+.monster[data-cards-pic-y='7']{--card-y-index: 7;}
+.monster[data-cards-pic-y='8']{--card-y-index: 8;}
+.monster[data-cards-pic-y='9']{--card-y-index: 9;}
+
+/*属性边框*/
+.monster .attrs {
+	--attr-y-index: 0;
+	--attr-x-index: 0;
+	--y-pos:  calc(var(--head-height) + 4px);
+}
+.monster .attrs .attr{
+	background-position-x: calc(var(--x-pos) * var(--attr-x-index) * -1 - var(--x-pos-start)); /*火*/
+	background-position-y: calc(var(--y-pos) * var(--attr-y-index) * -1 - var(--y-pos-start));
+}
+.monster .attrs .attr:nth-of-type(1){ /*主属性*/
+	--attr-y-index: 0;
+}
+.monster .attrs .attr:nth-of-type(2){ /*副属性*/
+	--attr-y-index: 1;
+}
+.monster .attrs .attr:nth-of-type(3){ /*三属性*/
+	--attr-y-index: 2;
+}
+.monster .attrs .attr:nth-of-type(4){ /*四属性*/
+	--attr-y-index: 3;
+}
+.monster .attrs .attr[data-attr='-1'],
+.monster .attrs .attr:where(
+	[data-attr='any'],
+	[data-attr='6'],
+):nth-of-type(n+2)
+{
+	background: none; /*无*/
+	display: none;
+}
+.monster .attrs .attr[data-attr='0'] { /*火*/
+	--attr-x-index: 0;
+}
+.monster .attrs .attr[data-attr='1'] { /*水*/
+	--attr-x-index: 1;
+}
+.monster .attrs .attr[data-attr='2'] { /*木*/
+	--attr-x-index: 2;
+}
+.monster .attrs .attr[data-attr='3'] { /*光*/
+	--attr-x-index: 3;
+}
+.monster .attrs .attr[data-attr='4'] { /*暗*/
+	--attr-x-index: 4;
+}
+.monster .attrs .attr[data-attr='5'] { /*心*/
+	--attr-x-index: 5;
+}
+.monster .attrs .attr[data-attr='6'] { /*无主属性*/
+	--attr-x-index: 6;
+}
+.monster .attrs .attr[data-attr='any'] {
+	--attr-x-index: 0;
+	background-image: url(images/card-frame-any.png);
+}
+/*
+.monster .attrs .attr[data-attr='any'] {
+	background-image: url(images/card-frame-any.png);
+	background-position-x: 0;
+}
+*/
+/*宠物头像所用的图片*/
+.monster[data-cards-pic-idx='1']{background-image: url(images/cards_ja/CARDS_001.PNG);}
+.monster[data-cards-pic-idx='2']{background-image: url(images/cards_ja/CARDS_002.PNG);}
+.monster[data-cards-pic-idx='3']{background-image: url(images/cards_ja/CARDS_003.PNG);}
+.monster[data-cards-pic-idx='4']{background-image: url(images/cards_ja/CARDS_004.PNG);}
+.monster[data-cards-pic-idx='5']{background-image: url(images/cards_ja/CARDS_005.PNG);}
+.monster[data-cards-pic-idx='6']{background-image: url(images/cards_ja/CARDS_006.PNG);}
+.monster[data-cards-pic-idx='7']{background-image: url(images/cards_ja/CARDS_007.PNG);}
+.monster[data-cards-pic-idx='8']{background-image: url(images/cards_ja/CARDS_008.PNG);}
+.monster[data-cards-pic-idx='9']{background-image: url(images/cards_ja/CARDS_009.PNG);}
+.monster[data-cards-pic-idx='10']{background-image: url(images/cards_ja/CARDS_010.PNG);}
+.monster[data-cards-pic-idx='11']{background-image: url(images/cards_ja/CARDS_011.PNG);}
+.monster[data-cards-pic-idx='12']{background-image: url(images/cards_ja/CARDS_012.PNG);}
+.monster[data-cards-pic-idx='13']{background-image: url(images/cards_ja/CARDS_013.PNG);}
+.monster[data-cards-pic-idx='14']{background-image: url(images/cards_ja/CARDS_014.PNG);}
+.monster[data-cards-pic-idx='15']{background-image: url(images/cards_ja/CARDS_015.PNG);}
+.monster[data-cards-pic-idx='16']{background-image: url(images/cards_ja/CARDS_016.PNG);}
+.monster[data-cards-pic-idx='17']{background-image: url(images/cards_ja/CARDS_017.PNG);}
+.monster[data-cards-pic-idx='18']{background-image: url(images/cards_ja/CARDS_018.PNG);}
+.monster[data-cards-pic-idx='19']{background-image: url(images/cards_ja/CARDS_019.PNG);}
+.monster[data-cards-pic-idx='20']{background-image: url(images/cards_ja/CARDS_020.PNG);}
+.monster[data-cards-pic-idx='21']{background-image: url(images/cards_ja/CARDS_021.PNG);}
+.monster[data-cards-pic-idx='22']{background-image: url(images/cards_ja/CARDS_022.PNG);}
+.monster[data-cards-pic-idx='23']{background-image: url(images/cards_ja/CARDS_023.PNG);}
+.monster[data-cards-pic-idx='24']{background-image: url(images/cards_ja/CARDS_024.PNG);}
+.monster[data-cards-pic-idx='25']{background-image: url(images/cards_ja/CARDS_025.PNG);}
+.monster[data-cards-pic-idx='26']{background-image: url(images/cards_ja/CARDS_026.PNG);}
+.monster[data-cards-pic-idx='27']{background-image: url(images/cards_ja/CARDS_027.PNG);}
+.monster[data-cards-pic-idx='28']{background-image: url(images/cards_ja/CARDS_028.PNG);}
+.monster[data-cards-pic-idx='29']{background-image: url(images/cards_ja/CARDS_029.PNG);}
+.monster[data-cards-pic-idx='30']{background-image: url(images/cards_ja/CARDS_030.PNG);}
+.monster[data-cards-pic-idx='31']{background-image: url(images/cards_ja/CARDS_031.PNG);}
+.monster[data-cards-pic-idx='32']{background-image: url(images/cards_ja/CARDS_032.PNG);}
+.monster[data-cards-pic-idx='33']{background-image: url(images/cards_ja/CARDS_033.PNG);}
+.monster[data-cards-pic-idx='34']{background-image: url(images/cards_ja/CARDS_034.PNG);}
+.monster[data-cards-pic-idx='35']{background-image: url(images/cards_ja/CARDS_035.PNG);}
+.monster[data-cards-pic-idx='36']{background-image: url(images/cards_ja/CARDS_036.PNG);}
+.monster[data-cards-pic-idx='37']{background-image: url(images/cards_ja/CARDS_037.PNG);}
+.monster[data-cards-pic-idx='38']{background-image: url(images/cards_ja/CARDS_038.PNG);}
+.monster[data-cards-pic-idx='39']{background-image: url(images/cards_ja/CARDS_039.PNG);}
+.monster[data-cards-pic-idx='40']{background-image: url(images/cards_ja/CARDS_040.PNG);}
+.monster[data-cards-pic-idx='41']{background-image: url(images/cards_ja/CARDS_041.PNG);}
+.monster[data-cards-pic-idx='42']{background-image: url(images/cards_ja/CARDS_042.PNG);}
+.monster[data-cards-pic-idx='43']{background-image: url(images/cards_ja/CARDS_043.PNG);}
+.monster[data-cards-pic-idx='44']{background-image: url(images/cards_ja/CARDS_044.PNG);}
+.monster[data-cards-pic-idx='45']{background-image: url(images/cards_ja/CARDS_045.PNG);}
+.monster[data-cards-pic-idx='46']{background-image: url(images/cards_ja/CARDS_046.PNG);}
+.monster[data-cards-pic-idx='47']{background-image: url(images/cards_ja/CARDS_047.PNG);}
+.monster[data-cards-pic-idx='48']{background-image: url(images/cards_ja/CARDS_048.PNG);}
+.monster[data-cards-pic-idx='49']{background-image: url(images/cards_ja/CARDS_049.PNG);}
+.monster[data-cards-pic-idx='50']{background-image: url(images/cards_ja/CARDS_050.PNG);}
+.monster[data-cards-pic-idx='51']{background-image: url(images/cards_ja/CARDS_051.PNG);}
+.monster[data-cards-pic-idx='52']{background-image: url(images/cards_ja/CARDS_052.PNG);}
+.monster[data-cards-pic-idx='53']{background-image: url(images/cards_ja/CARDS_053.PNG);}
+.monster[data-cards-pic-idx='54']{background-image: url(images/cards_ja/CARDS_054.PNG);}
+.monster[data-cards-pic-idx='55']{background-image: url(images/cards_ja/CARDS_055.PNG);}
+.monster[data-cards-pic-idx='56']{background-image: url(images/cards_ja/CARDS_056.PNG);}
+.monster[data-cards-pic-idx='57']{background-image: url(images/cards_ja/CARDS_057.PNG);}
+.monster[data-cards-pic-idx='58']{background-image: url(images/cards_ja/CARDS_058.PNG);}
+.monster[data-cards-pic-idx='59']{background-image: url(images/cards_ja/CARDS_059.PNG);}
+.monster[data-cards-pic-idx='60']{background-image: url(images/cards_ja/CARDS_060.PNG);}
+.monster[data-cards-pic-idx='61']{background-image: url(images/cards_ja/CARDS_061.PNG);}
+.monster[data-cards-pic-idx='62']{background-image: url(images/cards_ja/CARDS_062.PNG);}
+.monster[data-cards-pic-idx='63']{background-image: url(images/cards_ja/CARDS_063.PNG);}
+.monster[data-cards-pic-idx='64']{background-image: url(images/cards_ja/CARDS_064.PNG);}
+.monster[data-cards-pic-idx='65']{background-image: url(images/cards_ja/CARDS_065.PNG);}
+.monster[data-cards-pic-idx='66']{background-image: url(images/cards_ja/CARDS_066.PNG);}
+.monster[data-cards-pic-idx='67']{background-image: url(images/cards_ja/CARDS_067.PNG);}
+.monster[data-cards-pic-idx='68']{background-image: url(images/cards_ja/CARDS_068.PNG);}
+.monster[data-cards-pic-idx='69']{background-image: url(images/cards_ja/CARDS_069.PNG);}
+.monster[data-cards-pic-idx='70']{background-image: url(images/cards_ja/CARDS_070.PNG);}
+.monster[data-cards-pic-idx='71']{background-image: url(images/cards_ja/CARDS_071.PNG);}
+.monster[data-cards-pic-idx='72']{background-image: url(images/cards_ja/CARDS_072.PNG);}
+.monster[data-cards-pic-idx='73']{background-image: url(images/cards_ja/CARDS_073.PNG);}
+.monster[data-cards-pic-idx='74']{background-image: url(images/cards_ja/CARDS_074.PNG);}
+.monster[data-cards-pic-idx='75']{background-image: url(images/cards_ja/CARDS_075.PNG);}
+.monster[data-cards-pic-idx='76']{background-image: url(images/cards_ja/CARDS_076.PNG);}
+.monster[data-cards-pic-idx='77']{background-image: url(images/cards_ja/CARDS_077.PNG);}
+.monster[data-cards-pic-idx='78']{background-image: url(images/cards_ja/CARDS_078.PNG);}
+.monster[data-cards-pic-idx='79']{background-image: url(images/cards_ja/CARDS_079.PNG);}
+.monster[data-cards-pic-idx='80']{background-image: url(images/cards_ja/CARDS_080.PNG);}
+.monster[data-cards-pic-idx='81']{background-image: url(images/cards_ja/CARDS_081.PNG);}
+.monster[data-cards-pic-idx='82']{background-image: url(images/cards_ja/CARDS_082.PNG);}
+.monster[data-cards-pic-idx='83']{background-image: url(images/cards_ja/CARDS_083.PNG);}
+.monster[data-cards-pic-idx='84']{background-image: url(images/cards_ja/CARDS_084.PNG);}
+.monster[data-cards-pic-idx='85']{background-image: url(images/cards_ja/CARDS_085.PNG);}
+.monster[data-cards-pic-idx='86']{background-image: url(images/cards_ja/CARDS_086.PNG);}
+.monster[data-cards-pic-idx='87']{background-image: url(images/cards_ja/CARDS_087.PNG);}
+.monster[data-cards-pic-idx='88']{background-image: url(images/cards_ja/CARDS_088.PNG);}
+.monster[data-cards-pic-idx='89']{background-image: url(images/cards_ja/CARDS_089.PNG);}
+.monster[data-cards-pic-idx='90']{background-image: url(images/cards_ja/CARDS_090.PNG);}
+.monster[data-cards-pic-idx='91']{background-image: url(images/cards_ja/CARDS_091.PNG);}
+.monster[data-cards-pic-idx='92']{background-image: url(images/cards_ja/CARDS_092.PNG);}
+.monster[data-cards-pic-idx='93']{background-image: url(images/cards_ja/CARDS_093.PNG);}
+.monster[data-cards-pic-idx='94']{background-image: url(images/cards_ja/CARDS_094.PNG);}
+.monster[data-cards-pic-idx='95']{background-image: url(images/cards_ja/CARDS_095.PNG);}
+.monster[data-cards-pic-idx='96']{background-image: url(images/cards_ja/CARDS_096.PNG);}
+.monster[data-cards-pic-idx='97']{background-image: url(images/cards_ja/CARDS_097.PNG);}
+.monster[data-cards-pic-idx='98']{background-image: url(images/cards_ja/CARDS_098.PNG);}
+.monster[data-cards-pic-idx='99']{background-image: url(images/cards_ja/CARDS_099.PNG);}
+.monster[data-cards-pic-idx='100']{background-image: url(images/cards_ja/CARDS_100.PNG);}
+.monster[data-cards-pic-idx='101']{background-image: url(images/cards_ja/CARDS_101.PNG);}
+.monster[data-cards-pic-idx='102']{background-image: url(images/cards_ja/CARDS_102.PNG);}
+.monster[data-cards-pic-idx='103']{background-image: url(images/cards_ja/CARDS_103.PNG);}
+.monster[data-cards-pic-idx='104']{background-image: url(images/cards_ja/CARDS_104.PNG);}
+.monster[data-cards-pic-idx='105']{background-image: url(images/cards_ja/CARDS_105.PNG);}
+.monster[data-cards-pic-idx='106']{background-image: url(images/cards_ja/CARDS_106.PNG);}
+.monster[data-cards-pic-idx='107']{background-image: url(images/cards_ja/CARDS_107.PNG);}
+.monster[data-cards-pic-idx='108']{background-image: url(images/cards_ja/CARDS_108.PNG);}
+.monster[data-cards-pic-idx='109']{background-image: url(images/cards_ja/CARDS_109.PNG);}
+.monster[data-cards-pic-idx='110']{background-image: url(images/cards_ja/CARDS_110.PNG);}
+.monster[data-cards-pic-idx='111']{background-image: url(images/cards_ja/CARDS_111.PNG);}
+.monster[data-cards-pic-idx='112']{background-image: url(images/cards_ja/CARDS_112.PNG);}
+.monster[data-cards-pic-idx='113']{background-image: url(images/cards_ja/CARDS_113.PNG);}
+.monster[data-cards-pic-idx='114']{background-image: url(images/cards_ja/CARDS_114.PNG);}
+.monster[data-cards-pic-idx='115']{background-image: url(images/cards_ja/CARDS_115.PNG);}
+.monster[data-cards-pic-idx='116']{background-image: url(images/cards_ja/CARDS_116.PNG);}
+.monster[data-cards-pic-idx='117']{background-image: url(images/cards_ja/CARDS_117.PNG);}
+.monster[data-cards-pic-idx='118']{background-image: url(images/cards_ja/CARDS_118.PNG);}
+.monster[data-cards-pic-idx='119']{background-image: url(images/cards_ja/CARDS_119.PNG);}
+.monster[data-cards-pic-idx='120']{background-image: url(images/cards_ja/CARDS_120.PNG);}
+.monster[data-cards-pic-idx='121']{background-image: url(images/cards_ja/CARDS_121.PNG);}
+.monster[data-cards-pic-idx='122']{background-image: url(images/cards_ja/CARDS_122.PNG);}
+.monster[data-cards-pic-idx='123']{background-image: url(images/cards_ja/CARDS_123.PNG);}
+.monster[data-cards-pic-idx='124']{background-image: url(images/cards_ja/CARDS_124.PNG);}
+.monster[data-cards-pic-idx='125']{background-image: url(images/cards_ja/CARDS_125.PNG);}
+.monster[data-cards-pic-idx='126']{background-image: url(images/cards_ja/CARDS_126.PNG);}
+.monster[data-cards-pic-idx='127']{background-image: url(images/cards_ja/CARDS_127.PNG);}
+.monster[data-cards-pic-idx='128']{background-image: url(images/cards_ja/CARDS_128.PNG);}
+.monster[data-cards-pic-idx='129']{background-image: url(images/cards_ja/CARDS_129.PNG);}
+.monster[data-cards-pic-idx='130']{background-image: url(images/cards_ja/CARDS_130.PNG);}
+.monster[data-cards-pic-idx='131']{background-image: url(images/cards_ja/CARDS_131.PNG);}
+.monster[data-cards-pic-idx='132']{background-image: url(images/cards_ja/CARDS_132.PNG);}
+.monster[data-cards-pic-idx='133']{background-image: url(images/cards_ja/CARDS_133.PNG);}
+.monster[data-cards-pic-idx='134']{background-image: url(images/cards_ja/CARDS_134.PNG);}
+.monster[data-cards-pic-idx='135']{background-image: url(images/cards_ja/CARDS_135.PNG);}
+.monster[data-cards-pic-idx='136']{background-image: url(images/cards_ja/CARDS_136.PNG);}
+.monster[data-cards-pic-idx='137']{background-image: url(images/cards_ja/CARDS_137.PNG);}
+.monster[data-cards-pic-idx='138']{background-image: url(images/cards_ja/CARDS_138.PNG);}
+.monster[data-cards-pic-idx='139']{background-image: url(images/cards_ja/CARDS_139.PNG);}
+.monster[data-cards-pic-idx='140']{background-image: url(images/cards_ja/CARDS_140.PNG);}
+.monster[data-cards-pic-idx='141']{background-image: url(images/cards_ja/CARDS_141.PNG);}
+.monster[data-cards-pic-idx='142']{background-image: url(images/cards_ja/CARDS_142.PNG);}
+.monster[data-cards-pic-idx='143']{background-image: url(images/cards_ja/CARDS_143.PNG);}
+.monster[data-cards-pic-idx='144']{background-image: url(images/cards_ja/CARDS_144.PNG);}
+.monster[data-cards-pic-idx='145']{background-image: url(images/cards_ja/CARDS_145.PNG);}
+.monster[data-cards-pic-idx='146']{background-image: url(images/cards_ja/CARDS_146.PNG);}
+.monster[data-cards-pic-idx='147']{background-image: url(images/cards_ja/CARDS_147.PNG);}
+.monster[data-cards-pic-idx='148']{background-image: url(images/cards_ja/CARDS_148.PNG);}
+.monster[data-cards-pic-idx='149']{background-image: url(images/cards_ja/CARDS_149.PNG);}
+.monster[data-cards-pic-idx='150']{background-image: url(images/cards_ja/CARDS_150.PNG);}
+.monster[data-cards-pic-idx='151']{background-image: url(images/cards_ja/CARDS_151.PNG);}
+.monster[data-cards-pic-idx='152']{background-image: url(images/cards_ja/CARDS_152.PNG);}
+.monster[data-cards-pic-idx='153']{background-image: url(images/cards_ja/CARDS_153.PNG);}
+.monster[data-cards-pic-idx='154']{background-image: url(images/cards_ja/CARDS_154.PNG);}
+.monster[data-cards-pic-idx='155']{background-image: url(images/cards_ja/CARDS_155.PNG);}
+.monster[data-cards-pic-idx='156']{background-image: url(images/cards_ja/CARDS_156.PNG);}
+.monster[data-cards-pic-idx='157']{background-image: url(images/cards_ja/CARDS_157.PNG);}
+.monster[data-cards-pic-idx='158']{background-image: url(images/cards_ja/CARDS_158.PNG);}
+.monster[data-cards-pic-idx='159']{background-image: url(images/cards_ja/CARDS_159.PNG);}
+.monster[data-cards-pic-idx='160']{background-image: url(images/cards_ja/CARDS_160.PNG);}
+.monster[data-cards-pic-idx='161']{background-image: url(images/cards_ja/CARDS_161.PNG);}
+.monster[data-cards-pic-idx='162']{background-image: url(images/cards_ja/CARDS_162.PNG);}
+.monster[data-cards-pic-idx='163']{background-image: url(images/cards_ja/CARDS_163.PNG);}
+.monster[data-cards-pic-idx='164']{background-image: url(images/cards_ja/CARDS_164.PNG);}
+.monster[data-cards-pic-idx='165']{background-image: url(images/cards_ja/CARDS_165.PNG);}
+.monster[data-cards-pic-idx='166']{background-image: url(images/cards_ja/CARDS_166.PNG);}
+.monster[data-cards-pic-idx='167']{background-image: url(images/cards_ja/CARDS_167.PNG);}
+.monster[data-cards-pic-idx='168']{background-image: url(images/cards_ja/CARDS_168.PNG);}
+.monster[data-cards-pic-idx='169']{background-image: url(images/cards_ja/CARDS_169.PNG);}
+.monster[data-cards-pic-idx='170']{background-image: url(images/cards_ja/CARDS_170.PNG);}
+.monster[data-cards-pic-idx='171']{background-image: url(images/cards_ja/CARDS_171.PNG);}
+.monster[data-cards-pic-idx='172']{background-image: url(images/cards_ja/CARDS_172.PNG);}
+.monster[data-cards-pic-idx='173']{background-image: url(images/cards_ja/CARDS_173.PNG);}
+.monster[data-cards-pic-idx='174']{background-image: url(images/cards_ja/CARDS_174.PNG);}
+.monster[data-cards-pic-idx='175']{background-image: url(images/cards_ja/CARDS_175.PNG);}
+.monster[data-cards-pic-idx='176']{background-image: url(images/cards_ja/CARDS_176.PNG);}
+.monster[data-cards-pic-idx='177']{background-image: url(images/cards_ja/CARDS_177.PNG);}
+.monster[data-cards-pic-idx='178']{background-image: url(images/cards_ja/CARDS_178.PNG);}
+.monster[data-cards-pic-idx='179']{background-image: url(images/cards_ja/CARDS_179.PNG);}
+.monster[data-cards-pic-idx='180']{background-image: url(images/cards_ja/CARDS_180.PNG);}
+.monster[data-cards-pic-idx='181']{background-image: url(images/cards_ja/CARDS_181.PNG);}
+.monster[data-cards-pic-idx='182']{background-image: url(images/cards_ja/CARDS_182.PNG);}
+.monster[data-cards-pic-idx='183']{background-image: url(images/cards_ja/CARDS_183.PNG);}
+.monster[data-cards-pic-idx='184']{background-image: url(images/cards_ja/CARDS_184.PNG);}
+.monster[data-cards-pic-idx='185']{background-image: url(images/cards_ja/CARDS_185.PNG);}
+.monster[data-cards-pic-idx='186']{background-image: url(images/cards_ja/CARDS_186.PNG);}
+.monster[data-cards-pic-idx='187']{background-image: url(images/cards_ja/CARDS_187.PNG);}
+.monster[data-cards-pic-idx='188']{background-image: url(images/cards_ja/CARDS_188.PNG);}
+.monster[data-cards-pic-idx='189']{background-image: url(images/cards_ja/CARDS_189.PNG);}
+.monster[data-cards-pic-idx='190']{background-image: url(images/cards_ja/CARDS_190.PNG);}
+.monster[data-cards-pic-idx='191']{background-image: url(images/cards_ja/CARDS_191.PNG);}
+.monster[data-cards-pic-idx='192']{background-image: url(images/cards_ja/CARDS_192.PNG);}
+.monster[data-cards-pic-idx='193']{background-image: url(images/cards_ja/CARDS_193.PNG);}
+.monster[data-cards-pic-idx='194']{background-image: url(images/cards_ja/CARDS_194.PNG);}
+.monster[data-cards-pic-idx='195']{background-image: url(images/cards_ja/CARDS_195.PNG);}
+.monster[data-cards-pic-idx='196']{background-image: url(images/cards_ja/CARDS_196.PNG);}
+.monster[data-cards-pic-idx='197']{background-image: url(images/cards_ja/CARDS_197.PNG);}
+.monster[data-cards-pic-idx='198']{background-image: url(images/cards_ja/CARDS_198.PNG);}
+.monster[data-cards-pic-idx='199']{background-image: url(images/cards_ja/CARDS_199.PNG);}
+/*美服*/
+[data-game-source="en"] .monster[data-cards-pic-idx='1']{background-image: url(images/cards_en/CARDS_001.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='2']{background-image: url(images/cards_en/CARDS_002.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='3']{background-image: url(images/cards_en/CARDS_003.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='4']{background-image: url(images/cards_en/CARDS_004.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='5']{background-image: url(images/cards_en/CARDS_005.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='6']{background-image: url(images/cards_en/CARDS_006.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='7']{background-image: url(images/cards_en/CARDS_007.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='8']{background-image: url(images/cards_en/CARDS_008.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='9']{background-image: url(images/cards_en/CARDS_009.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='10']{background-image: url(images/cards_en/CARDS_010.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='11']{background-image: url(images/cards_en/CARDS_011.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='12']{background-image: url(images/cards_en/CARDS_012.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='13']{background-image: url(images/cards_en/CARDS_013.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='14']{background-image: url(images/cards_en/CARDS_014.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='15']{background-image: url(images/cards_en/CARDS_015.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='16']{background-image: url(images/cards_en/CARDS_016.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='17']{background-image: url(images/cards_en/CARDS_017.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='18']{background-image: url(images/cards_en/CARDS_018.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='19']{background-image: url(images/cards_en/CARDS_019.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='20']{background-image: url(images/cards_en/CARDS_020.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='21']{background-image: url(images/cards_en/CARDS_021.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='22']{background-image: url(images/cards_en/CARDS_022.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='23']{background-image: url(images/cards_en/CARDS_023.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='24']{background-image: url(images/cards_en/CARDS_024.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='25']{background-image: url(images/cards_en/CARDS_025.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='26']{background-image: url(images/cards_en/CARDS_026.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='27']{background-image: url(images/cards_en/CARDS_027.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='28']{background-image: url(images/cards_en/CARDS_028.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='29']{background-image: url(images/cards_en/CARDS_029.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='30']{background-image: url(images/cards_en/CARDS_030.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='31']{background-image: url(images/cards_en/CARDS_031.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='32']{background-image: url(images/cards_en/CARDS_032.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='33']{background-image: url(images/cards_en/CARDS_033.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='34']{background-image: url(images/cards_en/CARDS_034.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='35']{background-image: url(images/cards_en/CARDS_035.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='36']{background-image: url(images/cards_en/CARDS_036.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='37']{background-image: url(images/cards_en/CARDS_037.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='38']{background-image: url(images/cards_en/CARDS_038.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='39']{background-image: url(images/cards_en/CARDS_039.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='40']{background-image: url(images/cards_en/CARDS_040.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='41']{background-image: url(images/cards_en/CARDS_041.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='42']{background-image: url(images/cards_en/CARDS_042.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='43']{background-image: url(images/cards_en/CARDS_043.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='44']{background-image: url(images/cards_en/CARDS_044.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='45']{background-image: url(images/cards_en/CARDS_045.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='46']{background-image: url(images/cards_en/CARDS_046.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='47']{background-image: url(images/cards_en/CARDS_047.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='48']{background-image: url(images/cards_en/CARDS_048.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='49']{background-image: url(images/cards_en/CARDS_049.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='50']{background-image: url(images/cards_en/CARDS_050.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='51']{background-image: url(images/cards_en/CARDS_051.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='52']{background-image: url(images/cards_en/CARDS_052.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='53']{background-image: url(images/cards_en/CARDS_053.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='54']{background-image: url(images/cards_en/CARDS_054.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='55']{background-image: url(images/cards_en/CARDS_055.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='56']{background-image: url(images/cards_en/CARDS_056.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='57']{background-image: url(images/cards_en/CARDS_057.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='58']{background-image: url(images/cards_en/CARDS_058.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='59']{background-image: url(images/cards_en/CARDS_059.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='60']{background-image: url(images/cards_en/CARDS_060.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='61']{background-image: url(images/cards_en/CARDS_061.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='62']{background-image: url(images/cards_en/CARDS_062.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='63']{background-image: url(images/cards_en/CARDS_063.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='64']{background-image: url(images/cards_en/CARDS_064.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='65']{background-image: url(images/cards_en/CARDS_065.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='66']{background-image: url(images/cards_en/CARDS_066.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='67']{background-image: url(images/cards_en/CARDS_067.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='68']{background-image: url(images/cards_en/CARDS_068.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='69']{background-image: url(images/cards_en/CARDS_069.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='70']{background-image: url(images/cards_en/CARDS_070.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='71']{background-image: url(images/cards_en/CARDS_071.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='72']{background-image: url(images/cards_en/CARDS_072.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='73']{background-image: url(images/cards_en/CARDS_073.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='74']{background-image: url(images/cards_en/CARDS_074.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='75']{background-image: url(images/cards_en/CARDS_075.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='76']{background-image: url(images/cards_en/CARDS_076.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='77']{background-image: url(images/cards_en/CARDS_077.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='78']{background-image: url(images/cards_en/CARDS_078.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='79']{background-image: url(images/cards_en/CARDS_079.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='80']{background-image: url(images/cards_en/CARDS_080.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='81']{background-image: url(images/cards_en/CARDS_081.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='82']{background-image: url(images/cards_en/CARDS_082.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='83']{background-image: url(images/cards_en/CARDS_083.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='84']{background-image: url(images/cards_en/CARDS_084.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='85']{background-image: url(images/cards_en/CARDS_085.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='86']{background-image: url(images/cards_en/CARDS_086.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='87']{background-image: url(images/cards_en/CARDS_087.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='88']{background-image: url(images/cards_en/CARDS_088.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='89']{background-image: url(images/cards_en/CARDS_089.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='90']{background-image: url(images/cards_en/CARDS_090.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='91']{background-image: url(images/cards_en/CARDS_091.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='92']{background-image: url(images/cards_en/CARDS_092.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='93']{background-image: url(images/cards_en/CARDS_093.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='94']{background-image: url(images/cards_en/CARDS_094.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='95']{background-image: url(images/cards_en/CARDS_095.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='96']{background-image: url(images/cards_en/CARDS_096.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='97']{background-image: url(images/cards_en/CARDS_097.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='98']{background-image: url(images/cards_en/CARDS_098.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='99']{background-image: url(images/cards_en/CARDS_099.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='100']{background-image: url(images/cards_en/CARDS_100.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='101']{background-image: url(images/cards_en/CARDS_101.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='102']{background-image: url(images/cards_en/CARDS_102.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='103']{background-image: url(images/cards_en/CARDS_103.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='104']{background-image: url(images/cards_en/CARDS_104.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='105']{background-image: url(images/cards_en/CARDS_105.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='106']{background-image: url(images/cards_en/CARDS_106.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='107']{background-image: url(images/cards_en/CARDS_107.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='108']{background-image: url(images/cards_en/CARDS_108.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='109']{background-image: url(images/cards_en/CARDS_109.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='110']{background-image: url(images/cards_en/CARDS_110.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='111']{background-image: url(images/cards_en/CARDS_111.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='112']{background-image: url(images/cards_en/CARDS_112.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='113']{background-image: url(images/cards_en/CARDS_113.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='114']{background-image: url(images/cards_en/CARDS_114.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='115']{background-image: url(images/cards_en/CARDS_115.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='116']{background-image: url(images/cards_en/CARDS_116.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='117']{background-image: url(images/cards_en/CARDS_117.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='118']{background-image: url(images/cards_en/CARDS_118.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='119']{background-image: url(images/cards_en/CARDS_119.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='120']{background-image: url(images/cards_en/CARDS_120.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='121']{background-image: url(images/cards_en/CARDS_121.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='122']{background-image: url(images/cards_en/CARDS_122.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='123']{background-image: url(images/cards_en/CARDS_123.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='124']{background-image: url(images/cards_en/CARDS_124.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='125']{background-image: url(images/cards_en/CARDS_125.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='126']{background-image: url(images/cards_en/CARDS_126.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='127']{background-image: url(images/cards_en/CARDS_127.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='128']{background-image: url(images/cards_en/CARDS_128.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='129']{background-image: url(images/cards_en/CARDS_129.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='130']{background-image: url(images/cards_en/CARDS_130.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='131']{background-image: url(images/cards_en/CARDS_131.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='132']{background-image: url(images/cards_en/CARDS_132.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='133']{background-image: url(images/cards_en/CARDS_133.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='134']{background-image: url(images/cards_en/CARDS_134.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='135']{background-image: url(images/cards_en/CARDS_135.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='136']{background-image: url(images/cards_en/CARDS_136.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='137']{background-image: url(images/cards_en/CARDS_137.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='138']{background-image: url(images/cards_en/CARDS_138.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='139']{background-image: url(images/cards_en/CARDS_139.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='140']{background-image: url(images/cards_en/CARDS_140.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='141']{background-image: url(images/cards_en/CARDS_141.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='142']{background-image: url(images/cards_en/CARDS_142.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='143']{background-image: url(images/cards_en/CARDS_143.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='144']{background-image: url(images/cards_en/CARDS_144.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='145']{background-image: url(images/cards_en/CARDS_145.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='146']{background-image: url(images/cards_en/CARDS_146.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='147']{background-image: url(images/cards_en/CARDS_147.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='148']{background-image: url(images/cards_en/CARDS_148.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='149']{background-image: url(images/cards_en/CARDS_149.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='150']{background-image: url(images/cards_en/CARDS_150.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='151']{background-image: url(images/cards_en/CARDS_151.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='152']{background-image: url(images/cards_en/CARDS_152.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='153']{background-image: url(images/cards_en/CARDS_153.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='154']{background-image: url(images/cards_en/CARDS_154.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='155']{background-image: url(images/cards_en/CARDS_155.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='156']{background-image: url(images/cards_en/CARDS_156.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='157']{background-image: url(images/cards_en/CARDS_157.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='158']{background-image: url(images/cards_en/CARDS_158.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='159']{background-image: url(images/cards_en/CARDS_159.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='160']{background-image: url(images/cards_en/CARDS_160.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='161']{background-image: url(images/cards_en/CARDS_161.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='162']{background-image: url(images/cards_en/CARDS_162.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='163']{background-image: url(images/cards_en/CARDS_163.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='164']{background-image: url(images/cards_en/CARDS_164.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='165']{background-image: url(images/cards_en/CARDS_165.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='166']{background-image: url(images/cards_en/CARDS_166.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='167']{background-image: url(images/cards_en/CARDS_167.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='168']{background-image: url(images/cards_en/CARDS_168.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='169']{background-image: url(images/cards_en/CARDS_169.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='170']{background-image: url(images/cards_en/CARDS_170.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='171']{background-image: url(images/cards_en/CARDS_171.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='172']{background-image: url(images/cards_en/CARDS_172.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='173']{background-image: url(images/cards_en/CARDS_173.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='174']{background-image: url(images/cards_en/CARDS_174.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='175']{background-image: url(images/cards_en/CARDS_175.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='176']{background-image: url(images/cards_en/CARDS_176.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='177']{background-image: url(images/cards_en/CARDS_177.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='178']{background-image: url(images/cards_en/CARDS_178.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='179']{background-image: url(images/cards_en/CARDS_179.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='180']{background-image: url(images/cards_en/CARDS_180.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='181']{background-image: url(images/cards_en/CARDS_181.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='182']{background-image: url(images/cards_en/CARDS_182.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='183']{background-image: url(images/cards_en/CARDS_183.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='184']{background-image: url(images/cards_en/CARDS_184.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='185']{background-image: url(images/cards_en/CARDS_185.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='186']{background-image: url(images/cards_en/CARDS_186.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='187']{background-image: url(images/cards_en/CARDS_187.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='188']{background-image: url(images/cards_en/CARDS_188.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='189']{background-image: url(images/cards_en/CARDS_189.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='190']{background-image: url(images/cards_en/CARDS_190.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='191']{background-image: url(images/cards_en/CARDS_191.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='192']{background-image: url(images/cards_en/CARDS_192.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='193']{background-image: url(images/cards_en/CARDS_193.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='194']{background-image: url(images/cards_en/CARDS_194.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='195']{background-image: url(images/cards_en/CARDS_195.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='196']{background-image: url(images/cards_en/CARDS_196.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='197']{background-image: url(images/cards_en/CARDS_197.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='198']{background-image: url(images/cards_en/CARDS_198.PNG);}
+[data-game-source="en"] .monster[data-cards-pic-idx='199']{background-image: url(images/cards_en/CARDS_199.PNG);}
+/*韩服*/
+[data-game-source="ko"] .monster[data-cards-pic-idx='1']{background-image: url(images/cards_ko/CARDS_001.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='2']{background-image: url(images/cards_ko/CARDS_002.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='3']{background-image: url(images/cards_ko/CARDS_003.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='4']{background-image: url(images/cards_ko/CARDS_004.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='5']{background-image: url(images/cards_ko/CARDS_005.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='6']{background-image: url(images/cards_ko/CARDS_006.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='7']{background-image: url(images/cards_ko/CARDS_007.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='8']{background-image: url(images/cards_ko/CARDS_008.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='9']{background-image: url(images/cards_ko/CARDS_009.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='10']{background-image: url(images/cards_ko/CARDS_010.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='11']{background-image: url(images/cards_ko/CARDS_011.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='12']{background-image: url(images/cards_ko/CARDS_012.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='13']{background-image: url(images/cards_ko/CARDS_013.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='14']{background-image: url(images/cards_ko/CARDS_014.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='15']{background-image: url(images/cards_ko/CARDS_015.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='16']{background-image: url(images/cards_ko/CARDS_016.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='17']{background-image: url(images/cards_ko/CARDS_017.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='18']{background-image: url(images/cards_ko/CARDS_018.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='19']{background-image: url(images/cards_ko/CARDS_019.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='20']{background-image: url(images/cards_ko/CARDS_020.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='21']{background-image: url(images/cards_ko/CARDS_021.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='22']{background-image: url(images/cards_ko/CARDS_022.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='23']{background-image: url(images/cards_ko/CARDS_023.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='24']{background-image: url(images/cards_ko/CARDS_024.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='25']{background-image: url(images/cards_ko/CARDS_025.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='26']{background-image: url(images/cards_ko/CARDS_026.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='27']{background-image: url(images/cards_ko/CARDS_027.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='28']{background-image: url(images/cards_ko/CARDS_028.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='29']{background-image: url(images/cards_ko/CARDS_029.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='30']{background-image: url(images/cards_ko/CARDS_030.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='31']{background-image: url(images/cards_ko/CARDS_031.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='32']{background-image: url(images/cards_ko/CARDS_032.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='33']{background-image: url(images/cards_ko/CARDS_033.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='34']{background-image: url(images/cards_ko/CARDS_034.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='35']{background-image: url(images/cards_ko/CARDS_035.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='36']{background-image: url(images/cards_ko/CARDS_036.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='37']{background-image: url(images/cards_ko/CARDS_037.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='38']{background-image: url(images/cards_ko/CARDS_038.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='39']{background-image: url(images/cards_ko/CARDS_039.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='40']{background-image: url(images/cards_ko/CARDS_040.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='41']{background-image: url(images/cards_ko/CARDS_041.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='42']{background-image: url(images/cards_ko/CARDS_042.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='43']{background-image: url(images/cards_ko/CARDS_043.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='44']{background-image: url(images/cards_ko/CARDS_044.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='45']{background-image: url(images/cards_ko/CARDS_045.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='46']{background-image: url(images/cards_ko/CARDS_046.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='47']{background-image: url(images/cards_ko/CARDS_047.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='48']{background-image: url(images/cards_ko/CARDS_048.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='49']{background-image: url(images/cards_ko/CARDS_049.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='50']{background-image: url(images/cards_ko/CARDS_050.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='51']{background-image: url(images/cards_ko/CARDS_051.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='52']{background-image: url(images/cards_ko/CARDS_052.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='53']{background-image: url(images/cards_ko/CARDS_053.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='54']{background-image: url(images/cards_ko/CARDS_054.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='55']{background-image: url(images/cards_ko/CARDS_055.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='56']{background-image: url(images/cards_ko/CARDS_056.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='57']{background-image: url(images/cards_ko/CARDS_057.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='58']{background-image: url(images/cards_ko/CARDS_058.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='59']{background-image: url(images/cards_ko/CARDS_059.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='60']{background-image: url(images/cards_ko/CARDS_060.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='61']{background-image: url(images/cards_ko/CARDS_061.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='62']{background-image: url(images/cards_ko/CARDS_062.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='63']{background-image: url(images/cards_ko/CARDS_063.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='64']{background-image: url(images/cards_ko/CARDS_064.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='65']{background-image: url(images/cards_ko/CARDS_065.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='66']{background-image: url(images/cards_ko/CARDS_066.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='67']{background-image: url(images/cards_ko/CARDS_067.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='68']{background-image: url(images/cards_ko/CARDS_068.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='69']{background-image: url(images/cards_ko/CARDS_069.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='70']{background-image: url(images/cards_ko/CARDS_070.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='71']{background-image: url(images/cards_ko/CARDS_071.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='72']{background-image: url(images/cards_ko/CARDS_072.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='73']{background-image: url(images/cards_ko/CARDS_073.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='74']{background-image: url(images/cards_ko/CARDS_074.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='75']{background-image: url(images/cards_ko/CARDS_075.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='76']{background-image: url(images/cards_ko/CARDS_076.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='77']{background-image: url(images/cards_ko/CARDS_077.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='78']{background-image: url(images/cards_ko/CARDS_078.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='79']{background-image: url(images/cards_ko/CARDS_079.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='80']{background-image: url(images/cards_ko/CARDS_080.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='81']{background-image: url(images/cards_ko/CARDS_081.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='82']{background-image: url(images/cards_ko/CARDS_082.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='83']{background-image: url(images/cards_ko/CARDS_083.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='84']{background-image: url(images/cards_ko/CARDS_084.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='85']{background-image: url(images/cards_ko/CARDS_085.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='86']{background-image: url(images/cards_ko/CARDS_086.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='87']{background-image: url(images/cards_ko/CARDS_087.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='88']{background-image: url(images/cards_ko/CARDS_088.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='89']{background-image: url(images/cards_ko/CARDS_089.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='90']{background-image: url(images/cards_ko/CARDS_090.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='91']{background-image: url(images/cards_ko/CARDS_091.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='92']{background-image: url(images/cards_ko/CARDS_092.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='93']{background-image: url(images/cards_ko/CARDS_093.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='94']{background-image: url(images/cards_ko/CARDS_094.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='95']{background-image: url(images/cards_ko/CARDS_095.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='96']{background-image: url(images/cards_ko/CARDS_096.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='97']{background-image: url(images/cards_ko/CARDS_097.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='98']{background-image: url(images/cards_ko/CARDS_098.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='99']{background-image: url(images/cards_ko/CARDS_099.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='100']{background-image: url(images/cards_ko/CARDS_100.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='101']{background-image: url(images/cards_ko/CARDS_101.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='102']{background-image: url(images/cards_ko/CARDS_102.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='103']{background-image: url(images/cards_ko/CARDS_103.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='104']{background-image: url(images/cards_ko/CARDS_104.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='105']{background-image: url(images/cards_ko/CARDS_105.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='106']{background-image: url(images/cards_ko/CARDS_106.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='107']{background-image: url(images/cards_ko/CARDS_107.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='108']{background-image: url(images/cards_ko/CARDS_108.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='109']{background-image: url(images/cards_ko/CARDS_109.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='110']{background-image: url(images/cards_ko/CARDS_110.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='111']{background-image: url(images/cards_ko/CARDS_111.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='112']{background-image: url(images/cards_ko/CARDS_112.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='113']{background-image: url(images/cards_ko/CARDS_113.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='114']{background-image: url(images/cards_ko/CARDS_114.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='115']{background-image: url(images/cards_ko/CARDS_115.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='116']{background-image: url(images/cards_ko/CARDS_116.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='117']{background-image: url(images/cards_ko/CARDS_117.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='118']{background-image: url(images/cards_ko/CARDS_118.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='119']{background-image: url(images/cards_ko/CARDS_119.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='120']{background-image: url(images/cards_ko/CARDS_120.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='121']{background-image: url(images/cards_ko/CARDS_121.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='122']{background-image: url(images/cards_ko/CARDS_122.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='123']{background-image: url(images/cards_ko/CARDS_123.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='124']{background-image: url(images/cards_ko/CARDS_124.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='125']{background-image: url(images/cards_ko/CARDS_125.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='126']{background-image: url(images/cards_ko/CARDS_126.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='127']{background-image: url(images/cards_ko/CARDS_127.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='128']{background-image: url(images/cards_ko/CARDS_128.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='129']{background-image: url(images/cards_ko/CARDS_129.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='130']{background-image: url(images/cards_ko/CARDS_130.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='131']{background-image: url(images/cards_ko/CARDS_131.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='132']{background-image: url(images/cards_ko/CARDS_132.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='133']{background-image: url(images/cards_ko/CARDS_133.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='134']{background-image: url(images/cards_ko/CARDS_134.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='135']{background-image: url(images/cards_ko/CARDS_135.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='136']{background-image: url(images/cards_ko/CARDS_136.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='137']{background-image: url(images/cards_ko/CARDS_137.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='138']{background-image: url(images/cards_ko/CARDS_138.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='139']{background-image: url(images/cards_ko/CARDS_139.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='140']{background-image: url(images/cards_ko/CARDS_140.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='141']{background-image: url(images/cards_ko/CARDS_141.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='142']{background-image: url(images/cards_ko/CARDS_142.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='143']{background-image: url(images/cards_ko/CARDS_143.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='144']{background-image: url(images/cards_ko/CARDS_144.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='145']{background-image: url(images/cards_ko/CARDS_145.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='146']{background-image: url(images/cards_ko/CARDS_146.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='147']{background-image: url(images/cards_ko/CARDS_147.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='148']{background-image: url(images/cards_ko/CARDS_148.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='149']{background-image: url(images/cards_ko/CARDS_149.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='150']{background-image: url(images/cards_ko/CARDS_150.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='151']{background-image: url(images/cards_ko/CARDS_151.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='152']{background-image: url(images/cards_ko/CARDS_152.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='153']{background-image: url(images/cards_ko/CARDS_153.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='154']{background-image: url(images/cards_ko/CARDS_154.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='155']{background-image: url(images/cards_ko/CARDS_155.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='156']{background-image: url(images/cards_ko/CARDS_156.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='157']{background-image: url(images/cards_ko/CARDS_157.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='158']{background-image: url(images/cards_ko/CARDS_158.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='159']{background-image: url(images/cards_ko/CARDS_159.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='160']{background-image: url(images/cards_ko/CARDS_160.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='161']{background-image: url(images/cards_ko/CARDS_161.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='162']{background-image: url(images/cards_ko/CARDS_162.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='163']{background-image: url(images/cards_ko/CARDS_163.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='164']{background-image: url(images/cards_ko/CARDS_164.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='165']{background-image: url(images/cards_ko/CARDS_165.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='166']{background-image: url(images/cards_ko/CARDS_166.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='167']{background-image: url(images/cards_ko/CARDS_167.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='168']{background-image: url(images/cards_ko/CARDS_168.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='169']{background-image: url(images/cards_ko/CARDS_169.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='170']{background-image: url(images/cards_ko/CARDS_170.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='171']{background-image: url(images/cards_ko/CARDS_171.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='172']{background-image: url(images/cards_ko/CARDS_172.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='173']{background-image: url(images/cards_ko/CARDS_173.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='174']{background-image: url(images/cards_ko/CARDS_174.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='175']{background-image: url(images/cards_ko/CARDS_175.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='176']{background-image: url(images/cards_ko/CARDS_176.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='177']{background-image: url(images/cards_ko/CARDS_177.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='178']{background-image: url(images/cards_ko/CARDS_178.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='179']{background-image: url(images/cards_ko/CARDS_179.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='180']{background-image: url(images/cards_ko/CARDS_180.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='181']{background-image: url(images/cards_ko/CARDS_181.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='182']{background-image: url(images/cards_ko/CARDS_182.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='183']{background-image: url(images/cards_ko/CARDS_183.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='184']{background-image: url(images/cards_ko/CARDS_184.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='185']{background-image: url(images/cards_ko/CARDS_185.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='186']{background-image: url(images/cards_ko/CARDS_186.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='187']{background-image: url(images/cards_ko/CARDS_187.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='188']{background-image: url(images/cards_ko/CARDS_188.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='189']{background-image: url(images/cards_ko/CARDS_189.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='190']{background-image: url(images/cards_ko/CARDS_190.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='191']{background-image: url(images/cards_ko/CARDS_191.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='192']{background-image: url(images/cards_ko/CARDS_192.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='193']{background-image: url(images/cards_ko/CARDS_193.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='194']{background-image: url(images/cards_ko/CARDS_194.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='195']{background-image: url(images/cards_ko/CARDS_195.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='196']{background-image: url(images/cards_ko/CARDS_196.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='197']{background-image: url(images/cards_ko/CARDS_197.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='198']{background-image: url(images/cards_ko/CARDS_198.PNG);}
+[data-game-source="ko"] .monster[data-cards-pic-idx='199']{background-image: url(images/cards_ko/CARDS_199.PNG);}
+/*.en-only.monster[data-cards-pic-idx='54']{background-image: url(images/cards/en/CARDS_054.PNG);}
+.en-only.monster[data-cards-pic-idx='55']{background-image: url(images/cards/en/CARDS_055.PNG);}*/
+/*觉醒、类型、潜觉*/
+.awoken-icon,
+.type-icon
+{
+	--icon-width: var(--awoken-width);
+	--icon-height: var(--awoken-height);
+	--icon-x-index: 0;
+	--icon-y-index: 0;
+	display: inline-flex;
+	vertical-align: middle;
+	background-repeat: no-repeat;
+	width: var(--icon-width);
+	height: var(--icon-height);
+	background-position-x:calc(var(--icon-width) * var(--icon-x-index) * -1);
+	background-position-y:calc(var(--icon-height) * var(--icon-y-index) * -1);
+}
+/*觉醒*/
+.awoken-icon{
+	background-image: url(images/awoken.png);
+}
+
+.awoken-icon[data-awoken-icon='0']{/*问号*/
+	--icon-y-index: 0;
+}
+.awoken-icon.super-awoken-locked[data-awoken-icon='0']{/*锁，未满足超觉醒条件*/
+	--icon-x-index: 1;
+	--icon-y-index: 0;
+}
+.awoken-icon.sync-awakening[data-awoken-icon='0']{/*蓝波利，同步觉醒未启用*/
+	--icon-x-index: 2;
+	--icon-y-index: 0;
+}
+.awoken-icon[data-awoken-icon='1']{/*HP+*/
+	--icon-y-index: 1;
+}
+.awoken-icon[data-awoken-icon='2']{/*攻击+*/
+	--icon-y-index: 2;
+}
+.awoken-icon[data-awoken-icon='3']{/*回复+*/
+	--icon-y-index: 3;
+}
+.awoken-icon[data-awoken-icon='4']{/*火盾*/
+	--icon-y-index: 4;
+}
+.awoken-icon[data-awoken-icon='5']{/*水盾*/
+	--icon-y-index: 5;
+}
+.awoken-icon[data-awoken-icon='6']{/*木盾*/
+	--icon-y-index: 6;
+}
+.awoken-icon[data-awoken-icon='7']{/*光盾*/
+	--icon-y-index: 7;
+}
+.awoken-icon[data-awoken-icon='8']{/*暗盾*/
+	--icon-y-index: 8;
+}
+.awoken-icon[data-awoken-icon='9']{/*自回*/
+	--icon-y-index: 9;
+}
+.awoken-icon[data-awoken-icon='10']{/*防封*/
+	--icon-y-index: 10;
+}
+.awoken-icon[data-awoken-icon='11']{/*防暗*/
+	--icon-y-index: 11;
+}
+.awoken-icon[data-awoken-icon='12']{/*防废*/
+	--icon-y-index: 12;
+}
+.awoken-icon[data-awoken-icon='13']{/*防毒*/
+	--icon-y-index: 13;
+}
+.awoken-icon[data-awoken-icon='14']{/*火+*/
+	--icon-y-index: 14;
+}
+.awoken-icon[data-awoken-icon='15']{/*水+*/
+	--icon-y-index: 15;
+}
+.awoken-icon[data-awoken-icon='16']{/*木+*/
+	--icon-y-index: 16;
+}
+.awoken-icon[data-awoken-icon='17']{/*光+*/
+	--icon-y-index: 17;
+}
+.awoken-icon[data-awoken-icon='18']{/*暗+*/
+	--icon-y-index: 18;
+}
+.awoken-icon[data-awoken-icon='19']{/*手指*/
+	--icon-y-index: 19;
+}
+.awoken-icon[data-awoken-icon='20']{/*心解*/
+	--icon-y-index: 20;
+}
+.awoken-icon[data-awoken-icon='21']{/*SB*/
+	--icon-y-index: 21;
+}
+.awoken-icon[data-awoken-icon='22']{/*火横*/
+	--icon-y-index: 22;
+}
+.awoken-icon[data-awoken-icon='23']{/*水横*/
+	--icon-y-index: 23;
+}
+.awoken-icon[data-awoken-icon='24']{/*木横*/
+	--icon-y-index: 24;
+}
+.awoken-icon[data-awoken-icon='25']{/*光横*/
+	--icon-y-index: 25;
+}
+.awoken-icon[data-awoken-icon='26']{/*暗横*/
+	--icon-y-index: 26;
+}
+.awoken-icon[data-awoken-icon='27']{/*U*/
+	--icon-y-index: 27;
+}
+.awoken-icon[data-awoken-icon='28']{/*SX*/
+	--icon-y-index: 28;
+}
+.awoken-icon[data-awoken-icon='29']{/*心+*/
+	--icon-y-index: 29;
+}
+.awoken-icon[data-awoken-icon='30']{/*协力*/
+	--icon-y-index: 30;
+}
+.awoken-icon[data-awoken-icon='31']{/*龙杀*/
+	--icon-y-index: 31;
+}
+.awoken-icon[data-awoken-icon='32']{/*神杀*/
+	--icon-y-index: 32;
+}
+.awoken-icon[data-awoken-icon='33']{/*恶魔杀*/
+	--icon-y-index: 33;
+}
+.awoken-icon[data-awoken-icon='34']{/*机杀*/
+	--icon-y-index: 34;
+}
+.awoken-icon[data-awoken-icon='35']{/*平衡杀*/
+	--icon-y-index: 35;
+}
+.awoken-icon[data-awoken-icon='36']{/*攻击杀*/
+	--icon-y-index: 36;
+}
+.awoken-icon[data-awoken-icon='37']{/*体力杀*/
+	--icon-y-index: 37;
+}
+.awoken-icon[data-awoken-icon='38']{/*回复杀*/
+	--icon-y-index: 38;
+}
+.awoken-icon[data-awoken-icon='39']{/*进化杀*/
+	--icon-y-index: 39;
+}
+.awoken-icon[data-awoken-icon='40']{/*觉醒杀*/
+	--icon-y-index: 40;
+}
+.awoken-icon[data-awoken-icon='41']{/*强化杀*/
+	--icon-y-index: 41;
+}
+.awoken-icon[data-awoken-icon='42']{/*卖钱杀*/
+	--icon-y-index: 42;
+}
+.awoken-icon[data-awoken-icon='43']{/*7c*/
+	--icon-y-index: 43;
+}
+.awoken-icon[data-awoken-icon='44']{/*5色破防*/
+	--icon-y-index: 44;
+}
+.awoken-icon[data-awoken-icon='45']{/*心追*/
+	--icon-y-index: 45;
+}
+.awoken-icon[data-awoken-icon='46']{/*全体HP*/
+	--icon-y-index: 46;
+}
+.awoken-icon[data-awoken-icon='47']{/*全体回复*/
+	--icon-y-index: 47;
+}
+.awoken-icon[data-awoken-icon='48']{/*破无效*/
+	--icon-y-index: 48;
+}
+.awoken-icon[data-awoken-icon='49']{/*武器觉醒*/
+	--icon-y-index: 49;
+}
+.awoken-icon[data-awoken-icon='50']{/*方块心追*/
+	--icon-y-index: 50;
+}
+.awoken-icon[data-awoken-icon='51']{/*5色溜*/
+	--icon-y-index: 51;
+}
+.awoken-icon[data-awoken-icon='52']{/*大防封*/
+	--icon-y-index: 52;
+}
+.awoken-icon[data-awoken-icon='53']{/*大手指*/
+	--icon-y-index: 53;
+}
+.awoken-icon[data-awoken-icon='54']{/*防云*/
+	--icon-y-index: 54;
+}
+.awoken-icon[data-awoken-icon='55']{/*防封条*/
+	--icon-y-index: 55;
+}
+.awoken-icon[data-awoken-icon='56']{/*大SB*/
+	--icon-y-index: 56;
+}
+.awoken-icon[data-awoken-icon='57']{/*满血强化*/
+	--icon-y-index: 57;
+}
+.awoken-icon[data-awoken-icon='58']{/*下半血强化*/
+	--icon-y-index: 58;
+}
+.awoken-icon[data-awoken-icon='59']{/*L盾*/
+	--icon-y-index: 59;
+}
+.awoken-icon[data-awoken-icon='60']{/*L解锁*/
+	--icon-y-index: 60;
+}
+.awoken-icon[data-awoken-icon='61']{/*10c*/
+	--icon-y-index: 61;
+}
+.awoken-icon[data-awoken-icon='62']{/*c珠*/
+	--icon-y-index: 62;
+}
+.awoken-icon[data-awoken-icon='63']{/*语音*/
+	--icon-y-index: 63;
+}
+.awoken-icon[data-awoken-icon='64']{/*奖励增加*/
+	--icon-y-index: 64;
+}
+.awoken-icon[data-awoken-icon='65']{/*HP-*/
+	--icon-y-index: 65;
+}
+.awoken-icon[data-awoken-icon='66']{/*攻击-*/
+	--icon-y-index: 66;
+}
+.awoken-icon[data-awoken-icon='67']{/*回复-*/
+	--icon-y-index: 67;
+}
+.awoken-icon[data-awoken-icon='68']{/*大防暗*/
+	--icon-y-index: 68;
+}
+.awoken-icon[data-awoken-icon='69']{/*大防废*/
+	--icon-y-index: 69;
+}
+.awoken-icon[data-awoken-icon='70']{/*大防毒*/
+	--icon-y-index: 70;
+}
+.awoken-icon[data-awoken-icon='71']{/*掉废*/
+	--icon-y-index: 71;
+}
+.awoken-icon[data-awoken-icon='72']{/*掉毒*/
+	--icon-y-index: 72;
+}
+.awoken-icon[data-awoken-icon='73']{/*火串*/
+	--icon-y-index: 73;
+}
+.awoken-icon[data-awoken-icon='74']{/*水串*/
+	--icon-y-index: 74;
+}
+.awoken-icon[data-awoken-icon='75']{/*木串*/
+	--icon-y-index: 75;
+}
+.awoken-icon[data-awoken-icon='76']{/*光串*/
+	--icon-y-index: 76;
+}
+.awoken-icon[data-awoken-icon='77']{/*暗串*/
+	--icon-y-index: 77;
+}
+.awoken-icon[data-awoken-icon='78']{/*十字*/
+	--icon-y-index: 78;
+}
+.awoken-icon[data-awoken-icon='79']{/*3色*/
+	--icon-y-index: 79;
+}
+.awoken-icon[data-awoken-icon='80']{/*4色*/
+	--icon-y-index: 80;
+}
+.awoken-icon[data-awoken-icon='81']{/*5色*/
+	--icon-y-index: 81;
+}
+.awoken-icon[data-awoken-icon='82']{/*12珠*/
+	--icon-y-index: 82;
+}
+.awoken-icon[data-awoken-icon='83']{/*附加神类型*/
+	--icon-y-index: 83;
+}
+.awoken-icon[data-awoken-icon='84']{/*附加龙类型*/
+	--icon-y-index: 84;
+}
+.awoken-icon[data-awoken-icon='85']{/*附加恶魔类型*/
+	--icon-y-index: 85;
+}
+.awoken-icon[data-awoken-icon='86']{/*附加机械类型*/
+	--icon-y-index: 86;
+}
+.awoken-icon[data-awoken-icon='87']{/*附加平衡类型*/
+	--icon-y-index: 87;
+}
+.awoken-icon[data-awoken-icon='88']{/*附加攻击类型*/
+	--icon-y-index: 88;
+}
+.awoken-icon[data-awoken-icon='89']{/*附加体力类型*/
+	--icon-y-index: 89;
+}
+.awoken-icon[data-awoken-icon='90']{/*附加回复类型*/
+	--icon-y-index: 90;
+}
+.awoken-icon[data-awoken-icon='91']{/*附加火属性*/
+	--icon-y-index: 91;
+}
+.awoken-icon[data-awoken-icon='92']{/*附加水属性*/
+	--icon-y-index: 92;
+}
+.awoken-icon[data-awoken-icon='93']{/*附加木属性*/
+	--icon-y-index: 93;
+}
+.awoken-icon[data-awoken-icon='94']{/*附加光属性*/
+	--icon-y-index: 94;
+}
+.awoken-icon[data-awoken-icon='95']{/*附加暗属性*/
+	--icon-y-index: 95;
+}
+.awoken-icon[data-awoken-icon='96']{/*大U*/
+	--icon-y-index: 96;
+}
+.awoken-icon[data-awoken-icon='97']{/*大5色溜*/
+	--icon-y-index: 97;
+}
+.awoken-icon[data-awoken-icon='98']{/*大自回*/
+	--icon-y-index: 98;
+}
+.awoken-icon[data-awoken-icon='99']{/*大火+*/
+	--icon-y-index: 99;
+}
+.awoken-icon[data-awoken-icon='100']{/*大水+*/
+	--icon-y-index: 100;
+}
+.awoken-icon[data-awoken-icon='101']{/*大木+*/
+	--icon-y-index: 101;
+}
+.awoken-icon[data-awoken-icon='102']{/*大光+*/
+	--icon-y-index: 102;
+}
+.awoken-icon[data-awoken-icon='103']{/*大暗+*/
+	--icon-y-index: 103;
+}
+.awoken-icon[data-awoken-icon='104']{/*大心+*/
+	--icon-y-index: 104;
+}
+.awoken-icon[data-awoken-icon='105']{/*S-*/
+	--icon-y-index: 105;
+}
+.awoken-icon[data-awoken-icon='106']{/*浮游*/
+	--icon-y-index: 106;
+}
+.awoken-icon[data-awoken-icon='107']{/*大7c*/
+	--icon-y-index: 107;
+}
+.awoken-icon[data-awoken-icon='108']{/*大L解锁*/
+	--icon-y-index: 108;
+}
+.awoken-icon[data-awoken-icon='109']{/*大破无效*/
+	--icon-y-index: 109;
+}
+.awoken-icon[data-awoken-icon='110']{/*大十字*/
+	--icon-y-index: 110;
+}
+.awoken-icon[data-awoken-icon='111']{/*大10c*/
+	--icon-y-index: 111;
+}
+.awoken-icon[data-awoken-icon='112']{/*大3色*/
+	--icon-y-index: 112;
+}
+.awoken-icon[data-awoken-icon='113']{/*大4色*/
+	--icon-y-index: 113;
+}
+.awoken-icon[data-awoken-icon='114']{/*大5色*/
+	--icon-y-index: 114;
+}
+.awoken-icon[data-awoken-icon='115']{/*大心解*/
+	--icon-y-index: 115;
+}
+.awoken-icon[data-awoken-icon='116']{/*3火横*/
+	--icon-y-index: 116;
+}
+.awoken-icon[data-awoken-icon='117']{/*3水横*/
+	--icon-y-index: 117;
+}
+.awoken-icon[data-awoken-icon='118']{/*3木横*/
+	--icon-y-index: 118;
+}
+.awoken-icon[data-awoken-icon='119']{/*3光横*/
+	--icon-y-index: 119;
+}
+.awoken-icon[data-awoken-icon='120']{/*3暗横*/
+	--icon-y-index: 120;
+}
+.awoken-icon[data-awoken-icon='121']{/*大火串*/
+	--icon-y-index: 121;
+}
+.awoken-icon[data-awoken-icon='122']{/*大水串*/
+	--icon-y-index: 122;
+}
+.awoken-icon[data-awoken-icon='123']{/*大木串*/
+	--icon-y-index: 123;
+}
+.awoken-icon[data-awoken-icon='124']{/*大光串*/
+	--icon-y-index: 124;
+}
+.awoken-icon[data-awoken-icon='125']{/*大暗串*/
+	--icon-y-index: 125;
+}
+.awoken-icon[data-awoken-icon='126']{/*T字*/
+	--icon-y-index: 126;
+}
+.awoken-icon[data-awoken-icon='127']{/*三维*/
+	--icon-y-index: 127;
+}
+.awoken-icon[data-awoken-icon='128']{/*阳之加护*/
+	--icon-y-index: 128;
+}
+.awoken-icon[data-awoken-icon='128'].yinyang{/*同时阴阳*/
+	--icon-x-index: 1;
+}
+.awoken-icon[data-awoken-icon='129']{/*阴之加护*/
+	--icon-y-index: 129;
+}
+.awoken-icon[data-awoken-icon='130']{/*熟成*/
+	--icon-y-index: 130;
+}
+.awoken-icon[data-awoken-icon='131']{/*部位破坏*/
+	--icon-y-index: 131;
+}
+.awoken-icon[data-awoken-icon='132']{/*下午茶*/
+	--icon-y-index: 132;
+}
+.awoken-icon[data-awoken-icon='133']{/*火水同时攻击*/
+	--icon-y-index: 133;
+}
+.awoken-icon[data-awoken-icon='134']{/*水木同时攻击*/
+	--icon-y-index: 134;
+}
+.awoken-icon[data-awoken-icon='135']{/*木火同时攻击*/
+	--icon-y-index: 135;
+}
+.awoken-icon[data-awoken-icon='136']{/*技能延迟耐性*/
+	--icon-y-index: 136;
+}
+.awoken-icon[data-awoken-icon='137']{/*五色宝珠强化*/
+	--icon-y-index: 137;
+}
+.awoken-icon[data-awoken-icon='138']{/*辅助共鸣*/
+	--icon-y-index: 138;
+}
+.awoken-icon[data-awoken-icon='139']{/*自力*/
+	--icon-y-index: 139;
+}
+.awoken-icon[data-awoken-icon='140']{/*防手指*/
+	--icon-y-index: 140;
+}
+.awoken-icon[data-awoken-icon='141']{/*达人多色*/
+	--icon-y-index: 141;
+}
+.awoken-icon[data-awoken-icon='142']{/*三维+*/
+	--icon-y-index: 142;
+}
+.awoken-icon[data-awoken-icon='143']{/*加速*/
+	--icon-y-index: 143;
+}
+:lang(zh) .awoken-icon:where(
+	[data-awoken-icon='46'],
+	[data-awoken-icon='47'],
+){
+	--icon-x-index: 2;
+}
+:where(:lang(en), :lang(ko)) .awoken-icon:where(
+	[data-awoken-icon='40'],
+	[data-awoken-icon='46'],
+	[data-awoken-icon='47'],
+	[data-awoken-icon='48'],
+	[data-awoken-icon='109'],
+){
+	--icon-x-index: 1;
+}
+/*类型*/
+.type-icon
+{
+	background-image: url(images/type.png);
+	--icon-x-index: 0;
+	--icon-y-index: 0;
+}
+.type-icon:not([data-type-icon])
+{
+	background-image: unset;
+}
+.type-icon[data-type-icon='0']
+{/*进化用*/
+	--icon-y-index: 0;
+}
+.type-icon[data-type-icon='1']
+{/*平衡*/
+	--icon-y-index: 1;
+}
+.type-icon[data-type-icon='2']
+{/*体力*/
+	--icon-y-index: 2;
+}
+.type-icon[data-type-icon='3']
+{/*回复*/
+	--icon-y-index: 3;
+}
+.type-icon[data-type-icon='4']
+{/*龙*/
+	--icon-y-index: 4;
+}
+.type-icon[data-type-icon='5']
+{/*神*/
+	--icon-y-index: 5;
+}
+.type-icon[data-type-icon='6']
+{/*攻击*/
+	--icon-y-index: 6;
+}
+.type-icon[data-type-icon='7']
+{/*恶魔*/
+	--icon-y-index: 7;
+}
+.type-icon[data-type-icon='8']
+{/*机械*/
+	--icon-y-index: 8;
+}
+.type-icon[data-type-icon='9']
+{/*特别保护*/
+	--icon-y-index: 9;
+}
+.type-icon[data-type-icon='12']
+{/*能力觉醒用*/
+	--icon-y-index: 12;
+}
+.type-icon[data-type-icon='14']
+{/*强化合成用*/
+	--icon-y-index: 14;
+}
+.type-icon[data-type-icon='15']
+{/*贩卖用*/
+	--icon-y-index: 15;
+}
+:where(:lang(en), :lang(ko)) .type-icon:where(
+	[data-type-icon='12'],
+	[data-type-icon='9'],
+){
+	--icon-x-index: 1;
+}
+/*潜在觉醒*/
+.latent-icon {
+	--icon-width: var(--awoken-width);
+	--icon-height: var(--awoken-height);
+	--icon-x-index: 0;
+	--icon-y-index: 0;
+}
+.latent-icon::before,
+.latent-icon::after
+{
+	background-image: url(images/icon-latent.png);
+	background-repeat: no-repeat;
+	margin: -2px;
+	width: var(--icon-width);
+	height: var(--icon-height);
+	background-position-x:calc(var(--icon-width) * var(--icon-x-index) * -1);
+	background-position-y:calc(var(--icon-height) * var(--icon-y-index) * -1);
+}
+.latent-icon::before{
+	content: "";
+}
+/*7格开始没有id的，显示锁*/
+.latent-ul>.latent-icon:nth-of-type(n+7):not([data-latent-icon]):before {
+	--icon-x-index: 1;
+	--icon-y-index: 0;
+}
+.latent-icon[data-latent-icon]::before{
+	--icon-x-index: 0;
+}
+.latent-icon[data-latent-icon='1']::before{ /*HP*/
+	--icon-y-index: 1;
+}
+.latent-icon[data-latent-icon='2']::before{ /*攻击*/
+	--icon-y-index: 2;
+}
+.latent-icon[data-latent-icon='3']::before{ /*回复*/
+	--icon-y-index: 3;
+}
+.latent-icon[data-latent-icon='4']::before{ /*手指*/
+	--icon-y-index: 4;
+}
+.latent-icon[data-latent-icon='5']::before{ /*自回*/
+	--icon-y-index: 5;
+}
+.latent-icon[data-latent-icon='6']::before{ /*火盾*/
+	--icon-y-index: 6;
+}
+.latent-icon[data-latent-icon='7']::before{ /*水盾*/
+	--icon-y-index: 7;
+}
+.latent-icon[data-latent-icon='8']::before{ /*木盾*/
+	--icon-y-index: 8;
+}
+.latent-icon[data-latent-icon='9']::before{ /*光盾*/
+	--icon-y-index: 9;
+}
+.latent-icon[data-latent-icon='10']::before{ /*暗盾*/
+	--icon-y-index: 10;
+}
+.latent-icon[data-latent-icon='11']::before{ /*防坐*/
+	--icon-y-index: 11;
+}
+.latent-icon[data-latent-icon='12']::before{ /*三维*/
+	--icon-y-index: 12;
+}
+.latent-icon[data-latent-icon='13']::before{ /*不被换队长*/
+	--icon-y-index: 13;
+}
+.latent-icon[data-latent-icon='14']::before{ /*不掉废*/
+	--icon-y-index: 14;
+}
+.latent-icon[data-latent-icon='15']::before{ /*不掉毒*/
+	--icon-y-index: 15;
+}
+.latent-icon[data-latent-icon='16']::before{ /*进化杀*/
+	--icon-y-index: 16;
+}
+.latent-icon[data-latent-icon='17']::before{ /*觉醒杀*/
+	--icon-y-index: 17;
+}
+.latent-icon[data-latent-icon='18']::before{ /*强化杀*/
+	--icon-y-index: 18;
+}
+.latent-icon[data-latent-icon='19']::before{ /*卖钱杀*/
+	--icon-y-index: 19;
+}
+.latent-icon[data-latent-icon='20']::before{ /*神杀*/
+	--icon-y-index: 20;
+}
+.latent-icon[data-latent-icon='21']::before{ /*龙杀*/
+	--icon-y-index: 21;
+}
+.latent-icon[data-latent-icon='22']::before{ /*恶魔杀*/
+	--icon-y-index: 22;
+}
+.latent-icon[data-latent-icon='23']::before{ /*机械杀*/
+	--icon-y-index: 23;
+}
+.latent-icon[data-latent-icon='24']::before{ /*平衡杀*/
+	--icon-y-index: 24;
+}
+.latent-icon[data-latent-icon='25']::before{ /*攻击杀*/
+	--icon-y-index: 25;
+}
+.latent-icon[data-latent-icon='26']::before{ /*体力杀*/
+	--icon-y-index: 26;
+}
+.latent-icon[data-latent-icon='27']::before{ /*回复杀*/
+	--icon-y-index: 27;
+}
+.latent-icon[data-latent-icon='28']::before{ /*大HP*/
+	--icon-y-index: 28;
+}
+.latent-icon[data-latent-icon='29']::before{ /*大攻击*/
+	--icon-y-index: 29;
+}
+.latent-icon[data-latent-icon='30']::before{ /*大回复*/
+	--icon-y-index: 30;
+}
+.latent-icon[data-latent-icon='31']::before{ /*大手指*/
+	--icon-y-index: 31;
+}
+.latent-icon[data-latent-icon='32']::before{ /*大火盾*/
+	--icon-y-index: 32;
+}
+.latent-icon[data-latent-icon='33']::before{ /*大水盾*/
+	--icon-y-index: 33;
+}
+.latent-icon[data-latent-icon='34']::before{ /*大木盾*/
+	--icon-y-index: 34;
+}
+.latent-icon[data-latent-icon='35']::before{ /*大光盾*/
+	--icon-y-index: 35;
+}
+.latent-icon[data-latent-icon='36']::before{ /*大暗盾*/
+	--icon-y-index: 36;
+}
+.latent-icon[data-latent-icon='37']::before{ /*6色破无效*/
+	--icon-y-index: 37;
+}
+.latent-icon[data-latent-icon='38']::before{ /*3色破属吸*/
+	--icon-y-index: 38;
+}
+.latent-icon[data-latent-icon='39']::before{ /*C珠破吸*/
+	--icon-y-index: 39;
+}
+.latent-icon[data-latent-icon='40']::before{ /*心横解转转*/
+	--icon-y-index: 40;
+}
+.latent-icon[data-latent-icon='41']::before{ /*U解禁消*/
+	--icon-y-index: 41;
+}
+.latent-icon[data-latent-icon='42']::before{ /*伤害上限×4*/
+	--icon-y-index: 42;
+}
+.latent-icon[data-latent-icon='43']::before{ /*HP++*/
+	--icon-y-index: 43;
+}
+.latent-icon[data-latent-icon='44']::before{ /*攻击++*/
+	--icon-y-index: 44;
+}
+.latent-icon[data-latent-icon='45']::before{ /*回复++*/
+	--icon-y-index: 45;
+}
+.latent-icon[data-latent-icon='46']::before{ /*心追解云封*/
+	--icon-y-index: 46;
+}
+.latent-icon[data-latent-icon='47']::before{ /*心L大SB*/
+	--icon-y-index: 47;
+}
+.latent-icon[data-latent-icon='48']::before{ /*L解禁武器*/
+	--icon-y-index: 48;
+}
+.latent-icon[data-latent-icon='49']::before{ /*伤害上限×8*/
+	--icon-y-index: 49;
+}
+.latent-icon[data-latent-icon='50']::before{ /*十字追部位*/
+	--icon-y-index: 50;
+}
+.latent-icon[data-latent-icon='51']::before{ /*方块破防*/
+	--icon-y-index: 51;
+}
+:is(:lang(en), :lang(ko)) .latent-icon:where(
+	[data-latent-icon='17'],
+	[data-latent-icon='37'],
+	[data-latent-icon='39'],
+)::before{
+	--icon-x-index: 1;
+}
+
+/* 编辑界面特殊的 三维潜觉 */
+.latent-ul-div .latent-ul .latent-icon[data-latent-icon='12']::before
+{
+	width: calc(var(--icon-width) * 2 + var(--column-gap));
+	--icon-x-index: 1;
+}
+/* 潜觉编辑界面，这几个潜觉需要多显示一个需求的普通觉醒 */
+.m-latent-allowable-ul .latent-icon:where(
+	[data-latent-icon='39'],
+	[data-latent-icon='40'],
+	[data-latent-icon='41'],
+	[data-latent-icon='46'],
+	[data-latent-icon='47'],
+	[data-latent-icon='48'],
+	[data-latent-icon='50'],
+	[data-latent-icon='51'],
+){ /*所以横向占两格*/
+	grid-column: span 2;
+}
+
+/*将需要的前置觉醒图片，赋予他们的 after */
+.latent-icon.show-enabling-awokwn:where(
+	[data-latent-icon='39'],
+	[data-latent-icon='40'],
+	[data-latent-icon='41'],
+	[data-latent-icon='46'],
+	[data-latent-icon='47'],
+	[data-latent-icon='48'],
+	[data-latent-icon='50'],
+	[data-latent-icon='51'],
+)::after 
+{
+	content: "";
+	background-image: url(images/awoken.png);
+	margin-left: 6px;
+	opacity: 0.5;
+}
+.latent-icon.show-enabling-awokwn[data-latent-icon='39']::after{ /*C珠破吸*/
+	--icon-y-index: 62;
+}
+.latent-icon.show-enabling-awokwn[data-latent-icon='40']::after{ /*心横解转转*/
+	--icon-y-index: 20;
+}
+.latent-icon.show-enabling-awokwn[data-latent-icon='41']::after{ /*U解禁消*/
+	--icon-y-index: 27;
+}
+.latent-icon.show-enabling-awokwn[data-latent-icon='46']::after{ /*心追解云封*/
+	--icon-y-index: 45;
+}
+.latent-icon.show-enabling-awokwn[data-latent-icon='47']::after{ /*心L大SB*/
+	--icon-y-index: 59;
+}
+.latent-icon.show-enabling-awokwn[data-latent-icon='48']::after{ /*心L大SB*/
+	--icon-y-index: 60;
+}
+.latent-icon.show-enabling-awokwn[data-latent-icon='50']::after{ /*十字追部位*/
+	--icon-y-index: 78;
+}
+.latent-icon.show-enabling-awokwn[data-latent-icon='51']::after{ /*方块破防*/
+	--icon-y-index: 48;
+}
+
+/* 额外有 x2 的 6格觉醒 */
+.level-super-break .latent-icon:where(
+	[data-latent-icon='13'], /*防换队长*/
+	[data-latent-icon='14'], /*防费*/
+	[data-latent-icon='15'], /*防毒*/
+	[data-latent-icon='37'], /*破无效*/
+	[data-latent-icon='38'], /*破属吸*/
+	[data-latent-icon='39'], /*破伤吸*/
+	[data-latent-icon='40'], /*解轮盘赌*/
+	[data-latent-icon='41'], /*解禁消*/
+	[data-latent-icon='46'], /*解云封*/
+	[data-latent-icon='47'], /*S++*/
+	[data-latent-icon='48'],/*解封武器*/
+	[data-latent-icon='51'],/*方块破防*/
+)::after
+{
+	/*font-family: var(--game-font-family);
+	font-size: 10px;
+	line-height: 14px;
+	text-shadow: black -1px -1px 1px,black 1px -1px 1px,black -1px 1px 1px,black 1px 1px 1px;
+	text-align: center;
+	color: orange;
+	content: "×2";*/
+	content: "";
+	margin-left: 3px;
+	--icon-x-index: 1;
+	--icon-y-index: 45;
+}
+
+/* 徽章背景 */
+.badge{
+	width: var(--badge-width);
+	height: var(--badge-height);
+	background-image: url(images/badge-bg.png);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 15px;
+	box-shadow: 0 3px 3px 1px black;
+}
+.badge::before{
+	--icon-x-index: 0;
+	--icon-y-index: 0;
+	display: flex;
+	content: "";
+	background-repeat: no-repeat;
+	background-image: url(images/badge.png);
+	width: var(--badge-width);
+	height: var(--badge-height);
+	background-position-x:calc(var(--badge-width) * var(--icon-x-index) * -1);
+	background-position-y:calc(var(--badge-height) * var(--icon-y-index) * -1);
+}
+.badge:where( /*去武器的白色徽章底*/
+	[data-badge-icon='22'],
+	[data-badge-icon='23'],
+){
+	background-position-x: calc(var(--badge-width) * -1);
+}
+.badge:where( /*联动的蓝色徽章底*/
+	[data-badge-icon='24'],
+	[data-badge-icon='79'],
+	[data-badge-icon='26'],
+	[data-badge-icon='53'],
+	[data-badge-icon='27'],
+	[data-badge-icon='28'],
+	[data-badge-icon='29'],
+	[data-badge-icon='31'],
+	[data-badge-icon='15'],
+	[data-badge-icon='32'],
+	[data-badge-icon='33'],
+	[data-badge-icon='76'],
+	[data-badge-icon='34'],
+	[data-badge-icon='36'],
+	[data-badge-icon='77'],
+	[data-badge-icon='37'],
+	[data-badge-icon='38'],
+	[data-badge-icon='62'],
+	[data-badge-icon='39'],
+	[data-badge-icon='49'],
+	[data-badge-icon='54'],
+	[data-badge-icon='55'],
+	[data-badge-icon='58'],
+	[data-badge-icon='59'],
+	[data-badge-icon='71'],
+	[data-badge-icon='72'],
+	[data-badge-icon='73'],
+	[data-badge-icon='74'],
+	[data-badge-icon='81'],
+	[data-badge-icon='82'],
+	[data-badge-icon='84'],
+	[data-badge-icon='85'],
+	[data-badge-icon='93'],
+	[data-badge-icon='94'],
+	[data-badge-icon='99'],
+	[data-badge-icon='99'],
+){
+	background-position-y: calc(var(--badge-height) * -1);
+}
+.badge[data-badge-icon='129']::before{ /*月卡*/
+	--icon-x-index: 1;
+	--icon-y-index: 0;
+}
+.badge[data-badge-icon='0']::before{
+	--icon-y-index: 0;
+}
+.badge[data-badge-icon='1']::before{
+	--icon-y-index: 1;
+}
+.badge[data-badge-icon='2']::before{
+	--icon-y-index: 2;
+}
+.badge[data-badge-icon='3']::before{
+	--icon-y-index: 3;
+}
+.badge[data-badge-icon='4']::before{
+	--icon-y-index: 4;
+}
+.badge[data-badge-icon='5']::before{
+	--icon-y-index: 5;
+}
+.badge[data-badge-icon='6']::before{
+	--icon-y-index: 6;
+}
+.badge[data-badge-icon='7']::before{
+	--icon-y-index: 7;
+}
+.badge[data-badge-icon='8']::before{
+	--icon-y-index: 8;
+}
+.badge[data-badge-icon='9']::before{
+	--icon-y-index: 9;
+}
+.badge[data-badge-icon='10']::before{
+	--icon-y-index: 10;
+}
+.badge[data-badge-icon='11']::before{
+	--icon-y-index: 11;
+}
+.badge[data-badge-icon='12']::before{
+	--icon-y-index: 12;
+}
+.badge[data-badge-icon='13']::before{
+	--icon-y-index: 13;
+}
+.badge[data-badge-icon='14']::before{
+	--icon-y-index: 14;
+}
+.badge[data-badge-icon='15']::before{
+	--icon-y-index: 15;
+}
+.badge[data-badge-icon='16']::before{
+	--icon-y-index: 16;
+}
+.badge[data-badge-icon='17']::before{
+	--icon-y-index: 17;
+}
+.badge[data-badge-icon='18']::before{
+	--icon-y-index: 18;
+}
+.badge[data-badge-icon='19']::before{
+	--icon-y-index: 19;
+}
+.badge[data-badge-icon='20']::before{
+	--icon-y-index: 20;
+}
+.badge[data-badge-icon='21']::before{
+	--icon-y-index: 21;
+}
+.badge[data-badge-icon='22']::before{
+	--icon-y-index: 22;
+}
+.badge[data-badge-icon='23']::before{
+	--icon-y-index: 23;
+}
+.badge[data-badge-icon='24']::before{
+	--icon-y-index: 24;
+}
+.badge[data-badge-icon='25']::before{
+	--icon-y-index: 25;
+}
+.badge[data-badge-icon='26']::before{
+	--icon-y-index: 26;
+}
+.badge[data-badge-icon='27']::before{
+	--icon-y-index: 27;
+}
+.badge[data-badge-icon='28']::before{
+	--icon-y-index: 28;
+}
+.badge[data-badge-icon='29']::before{
+	--icon-y-index: 29;
+}
+.badge[data-badge-icon='30']::before{
+	--icon-y-index: 30;
+}
+.badge[data-badge-icon='31']::before{
+	--icon-y-index: 31;
+}
+.badge[data-badge-icon='32']::before{
+	--icon-y-index: 32;
+}
+.badge[data-badge-icon='33']::before{
+	--icon-y-index: 33;
+}
+.badge[data-badge-icon='34']::before{
+	--icon-y-index: 34;
+}
+.badge[data-badge-icon='35']::before{
+	--icon-y-index: 35;
+}
+.badge[data-badge-icon='36']::before{
+	--icon-y-index: 36;
+}
+.badge[data-badge-icon='37']::before{
+	--icon-y-index: 37;
+}
+.badge[data-badge-icon='38']::before{
+	--icon-y-index: 38;
+}
+.badge[data-badge-icon='39']::before{
+	--icon-y-index: 39;
+}
+.badge[data-badge-icon='40']::before{
+	--icon-y-index: 40;
+}
+.badge[data-badge-icon='41']::before{
+	--icon-y-index: 41;
+}
+.badge[data-badge-icon='42']::before{
+	--icon-y-index: 42;
+}
+.badge[data-badge-icon='43']::before{
+	--icon-y-index: 43;
+}
+.badge[data-badge-icon='44']::before{
+	--icon-y-index: 44;
+}
+.badge[data-badge-icon='45']::before{
+	--icon-y-index: 45;
+}
+.badge[data-badge-icon='46']::before{
+	--icon-y-index: 46;
+}
+.badge[data-badge-icon='47']::before{
+	--icon-y-index: 47;
+}
+.badge[data-badge-icon='48']::before{
+	--icon-y-index: 48;
+}
+.badge[data-badge-icon='49']::before{
+	--icon-y-index: 49;
+}
+.badge[data-badge-icon='50']::before{
+	--icon-y-index: 50;
+}
+.badge[data-badge-icon='51']::before{
+	--icon-y-index: 51;
+}
+.badge[data-badge-icon='52']::before{
+	--icon-y-index: 52;
+}
+.badge[data-badge-icon='53']::before{
+	--icon-y-index: 53;
+}
+.badge[data-badge-icon='54']::before{
+	--icon-y-index: 54;
+}
+.badge[data-badge-icon='55']::before{
+	--icon-y-index: 55;
+}
+.badge[data-badge-icon='56']::before{
+	--icon-y-index: 56;
+}
+.badge[data-badge-icon='57']::before{
+	--icon-y-index: 57;
+}
+.badge[data-badge-icon='58']::before{
+	--icon-y-index: 58;
+}
+.badge[data-badge-icon='59']::before{
+	--icon-y-index: 59;
+}
+.badge[data-badge-icon='60']::before{
+	--icon-y-index: 60;
+}
+.badge[data-badge-icon='61']::before{
+	--icon-y-index: 61;
+}
+.badge[data-badge-icon='62']::before{
+	--icon-y-index: 62;
+}
+.badge[data-badge-icon='63']::before{
+	--icon-y-index: 63;
+}
+.badge[data-badge-icon='64']::before{
+	--icon-y-index: 64;
+}
+.badge[data-badge-icon='65']::before{
+	--icon-y-index: 65;
+}
+.badge[data-badge-icon='66']::before{
+	--icon-y-index: 66;
+}
+.badge[data-badge-icon='67']::before{
+	--icon-y-index: 67;
+}
+.badge[data-badge-icon='68']::before{
+	--icon-y-index: 68;
+}
+.badge[data-badge-icon='69']::before{
+	--icon-y-index: 69;
+}
+.badge[data-badge-icon='70']::before{
+	--icon-y-index: 70;
+}
+.badge[data-badge-icon='71']::before{
+	--icon-y-index: 71;
+}
+.badge[data-badge-icon='72']::before{
+	--icon-y-index: 72;
+}
+.badge[data-badge-icon='73']::before{
+	--icon-y-index: 73;
+}
+.badge[data-badge-icon='74']::before{
+	--icon-y-index: 74;
+}
+.badge[data-badge-icon='75']::before{
+	--icon-y-index: 75;
+}
+.badge[data-badge-icon='76']::before{
+	--icon-y-index: 76;
+}
+.badge[data-badge-icon='77']::before{
+	--icon-y-index: 77;
+}
+.badge[data-badge-icon='78']::before{
+	--icon-y-index: 78;
+}
+.badge[data-badge-icon='79']::before{
+	--icon-y-index: 79;
+}
+.badge[data-badge-icon='80']::before{
+	--icon-y-index: 80;
+}
+.badge[data-badge-icon='81']::before{
+	--icon-y-index: 81;
+}
+.badge[data-badge-icon='82']::before{
+	--icon-y-index: 82;
+}
+.badge[data-badge-icon='83']::before{
+	--icon-y-index: 83;
+}
+.badge[data-badge-icon='84']::before{
+	--icon-y-index: 84;
+}
+.badge[data-badge-icon='85']::before{
+	--icon-y-index: 85;
+}
+.badge[data-badge-icon='86']::before{
+	--icon-y-index: 86;
+}
+.badge[data-badge-icon='87']::before{
+	--icon-y-index: 87;
+}
+.badge[data-badge-icon='88']::before{
+	--icon-y-index: 88;
+}
+.badge[data-badge-icon='89']::before{
+	--icon-y-index: 89;
+}
+.badge[data-badge-icon='90']::before{
+	--icon-y-index: 90;
+}
+.badge[data-badge-icon='91']::before{
+	--icon-y-index: 91;
+}
+.badge[data-badge-icon='92']::before{
+	--icon-y-index: 92;
+}
+.badge[data-badge-icon='93']::before{
+	--icon-y-index: 93;
+}
+.badge[data-badge-icon='94']::before{
+	--icon-y-index: 94;
+}
+.badge[data-badge-icon='95']::before{
+	--icon-y-index: 95;
+}
+.badge[data-badge-icon='96']::before{
+	--icon-y-index: 96;
+}
+.badge[data-badge-icon='97']::before{
+	--icon-y-index: 97;
+}
+.badge[data-badge-icon='98']::before{
+	--icon-y-index: 98;
+}
+.badge[data-badge-icon='99']::before{
+	--icon-y-index: 99;
+}
+.badge[data-badge-icon='100']::before{
+	--icon-y-index: 100;
+}
+.badge[data-badge-icon='101']::before{
+	--icon-y-index: 101;
+}
+.badge[data-badge-icon='102']::before{
+	--icon-y-index: 102;
+}
+.badge[data-badge-icon='103']::before{
+	--icon-y-index: 103;
+}
+.badge[data-badge-icon='104']::before{
+	--icon-y-index: 104;
+}
+.badge[data-badge-icon='105']::before{
+	--icon-y-index: 105;
+}
+.badge[data-badge-icon='106']::before{
+	--icon-y-index: 106;
+}
+.badge[data-badge-icon='107']::before{
+	--icon-y-index: 107;
+}
+.badge[data-badge-icon='108']::before{
+	--icon-y-index: 108;
+}
+.badge[data-badge-icon='109']::before{
+	--icon-y-index: 109;
+}
+.badge[data-badge-icon='110']::before{
+	--icon-y-index: 110;
+}
+.badge[data-badge-icon='111']::before{
+	--icon-y-index: 111;
+}
+.badge[data-badge-icon='112']::before{
+	--icon-y-index: 112;
+}
+.badge[data-badge-icon='113']::before{
+	--icon-y-index: 113;
+}
+.badge[data-badge-icon='114']::before{
+	--icon-y-index: 114;
+}
+.badge[data-badge-icon='115']::before{
+	--icon-y-index: 115;
+}
+.badge[data-badge-icon='116']::before{
+	--icon-y-index: 116;
+}
+.badge[data-badge-icon='117']::before{
+	--icon-y-index: 117;
+}
+.badge[data-badge-icon='118']::before{
+	--icon-y-index: 118;
+}
+.badge[data-badge-icon='119']::before{
+	--icon-y-index: 119;
+}
+.badge[data-badge-icon='120']::before{
+	--icon-y-index: 120;
+}
+.badge[data-badge-icon='121']::before{
+	--icon-y-index: 121;
+}
+.badge[data-badge-icon='122']::before{
+	--icon-y-index: 122;
+}
+.badge[data-badge-icon='123']::before{
+	--icon-y-index: 123;
+}
+.badge[data-badge-icon='124']::before{
+	--icon-y-index: 124;
+}
+.badge[data-badge-icon='125']::before{
+	--icon-y-index: 125;
+}
+.badge[data-badge-icon='126']::before{
+	--icon-y-index: 126;
+}
+/*中文徽章*/
+:lang(zh) .badge:where(
+	[data-badge-icon='1'],
+	[data-badge-icon='10'],
+	[data-badge-icon='20'],
+	[data-badge-icon='129'],
+)::before {
+	--icon-x-index: 3;
+}
+
+:lang(en) .badge:where(
+	[data-badge-icon='1'],
+	[data-badge-icon='3'],
+	[data-badge-icon='20'],
+	[data-badge-icon='22'],
+	[data-badge-icon='90'],
+)::before,
+:lang(ko) .badge:where(
+	[data-badge-icon='3'],
+	[data-badge-icon='22'],
+	[data-badge-icon='90'],
+)::before {
+	--icon-x-index: 1;
+}
+:lang(ko) .badge:where(
+	[data-badge-icon='1'],
+	[data-badge-icon='20'],
+)::before {
+	--icon-x-index: 2;
+}
+
+/* 美服数据不一样的徽章 */
+[data-game-source="en"] .badge:where(
+	[data-badge-icon='15'], /*漫威变成本家*/
+	[data-badge-icon='26'], /*高达变成本家*/
+	[data-badge-icon='53'], /*高达变成本家*/
+)::before,
+/* 韩服数据不一样的徽章 */
+[data-game-source="ko"] .badge:where(
+	[data-badge-icon='15'], /*漫威变成本家*/
+)::before {
+	--icon-x-index: 1;
+}
+
+
+/*属性图片*/
+.attr-icon
+{
+	--icon-width: 36px;
+	--icon-height: 36px;
+	--icon-x-index: 0;
+	--icon-y-index: 0;
+	
+	display: inline-block;
+	width: var(--icon-width);
+	height: var(--icon-height);
+	background-image: url(images/attrs.png);
+	background-position-y: var(--icon-height);
+	background-repeat: no-repeat;
+	vertical-align: bottom;
+
+	background-position-x:calc(var(--icon-width) * var(--icon-x-index) * -1);
+	background-position-y:calc(var(--icon-height) * var(--icon-y-index) * -1);
+}
+.attr-icon[data-attr-icon='any'],
+.attr-icon[data-attr-icon='self']
+{
+	--icon-x-index: 1;
+	--icon-y-index: 0;
+}
+.attr-icon[data-attr-icon='fixed']
+{
+	--icon-x-index: 1;
+	--icon-y-index: 1;
+}
+
+.attr-icon[data-attr-icon='-1']
+{
+	width: auto;
+}
+.attr-icon[data-attr-icon='0']
+{
+	--icon-y-index: 0;
+}
+.attr-icon[data-attr-icon='1']
+{
+	--icon-y-index: 1;
+}
+.attr-icon[data-attr-icon='2']
+{
+	--icon-y-index: 2;
+}
+.attr-icon[data-attr-icon='3']
+{
+	--icon-y-index: 3;
+}
+.attr-icon[data-attr-icon='4']
+{
+	--icon-y-index: 4;
+}
+.attr-icon[data-attr-icon='5']
+{
+	--icon-y-index: 5;
+}
+.attr-icon[data-attr-icon='6']
+{
+	--icon-y-index: 6;
+}
+
+/*珠子图片*/
+.orb,
+.orb::before,
+.orb::after
+{
+	--icon-width: 36px;
+	--icon-height: 36px;
+	--icon-x-index: 0;
+	--icon-y-index: 0;
+	
+	display: inline-flex;
+	position: relative;
+	width: var(--icon-width);
+	height: var(--icon-height);
+	background-image: url(images/icon-orbs.png);
+	background-position-y: calc(var(--icon-height) * 1);
+	background-repeat: no-repeat;
+	vertical-align: bottom;
+
+	background-position-x:calc(var(--icon-width) * var(--icon-x-index) * -1);
+	background-position-y:calc(var(--icon-height) * var(--icon-y-index) * -1);
+}
+.orb::before,
+.orb::after
+{
+	--icon-x-index: 1;
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+.orb:not([data-orb-icon])
+{
+	background-image: unset;
+}
+.orb.enhanced::after
+{
+	content: "";
+	--icon-y-index: 0;
+}
+.orb.locked::before
+{
+	content: "";
+	--icon-y-index: 1;
+}
+.orb.drop::before
+{ /* 珠子加掉率 */
+	content: "";
+	--icon-y-index: 2;
+}
+.orb.bound
+{
+	filter:brightness(0.8);
+}
+.orb.enhanced::after
+{
+	content: "";
+	--icon-y-index: 0;
+}
+.orb.combo-drop::before
+{ /* 有豆荚的珠子 */
+	content: "";
+	--icon-y-index: 5;
+}
+.orb.nail::before
+{ /* 有豆荚的珠子 */
+	content: "";
+	--icon-y-index: 6;
+}
+
+.orb[data-orb-icon='_5color']
+{
+	background-image: url(images/icon-skills.png);
+	--icon-y-index: 24;
+}
+.orb[data-orb-icon='-1']
+{
+	width: auto;
+}
+.orb[data-orb-icon='0']
+{
+	--icon-y-index: 0;
+}
+.orb[data-orb-icon='1']
+{
+	--icon-y-index: 1;
+}
+.orb[data-orb-icon='2']
+{
+	--icon-y-index: 2;
+}
+.orb[data-orb-icon='3']
+{
+	--icon-y-index: 3;
+}
+.orb[data-orb-icon='4']
+{
+	--icon-y-index: 4;
+}
+.orb[data-orb-icon='5']
+{
+	--icon-y-index: 5;
+}
+.orb[data-orb-icon='6']
+{
+	--icon-y-index: 6;
+}
+.orb[data-orb-icon='7']
+{
+	--icon-y-index: 7;
+}
+.orb[data-orb-icon='8']
+{
+	--icon-y-index: 8;
+}
+.orb[data-orb-icon='9']
+{
+	--icon-y-index: 9;
+}
