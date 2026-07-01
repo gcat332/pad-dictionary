@@ -170,21 +170,28 @@ function skillStageHTML(sid){
 }
 
 function skillBlock(kind, accent, sid){
-  const { name, body } = skillStageHTML(sid);
+  const base = skillStageHTML(sid);
   const cd = cdText(sid);
-  const chain = evolvedSkillChain(sid);
-  const chainHTML = chain.map((stageId, i) => {
+  // Some evolution stages repeat the same text verbatim (the mechanical change hasn't
+  // happened yet, just an internal bookkeeping stage) — skip stages that add no new info.
+  const seenTexts = new Set([`${base.name}|${base.body}`]);
+  const distinctStages = [];
+  for (const stageId of evolvedSkillChain(sid)){
     const stage = skillStageHTML(stageId);
-    return `<div class="sk-evo">
-      <div class="eyebrow sk-evo-lbl">Evolves into (${i+1}/${chain.length})</div>
+    const key = `${stage.name}|${stage.body}`;
+    if (seenTexts.has(key)) continue;
+    seenTexts.add(key);
+    distinctStages.push(stage);
+  }
+  const chainHTML = distinctStages.map((stage, i) => `<div class="sk-evo">
+      <div class="eyebrow sk-evo-lbl">Evolves into (${i+1}/${distinctStages.length})</div>
       <div class="sk-title">${stage.name}</div>
       <p class="sk-desc">${stage.body}</p>
-    </div>`;
-  }).join("");
+    </div>`).join("");
   return `<section class="sk">
     <div class="eyebrow" style="color:${accent}">${kind}${cd?`<span class="cd">${cd}</span>`:""}</div>
-    <div class="sk-title">${name}</div>
-    <p class="sk-desc">${body}</p>
+    <div class="sk-title">${base.name}</div>
+    <p class="sk-desc">${base.body}</p>
     ${chainHTML}
   </section>`;
 }
