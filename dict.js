@@ -242,20 +242,23 @@ function openCompare(){
   const rowLabel = t => `<div class="cmp-lab">${t}</div>`;
   const cell = html => `<div class="cmp-cell">${html}</div>`;
   const row = (label, fn) => rowLabel(label) + cards.map(fn).map(cell).join("");
+  // numeric row: bold + mark the highest value (higher = better for HP/ATK/RCV)
+  const nrow = (label, fn) => { const vals=cards.map(fn); const max=Math.max(...vals);
+    return rowLabel(label) + vals.map(v=>`<div class="cmp-cell num${v===max&&cards.length>1?" best":""}">${v.toLocaleString()}</div>`).join(""); };
   cmpDlg.innerHTML = `
     <button class="close" onclick="compare.close()" aria-label="Close">×</button>
     <h2 class="cmp-title">Compare ${cards.length} cards</h2>
     <div class="cmp-grid" style="grid-template-columns:${cols}">
       ${rowLabel("")}${cards.map(c=>cell(`<div class="cmp-head" style="--accent:${accentOf(c)}">
         ${avatarHTML(c)}<div class="cmp-name">${attrsOf(c)}${enName(c)}</div>
-        <div class="dim" style="font-size:11px">#${c.id}</div>
-        <button class="cmp-rm" data-id="${c.id}">remove</button></div>`)).join("")}
+        <div class="dim cmp-id">#${c.id}</div>
+        <button class="cmp-rm" data-id="${c.id}">Remove</button></div>`)).join("")}
       ${row("Type", c=>(c.types||[]).filter(t=>t>=0).map(t=>TYPES[t]||t).join(", "))}
       ${row("Rarity", c=>"★"+c.rarity)}
       ${row("Cost", c=>c.cost)}
-      ${row("HP", c=>c.hp?.max??"-")}
-      ${row("ATK", c=>c.atk?.max??"-")}
-      ${row("RCV", c=>c.rcv?.max??"-")}
+      ${nrow("HP", c=>c.hp?.max??0)}
+      ${nrow("ATK", c=>c.atk?.max??0)}
+      ${nrow("RCV", c=>c.rcv?.max??0)}
       ${row("Awakenings", c=>`<div class="awk-row">${awkOf(c)}</div>`)}
       ${row("Active", c=>skOf(c.activeSkillId))}
       ${row("Leader", c=>skOf(c.leaderSkillId))}
@@ -312,7 +315,7 @@ function specialNodeEl(node, depth){
     b.className="tg special-leaf"; b.dataset.v=node.key; b.textContent=node.label;
     b.style.marginLeft = `${Math.min(depth, 5) * 10}px`;
     b.classList.toggle("on", F.special.includes(node.key));
-    b.onclick=()=>{ toggle(F.special,node.key); b.classList.toggle("on"); applyView(); };
+    b.onclick=()=>{ toggle(F.special,node.key); b.classList.toggle("on"); updateSpecialCount(); applyView(); };
     return b;
   }
   const details=document.createElement("details");
@@ -335,9 +338,12 @@ function refreshBtnStates(){
     b.classList.toggle("on", n>0); b.querySelector(".cnt").textContent=n>1?n:""; });
   document.querySelectorAll("#f-special .tg").forEach(b=>b.classList.toggle("on", F.special.includes(b.dataset.v)));
   $("incl-super").checked=F.inclSuper; $("can-assist").checked=F.assist;
-  $("special-mode").textContent=F.specialMode.toUpperCase();
+  $("mode-and").classList.toggle("on", F.specialMode==="and");
+  $("mode-or").classList.toggle("on", F.specialMode==="or");
+  updateSpecialCount();
   q.value=F.term; sortSel.value=F.sortKey; dirBtn.textContent=F.desc?"↓ desc":"↑ asc";
 }
+function updateSpecialCount(){ $("special-count").textContent = F.special.length ? ` · ${F.special.length}` : ""; }
 
 /* ---------- special search: user-saved presets (full filter snapshots) ---------- */
 const PK="paddict.presets";
@@ -371,7 +377,10 @@ sortSel.onchange=()=>{ F.sortKey=sortSel.value; applyView(); };
 dirBtn.onclick=()=>{ F.desc=!F.desc; dirBtn.textContent=F.desc?"↓ desc":"↑ asc"; applyView(); };
 $("incl-super").onchange=e=>{ F.inclSuper=e.target.checked; applyView(); };
 $("can-assist").onchange=e=>{ F.assist=e.target.checked; applyView(); };
-$("special-mode").onclick=()=>{ F.specialMode=F.specialMode==="and"?"or":"and"; $("special-mode").textContent=F.specialMode.toUpperCase(); applyView(); };
+const setMode=m=>{ F.specialMode=m; $("mode-and").classList.toggle("on",m==="and"); $("mode-or").classList.toggle("on",m==="or"); applyView(); };
+$("mode-and").onclick=()=>setMode("and");
+$("mode-or").onclick=()=>setMode("or");
+$("special-clear").onclick=()=>{ F.special=[]; document.querySelectorAll("#f-special .tg.on").forEach(b=>b.classList.remove("on")); updateSpecialCount(); applyView(); };
 $("clear").onclick=()=>{ Object.assign(F,{attr:[[],[],[]],type:[],rare:[],awoken:[],assist:false,special:[],term:""});
   buildFilterUI(); refreshBtnStates(); applyView(); };
 

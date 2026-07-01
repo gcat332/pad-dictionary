@@ -29,8 +29,12 @@
     <div id="f-awoken" class="fbtns awoken"></div>
   </div>
   <div class="frow">
-    <span class="flabel">Special Search</span>
-    <button id="special-mode" title="Toggle AND / OR matching">AND</button>
+    <span class="flabel">Skill filter<span id="special-count" class="fcount"></span></span>
+    <div class="seg" role="group" aria-label="Match mode">
+      <button id="mode-and" class="on" title="Card must match every selected skill">AND</button>
+      <button id="mode-or" title="Card matches any selected skill">OR</button>
+    </div>
+    <button id="special-clear" class="mini" title="Clear skill filter">Clear</button>
     <label class="opt"><input type="checkbox" id="can-assist"> Can be assist only</label>
     <div id="f-special" class="fbtns special"></div>
   </div>
