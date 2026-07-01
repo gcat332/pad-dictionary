@@ -1,0 +1,4 @@
+[
+  { "id": 0, "name": "None", "description": "", "type": 0, "maxLevel": 0, "initialCooldown": 0, "params": [] },
+  { "id": 1, "name": "Heat Breath", "description": "Inflicts 10x ATK Fire Mass Attack", "type": 0, "maxLevel": 6, "initialCooldown": 8, "params": [0, 1000] }
+]

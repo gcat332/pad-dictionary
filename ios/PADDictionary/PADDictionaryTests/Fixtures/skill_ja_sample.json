@@ -1,0 +1,4 @@
+[
+  { "id": 0, "name": "無し", "description": "", "type": 0, "maxLevel": 0, "initialCooldown": 0, "params": [] },
+  { "id": 1, "name": "ヒートブレス", "description": "敵全体に攻撃力×10倍の火属性攻撃。", "type": 0, "maxLevel": 6, "initialCooldown": 8, "params": [0, 1000] }
+]
