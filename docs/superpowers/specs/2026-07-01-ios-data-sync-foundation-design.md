@@ -77,12 +77,14 @@ JSON/sprites afterward is an unauthenticated public HTTPS GET against
 
 - `triggerUpdate() async throws` — `POST /repos/{owner}/{repo}/actions/workflows/update-data.yml/dispatches`
   with the stored PAT in the `Authorization` header.
-- `pollRunStatus() async throws -> RunStatus` — `GET /repos/{owner}/{repo}/actions/runs?event=workflow_dispatch`,
-  poll every ~5s until `status == "completed"`; return `conclusion` (`success`/`failure`).
-- `downloadLatestData() async throws` — GET each of the 4 JSON files and all files
-  under `images/cards_ja/` (plus `awoken.png`, `icon-type.svg`, `CARDFRAME2.png`,
-  `CARDFRAMEW.png`) from `raw.githubusercontent.com/<owner>/<repo>/main/...`, writing
-  into the app's `Documents/` directory, overwriting the previous cache.
+- `pollRunStatus() async throws -> WorkflowConclusion` — `GET /repos/{owner}/{repo}/actions/workflows/update-data.yml/runs?per_page=1`,
+  poll every ~5s until the latest run's `status == "completed"`; return its `conclusion`.
+- `downloadLatestData() async throws` — lists `images/cards_ja/` via the Contents API
+  (`GET /repos/{owner}/{repo}/contents/images/cards_ja`) to get the current sprite
+  filenames, then GETs each of the 4 JSON files, the fixed icon/frame files, and every
+  sprite from `raw.githubusercontent.com/<owner>/<repo>/main/...`. Files are written to
+  a temp directory first, then moved into the app's `Documents/` cache only once every
+  file has downloaded successfully — a failed sync never corrupts the existing cache.
 - Full re-download each sync (no incremental sha-diffing) — simplest thing that
   works for a ~104MB, user-initiated, infrequent action. Revisit only if this proves
   annoying in practice.
@@ -96,10 +98,13 @@ JSON/sprites afterward is an unauthenticated public HTTPS GET against
 
 ### `DataStore` (Swift, `ObservableObject`)
 
-- On launch: reads cached JSON files from `Documents/` (falls back to a bundled
-  seed copy on first-ever launch so the app isn't empty before the first sync),
-  decodes into in-memory `[Card]` / `[Skill]` arrays.
-- Exposes `cards: [Card]`, `skills: [Skill]`, `lastSyncedAt: Date?` for future UI
+- On launch: reads whatever cached JSON files exist in `Documents/` and decodes them
+  into in-memory arrays. On the very first launch (before any sync), the cache is
+  empty and the arrays stay empty — no bundled seed dataset is shipped in the app
+  binary (would add ~86MB to the app for a one-time convenience). The UI shows an
+  empty state prompting the user to run "Update Data" once.
+- Exposes `cards: [Card]`, `skillsJA: [Skill]`, `skillsEN: [Skill]`,
+  `skillTranslations: [String: String]`, `lastSyncedAt: Date?` for future UI
   sub-projects to consume.
 - After a successful `downloadLatestData()`, re-reads and re-decodes, updates
   `lastSyncedAt` (persisted in `UserDefaults`).
@@ -135,3 +140,19 @@ One `XCTest` (`DataDecodingTests`) that decodes a small bundled fixture slice of
 `mon_ja.json` / `skill_ja.json` into `Card` / `Skill` and asserts a few known IDs
 decode with expected fields — the tripwire that fails if the models drift from the
 real JSON shape.
+
+## Execution roles
+
+Per the user's instruction: implementation (actual code) for every task is done by
+the `codex:codex-rescue` agent running model `gpt-5.5`, not by Claude subagents.
+Claude's role for this project is SA/BA — writing specs and plans, defining
+acceptance criteria per task, and reviewing each diff Codex produces before moving
+to the next task.
+
+## UI usability
+
+Even though this sub-project's UI is minimal (Settings + Sync screens only), it
+must be genuinely usable, not a placeholder wireframe: standard iOS layout/spacing,
+`NavigationStack`, SF Symbols for icons, and clear visible feedback for every sync
+state (not just a static label). The bigger UI work (browse/filter/search) in
+sub-projects 2–4 gets the same bar.
