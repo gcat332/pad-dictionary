@@ -23,10 +23,11 @@ header label{color:var(--dim);font-size:12px}
 .tg{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;font-size:12px;
   border:1px solid #3a4150;border-radius:7px;background:#1a1d24;color:var(--txt);cursor:pointer}
 .tg .attr{width:11px;height:11px;margin:0}
-.tg .ty,.tg .awk{width:18px;height:18px}
+.tg .ty{width:18px;height:18px}
+.tg .awk{--awk-s:18px}
 .fbtns.awoken{max-height:200px}
 .fbtns.awoken .tg{padding:4px}
-.fbtns.awoken .tg .awk{width:22px;height:22px}
+.fbtns.awoken .tg .awk{--awk-s:22px}
 .tg.on{background:#2f6dd0;border-color:#5b9bff}
 .awk-btn{position:relative}
 .awk-btn .cnt{position:absolute;right:-3px;top:-3px;min-width:14px;height:14px;line-height:14px;
@@ -58,7 +59,10 @@ header label{color:var(--dim);font-size:12px}
 .attr{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:middle;margin-right:3px}
 .a0{background:#e8513b}.a1{background:#3b9be8}.a2{background:#4caf50}
 .a3{background:#e8d23b}.a4{background:#a05bd6}
-.awk{width:24px;height:24px;vertical-align:middle}
+/* awakening icon = images/awoken.png sprite (32px cells; --awk-y = awakening id = row, column 0) */
+.awk{--awk-s:24px;display:inline-block;vertical-align:middle;width:var(--awk-s);height:var(--awk-s);
+  background:url(images/awoken.png) no-repeat;background-size:calc(var(--awk-s)*3) auto;
+  background-position:0 calc(var(--awk-s)*var(--awk-y,0)*-1)}
 
 /* ---- monster detail: panel wears the card's element ---- */
 dialog#detail{--accent:#6b7280;background:var(--panel);color:var(--txt);border:1px solid #333a46;
@@ -98,7 +102,7 @@ dialog::backdrop{background:rgba(6,8,12,.72);backdrop-filter:blur(2px)}
 .stats b{display:block;color:var(--dim);font-size:10px;font-weight:600;letter-spacing:.08em;margin-bottom:2px}
 
 .awk-row{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
-.awk-row .awk{width:30px;height:30px}
+.awk-row .awk{--awk-s:30px}
 .awk-row.sup{margin-top:8px}
 .sup-lbl{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-right:2px}
 .awk-x{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;font-size:11px;
@@ -148,7 +152,7 @@ dialog#compare[open]{display:flex;flex-direction:column}
 .cmp-lab{background:#161a21;color:var(--dim);font-size:11px;font-weight:700;text-transform:uppercase;
   letter-spacing:.06em;padding:10px;position:sticky;left:0;display:flex;align-items:center}
 .cmp-cell{background:#1c2028;padding:10px;font-size:13px;line-height:1.45;white-space:pre-wrap}
-.cmp-cell .awk-row{gap:4px}.cmp-cell .awk{width:26px;height:26px}
+.cmp-cell .awk-row{gap:4px}.cmp-cell .awk{--awk-s:26px}
 .cmp-head{--cell:64px;text-align:center;position:relative}
 .cmp-head .ava{margin:0 auto}.cmp-head .frame{display:none}
 .cmp-name{font-size:12px;font-weight:700;margin-top:6px;line-height:1.25}

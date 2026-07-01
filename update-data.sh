@@ -21,7 +21,7 @@ DATA_ONLY=false
 #   skill_ja = authoritative skill table (type/params for the engine + JP source for translation)
 #   skill_en = English skill text where available
 patterns=(/monsters-info/mon_ja.json /monsters-info/skill_en.json /monsters-info/skill_ja.json)
-$DATA_ONLY || patterns+=(/images/cards_ja)
+$DATA_ONLY || patterns+=(/images/cards_ja /images/awoken.png)
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
@@ -38,9 +38,10 @@ cp "$TMP/monsters-info/skill_en.json" monsters-info/skill_en.json
 cp "$TMP/monsters-info/skill_ja.json" monsters-info/skill_ja.json
 
 if ! $DATA_ONLY; then
-  echo "Syncing JP card sprites …"
+  echo "Syncing JP card sprites + awoken icons …"
   rm -rf images/cards_ja
   cp -R "$TMP/images/cards_ja" images/cards_ja
+  cp "$TMP/images/awoken.png" images/awoken.png   # awakening icon sheet (32px cells, ids 0–143)
 fi
 
 echo "Done. Review: git status && git diff --stat"

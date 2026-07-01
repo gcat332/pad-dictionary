@@ -9,7 +9,7 @@ const AWOKEN_ORDER = [63,49,21,46,47,43,61,48,27,60,78,79,80,81,44,51,82,62,58,5
   54,55,45,50,59,19,1,2,3,4,5,6,7,8,9,10,14,15,16,17,18,29,22,23,24,25,26,20,28,30,31,32,33,34,
   35,36,37,38,39,40,41,42,53,56,64,65,66,67,11,12,13,71,72,73,74,75,76,77,83,84,85,86,87,88,89,
   90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,
-  // newer awakenings (no glyph in icon-awoken.svg → shown as numbered chip, same as detail)
+  // newer awakenings — real icons come from images/awoken.png (ids 0–143)
   105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,
   129,130,131,132,133,134,135,136,137,138,139,140,141,142,143];
 const SPRITE_PER = 100;
@@ -25,7 +25,7 @@ const SORTS = [ // ported from sort_function_list (script-json_data.js:628)
   {key:"cd",label:"Skill CD",fn:(a,b)=>(SKILLS[a.activeSkillId]?.initialCooldown||0)-(SKILLS[b.activeSkillId]?.initialCooldown||0)},
 ];
 
-let CARDS = [], SKILLS = [], SKILL_EN = [], SKILL_TR = {};
+let CARDS = [], SKILLS = [], SKILL_EN = [], SKILL_TR = {}, AWOKEN_NAMES = {};
 let SPECIAL_ENGINE = null;
 // filter state — attr is 3 positional slots; awoken is an array allowing duplicates (counts)
 const F = {attr:[[],[],[]], type:[], rare:[], awoken:[], inclSuper:true, assist:false, special:[], specialMode:"and", term:"", sortKey:"id", desc:true};
@@ -53,11 +53,11 @@ function resolvedSkill(sid){
     source: enDesc ? "en" : trDesc ? "tr" : "none",
   };
 }
-const awkId = n => [40,46,47,48].includes(n) ? `${n}-en` : n;
-const awkSvg = n => `<svg class="awk" viewBox="0 0 32 32"><use href="images/icon-awoken.svg#awoken-${awkId(n)}"/></svg>`;
-// icon-awoken.svg only covers ids 0–104; newer awakenings have no glyph → labelled fallback chip (no blank gap)
-const hasAwkIcon = n => n >= 0 && n <= 104;
-const awkToken = n => hasAwkIcon(n) ? awkSvg(n) : `<span class="awk-x" title="Awakening ${n}">${n}</span>`;
+// awakening icons: images/awoken.png sprite (32px cells, ids 0–143 down column 0). Names from AWOKEN_NAMES.
+const awkName = n => AWOKEN_NAMES[n] || `Awakening ${n}`;
+const awkSvg = n => `<span class="awk" style="--awk-y:${n}" title="${awkName(n)}"></span>`;
+const hasAwkIcon = n => n >= 0 && n <= 143;
+const awkToken = n => hasAwkIcon(n) ? awkSvg(n) : `<span class="awk-x" title="${awkName(n)}">${n}</span>`;
 // per-card accent = its main attribute's orb colour; theming the detail panel by element
 const ATTR_ACCENT = ["#e8513b","#3b9be8","#4caf50","#f0c400","#a05bd6"];
 const accentOf = c => ATTR_ACCENT[c.attrs?.[0]] ?? "#6b7280";
@@ -365,10 +365,12 @@ Promise.all([
   fetch("monsters-info/skill_en.json").then(r=>r.json()),
   fetch("monsters-info/skill_ja.json").then(r=>r.json()),
   fetch("monsters-info/skill_tr.json").then(r=>r.ok?r.json():{}).catch(()=>({})),
-]).then(([cards, skillEn, skillJa, skillTr]) => {
+  fetch("monsters-info/awoken_names.json").then(r=>r.ok?r.json():{}).catch(()=>({})),
+]).then(([cards, skillEn, skillJa, skillTr, awokenNames]) => {
   SKILLS=skillJa;
   SKILL_EN=skillEn;
   SKILL_TR=skillTr || {};
+  AWOKEN_NAMES=awokenNames || {};
   CARDS=cards.filter(c=>!c.isEmpty&&c.enabled);
   if (!window.PADEngine?.createSpecialSearchEngine) throw new Error("engine.js did not load");
   SPECIAL_ENGINE=window.PADEngine.createSpecialSearchEngine({cards, skills: skillJa});
