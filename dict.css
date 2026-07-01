@@ -49,9 +49,9 @@ header label{color:var(--dim);font-size:12px}
   background-repeat:no-repeat;background-size:calc(var(--cell)*10) calc(var(--cell)*10)}
 /* attribute frame overlay — sprite steps 102px(x)/104px(y); scale by --cell so it fits any thumb size */
 .frame{position:absolute;inset:0;background-image:url(images/CARDFRAME2.png);background-repeat:no-repeat;pointer-events:none;
-  background-size:calc(712px*var(--cell)/102) calc(412px*var(--cell)/102);
+  background-size:calc(var(--cell)*712/102) calc(var(--cell)*412/102);
   background-position:calc(-1*var(--cell)*var(--fa,0)) 0}
-.frame.sub{background-position:calc(-1*var(--cell)*var(--fa,0)) calc(-104px*var(--cell)/102)}
+.frame.sub{background-position:calc(-1*var(--cell)*var(--fa,0)) calc(var(--cell)*-104/102)}
 .frame.w{background-image:url(images/CARDFRAMEW.png);background-size:var(--cell) var(--cell);background-position:0 0}
 .card .nm{font-size:11px;color:var(--dim);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
