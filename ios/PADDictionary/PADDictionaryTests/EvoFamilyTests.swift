@@ -32,9 +32,14 @@ final class EvoFamilyTests: XCTestCase {
     }
 
     func testCapsAt40Nodes() {
+        // A henshin chain (each card links to the next), not a shared evoRootId group —
+        // sharing one evoRootId pulls in ALL siblings in a single BFS step (matches the
+        // web's behavior), so the cap only meaningfully limits growth across chain-like
+        // transform links, one new node per step.
         var cards: [Card] = []
         for i in 1...60 {
-            cards.append(makeCard(id: i, evoRootId: 1))
+            let henshinTo = i < 60 ? [i + 1] : nil
+            cards.append(makeCard(id: i, evoRootId: i, henshinTo: henshinTo))
         }
         let family = evoFamily(of: cards[0], in: cards)
         XCTAssertLessThanOrEqual(family.count, 40)
