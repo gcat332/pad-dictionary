@@ -33,7 +33,7 @@ const F = {attr:[[],[],[]], type:[], rare:[], awoken:[], inclSuper:true, assist:
 const $ = id => document.getElementById(id);
 const grid=$("grid"), q=$("q"), sortSel=$("sort"), dirBtn=$("dir"), countEl=$("count"), dlg=$("detail");
 
-const spriteFile = id => `images/cards_ja/CARDS_${String(Math.ceil(id/SPRITE_PER)).padStart(3,"0")}.PNG`;
+const spriteFile = id => `images/cards_ja/CARDS_${String(Math.ceil(id/SPRITE_PER)).padStart(3,"0")}.webp`;
 const spritePos = id => { const i=(id-1)%SPRITE_PER; return `calc(var(--cell)*-${i%10}) calc(var(--cell)*-${Math.floor(i/10)})`; };
 const hasEN = c => !!(c.otLangName && c.otLangName.en);
 const enName = c => hasEN(c) ? c.otLangName.en : c.name;

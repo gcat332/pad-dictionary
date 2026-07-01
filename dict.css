@@ -56,8 +56,9 @@ header label{color:var(--dim);font-size:12px}
 /* card icon = sprite cell from images/cards_ja/CARDS_XXX.PNG (1024x1024, 10x10, 102px) */
 .card{cursor:pointer;text-align:center}
 .ava{position:relative;width:var(--cell);height:var(--cell);margin:0 auto}
-.icon{width:var(--cell);height:var(--cell);
-  background-repeat:no-repeat;background-size:calc(var(--cell)*10) calc(var(--cell)*10)}
+.icon{width:var(--cell);height:var(--cell);background-repeat:no-repeat;
+  /* sheet is 1024px with a 102px card pitch → scale so 102 sheet-px = --cell, matching the frame overlay */
+  background-size:calc(var(--cell)*1024/102) calc(var(--cell)*1024/102)}
 /* attribute frame overlay — sprite steps 102px(x)/104px(y); scale by --cell so it fits any thumb size */
 .frame{position:absolute;inset:0;background-image:url(images/CARDFRAME2.png);background-repeat:no-repeat;pointer-events:none;
   background-size:calc(var(--cell)*712/102) calc(var(--cell)*412/102);

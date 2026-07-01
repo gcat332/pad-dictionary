@@ -31,7 +31,7 @@ step, no backend — it deploys straight to GitHub Pages.
 | English skill text | `monsters-info/skill_en.json` where the EN server has it |
 | Translated skill text | `monsters-info/skill_tr.json` — 247 JP-only skill descriptions pre-translated offline |
 | Skill parser + taxonomy | `engine.js` — the PADDashFormation skill parser & `specialSearchFunctions` tree, run on our data |
-| Sprites / icons | `images/cards_ja/`, attribute frames, awoken/type SVG sprites |
+| Sprites / icons | `images/cards_ja/` (WebP sprite sheets), attribute frames, awoken/type icons |
 
 `old/` keeps the original upstream source for reference / future work.
 
@@ -42,7 +42,7 @@ step, no backend — it deploys straight to GitHub Pages.
 python3 -m http.server            # → http://localhost:8000
 
 # refresh data + sprites from upstream (blobless sparse clone; only the paths we use)
-./update-data.sh                  # JSON + JP sprites
+./update-data.sh                  # JSON + sprites (needs `brew install webp` to re-encode sprites to WebP)
 ./update-data.sh --data-only      # JSON only (fast)
 
 # re-generate translations for any new JP-only skills (idempotent; needs network)

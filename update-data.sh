@@ -38,9 +38,12 @@ cp "$TMP/monsters-info/skill_en.json" monsters-info/skill_en.json
 cp "$TMP/monsters-info/skill_ja.json" monsters-info/skill_ja.json
 
 if ! $DATA_ONLY; then
-  echo "Syncing JP card sprites + icons + frames …"
-  rm -rf images/cards_ja
-  cp -R "$TMP/images/cards_ja" images/cards_ja
+  command -v cwebp >/dev/null || { echo "Error: cwebp not found. Install with 'brew install webp' (card sprites are stored as WebP for faster loading)."; exit 1; }
+  echo "Syncing card sprites (PNG → WebP) + icons + frames …"
+  rm -rf images/cards_ja && mkdir -p images/cards_ja
+  for f in "$TMP"/images/cards_ja/*.PNG; do
+    cwebp -q 90 -quiet "$f" -o "images/cards_ja/$(basename "${f%.PNG}").webp"
+  done
   cp "$TMP/images/awoken.png"     images/awoken.png      # awakening icons (32px cells, ids 0–143)
   cp "$TMP/images/icon-type.svg"  images/icon-type.svg   # type icons
   cp "$TMP/images/CARDFRAME2.png" images/CARDFRAME2.png  # attribute frame sprite
