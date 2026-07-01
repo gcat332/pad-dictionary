@@ -172,7 +172,7 @@
 						return `${sk[1] * sk[2]}个×${sk[0]}T`;
 					}
 				},
-				{name:"Creates Cloud",otLangName:{chs:"生成封条 debuff",cht:"生成封条 debuff"},
+				{name:"Creates Seal",otLangName:{chs:"生成封条 debuff",cht:"生成封条 debuff"},
 					function:cards=>{
 						const searchTypeArray = [239];
 						return cards.filter(card=>{

@@ -6098,7 +6098,7 @@ const specialSearchFunctions = (function() {
 						return `${sk[1] * sk[2]}个×${sk[0]}T`;
 					}
 				},
-				{name:"Creates Cloud",otLangName:{chs:"生成封条 debuff",cht:"生成封条 debuff"},
+				{name:"Creates Seal",otLangName:{chs:"生成封条 debuff",cht:"生成封条 debuff"},
 					function:cards=>{
 						const searchTypeArray = [239];
 						return cards.filter(card=>{
@@ -8381,7 +8381,7 @@ const specialSearchFunctions = (function() {
     return node?.name || node?.otLangName?.en || "Unnamed";
   }
 
-  function normalizeNode(node, path = [], index = { value: 0 }) {
+  function normalizeNode(node, path = [], index = { value: 0 }, seen = new Set()) {
     const label = treeLabel(node);
     const nextPath = label === "All Functions" ? path : path.concat(label);
     if (node.group || Array.isArray(node.functions)) {
@@ -8389,10 +8389,16 @@ const specialSearchFunctions = (function() {
         type: "group",
         label,
         path: nextPath,
-        children: (node.functions || []).map((child) => normalizeNode(child, nextPath, index)),
+        children: (node.functions || []).map((child) => normalizeNode(child, nextPath, index, seen)),
       };
     }
-    const key = nextPath.join(" > ") || "leaf-" + index.value;
+    // Keys are the leaf's full path; two leaves with the same label under the
+    // same parent would otherwise share a key and shadow each other in leafByKey
+    // (the tree still renders both, but selecting either applies only one). Keep
+    // unique keys stable and only disambiguate genuine collisions.
+    let key = nextPath.join(" > ") || "leaf-" + index.value;
+    if (seen.has(key)) { let n = 2; while (seen.has(key + " #" + n)) n++; key += " #" + n; }
+    seen.add(key);
     index.value += 1;
     return {
       type: "leaf",
@@ -8402,6 +8408,24 @@ const specialSearchFunctions = (function() {
       filter: (cards) => node.function(cards),
       raw: node,
     };
+  }
+
+  // Any top-level leaf that isn't inside a group is tucked under a synthetic
+  // "Other" group so every filter chip has a parent. The "No Filter" sentinel is
+  // left at the root — dict.js hides it there as the clear-all control.
+  // ponytail: only builds "Other" when such orphans exist (none in current data).
+  function groupOrphanLeaves(root) {
+    const isSentinel = (n) => n.type === "leaf" && /no filter/i.test(n.label);
+    const orphans = root.children.filter((n) => n.type === "leaf" && !isSentinel(n));
+    if (!orphans.length) return root;
+    const kept = root.children.filter((n) => !orphans.includes(n));
+    const other = {
+      type: "group",
+      label: "Other",
+      path: ["Other"],
+      children: orphans.map((leaf) => ({ ...leaf, path: ["Other", leaf.label], key: ["Other", leaf.label].join(" > ") })),
+    };
+    return { ...root, children: [...kept, other] };
   }
 
   function flattenLeaves(node, out = []) {
@@ -8433,7 +8457,7 @@ const specialSearchFunctions = (function() {
     installHelpers();
     Skills = skills || [];
     Cards = cards || [];
-    const root = normalizeNode(specialSearchFunctions);
+    const root = groupOrphanLeaves(normalizeNode(specialSearchFunctions));
     const leaves = flattenLeaves(root);
     const leafByKey = new Map(leaves.map((leaf) => [leaf.key, leaf]));
     const leafByPath = new Map(leaves.map((leaf) => [leaf.path.join(" > "), leaf]));
