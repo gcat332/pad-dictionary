@@ -33,13 +33,18 @@ step, no backend — it deploys straight to GitHub Pages.
 | Skill parser + taxonomy | `engine.js` — the PADDashFormation skill parser & `specialSearchFunctions` tree, run on our data |
 | Sprites / icons | `images/cards_ja/` (WebP sprite sheets), attribute frames, awoken/type icons |
 
-`old/` keeps the original upstream source for reference / future work.
+`engine.js` is a single UMD closure authored as ordered partials in `engine/src/`
+and concatenated by `./build-engine.sh` — edit the partials, not `engine.js`.
+See `engine/README.md` for the file map.
 
 ## Scripts
 
 ```bash
 # run locally
 python3 -m http.server            # → http://localhost:8000
+
+# rebuild engine.js after editing any partial in engine/src/
+./build-engine.sh
 
 # refresh data + sprites from upstream (blobless sparse clone; only the paths we use)
 ./update-data.sh                  # JSON + sprites (needs `brew install webp` to re-encode sprites to WebP)
