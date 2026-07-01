@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 >
-> **Execution role override:** every implementation step (writing/editing code, running builds/tests) is done by dispatching to the `codex:codex-rescue` agent with `--model gpt-5.5 --write`, not by a Claude subagent. Claude's role is SA/BA: hand Codex one task at a time (its Files/Interfaces/Steps block verbatim), then review the resulting diff and test output against this plan's acceptance criteria before moving on. Codex's sandbox has no CoreSimulator access — Codex attempts the RED/GREEN `xcodebuild test` once per task and moves on; Claude re-runs the real test on a working Simulator afterward and is the actual gate.
+> **Execution role override:** Tasks 1-6 were implemented by dispatching to the `codex:codex-rescue` agent (`--model gpt-5.5 --write`). From Task 7 onward, per user instruction, implementation is done by dispatching to a Claude subagent running Opus 4.8 instead. In both cases Claude (Sonnet, the orchestrator) acts as SA/BA: hand the coder one task at a time (its Files/Interfaces/Steps block verbatim), then review the resulting diff and test output against this plan's acceptance criteria before moving on.
 
 **Goal:** Browse all cached cards in a grid with the same card-art/attribute-frame visuals as the web dictionary, search by ID, sort by the same 8 keys, and view a full detail screen per card including the evolution line.
 
