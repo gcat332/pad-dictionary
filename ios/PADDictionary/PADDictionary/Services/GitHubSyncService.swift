@@ -8,6 +8,32 @@ enum GitHubSyncError: Error, Equatable {
     case timedOut
 }
 
+enum WorkflowConclusion: String, Codable, Equatable {
+    case success, failure, cancelled, skipped, neutral, stale
+    case timedOut = "timed_out"
+    case actionRequired = "action_required"
+}
+
+private struct WorkflowRun: Codable {
+    let id: Int
+    let status: String
+    let conclusion: WorkflowConclusion?
+    let createdAt: String
+
+    enum CodingKeys: String, CodingKey {
+        case id, status, conclusion
+        case createdAt = "created_at"
+    }
+}
+
+private struct WorkflowRunsResponse: Codable {
+    let workflowRuns: [WorkflowRun]
+
+    enum CodingKeys: String, CodingKey {
+        case workflowRuns = "workflow_runs"
+    }
+}
+
 final class GitHubSyncService {
     let owner = "gcat332"
     let repo = "pad-dictionary"
@@ -42,5 +68,26 @@ final class GitHubSyncService {
         guard let http = response as? HTTPURLResponse else { throw GitHubSyncError.invalidResponse }
         if http.statusCode == 401 { throw GitHubSyncError.unauthorized }
         guard http.statusCode == 204 else { throw GitHubSyncError.unexpectedStatus(http.statusCode) }
+    }
+
+    func pollRunStatus(pollIntervalNanoseconds: UInt64 = 5_000_000_000, maxAttempts: Int = 60) async throws -> WorkflowConclusion {
+        let token = try requireToken()
+        let url = URL(string: "https://api.github.com/repos/\(owner)/\(repo)/actions/workflows/\(workflowFile)/runs?per_page=1")!
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
+
+        for _ in 0..<maxAttempts {
+            let (data, response) = try await session.data(for: request)
+            guard let http = response as? HTTPURLResponse else { throw GitHubSyncError.invalidResponse }
+            if http.statusCode == 401 { throw GitHubSyncError.unauthorized }
+            guard http.statusCode == 200 else { throw GitHubSyncError.unexpectedStatus(http.statusCode) }
+            let decoded = try JSONDecoder().decode(WorkflowRunsResponse.self, from: data)
+            if let run = decoded.workflowRuns.first, run.status == "completed" {
+                return run.conclusion ?? .neutral
+            }
+            try await Task.sleep(nanoseconds: pollIntervalNanoseconds)
+        }
+        throw GitHubSyncError.timedOut
     }
 }
