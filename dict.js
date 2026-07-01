@@ -322,7 +322,7 @@ function specialNodeEl(node, depth){
   }
   const details=document.createElement("details");
   details.className="special-node";
-  details.open = depth < 1;
+  details.open = false; // collapse every search topic by default
   const summary=document.createElement("summary");
   summary.textContent=node.label;
   details.appendChild(summary);
