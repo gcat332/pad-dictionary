@@ -8,7 +8,10 @@ const ATTR = [["Fire","a0"],["Water","a1"],["Wood","a2"],["Light","a3"],["Dark",
 const AWOKEN_ORDER = [63,49,21,46,47,43,61,48,27,60,78,79,80,81,44,51,82,62,58,57,52,68,69,70,
   54,55,45,50,59,19,1,2,3,4,5,6,7,8,9,10,14,15,16,17,18,29,22,23,24,25,26,20,28,30,31,32,33,34,
   35,36,37,38,39,40,41,42,53,56,64,65,66,67,11,12,13,71,72,73,74,75,76,77,83,84,85,86,87,88,89,
-  90,91,92,93,94,95,96,97,98,99,100,101,102,103,104];
+  90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,
+  // newer awakenings (no glyph in icon-awoken.svg → shown as numbered chip, same as detail)
+  105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,
+  129,130,131,132,133,134,135,136,137,138,139,140,141,142,143];
 const SPRITE_PER = 100;
 
 const SORTS = [ // ported from sort_function_list (script-json_data.js:628)
@@ -60,10 +63,10 @@ const ATTR_ACCENT = ["#e8513b","#3b9be8","#4caf50","#f0c400","#a05bd6"];
 const accentOf = c => ATTR_ACCENT[c.attrs?.[0]] ?? "#6b7280";
 const typeSvg = t => `<svg class="ty" viewBox="0 0 32 32"><use href="images/icon-type.svg#type-${t}"/></svg>`;
 const attrDot = a => a>=0 && a<5 ? `<span class="attr ${ATTR[a][1]}" title="${ATTR[a][0]}"></span>` : "";
-function frameLayer(attr, sub){ // ported from card-avatar.css
-  if (attr === 6) return `<div class="frame" style="background-image:url(images/CARDFRAMEW.png);background-position:0 0"></div>`;
+function frameLayer(attr, sub){ // scales with --cell (see .frame in dict.css)
+  if (attr === 6) return `<div class="frame w"></div>`;
   if (attr == null || attr < 0 || attr > 4) return "";
-  return `<div class="frame" style="background-position:calc(-102px*${attr}) ${sub?"-104px":"0"}"></div>`;
+  return `<div class="frame${sub?" sub":""}" style="--fa:${attr}"></div>`;
 }
 const avatarHTML = (c, extra="") => `<div class="ava" style="${extra}">
   <div class="icon" style="background-image:url(${spriteFile(c.id)});background-position:${spritePos(c.id)}"></div>
@@ -172,6 +175,7 @@ function openDetail(c){
         <div id="d-name" class="d-name">${attrs}${enName(c)}</div>
         <div class="d-sub">#${c.id} · ${c.name}</div>
         <div class="d-meta">${types}<span class="chip star">★${c.rarity}</span><span class="chip">Cost ${c.cost}</span></div>
+        <button class="cmp-add" data-id="${c.id}">⇄ Compare</button>
       </div>
     </div>
     <div class="d-body">
@@ -190,7 +194,58 @@ function openDetail(c){
   dlg.querySelectorAll(".evo-item").forEach(b => b.onclick = () => {
     const m = CARDS.find(x=>x.id===+b.dataset.id); if (m){ dlg.close(); openDetail(m); }
   });
+  dlg.querySelector(".cmp-add").onclick = () => { addCompare(c.id); };
   dlg.showModal();
+}
+
+/* ---------- compare mode ---------- */
+let COMPARE = [];
+const cmpBar = $("cmp-bar"), cmpDlg = $("compare");
+function addCompare(id){ if(!COMPARE.includes(id)) COMPARE.push(id); renderCmpBar(); }
+function removeCompare(id){ COMPARE = COMPARE.filter(x=>x!==id); renderCmpBar(); if(cmpDlg.open) (COMPARE.length?openCompare():cmpDlg.close()); }
+function renderCmpBar(){
+  if(!COMPARE.length){ cmpBar.hidden = true; cmpBar.innerHTML=""; return; }
+  cmpBar.hidden = false;
+  const thumbs = COMPARE.map(id=>{ const c=CARDS.find(x=>x.id===id); return c
+    ? `<button class="cmp-thumb" data-id="${id}" title="Remove #${id}">${avatarHTML(c)}<span>✕</span></button>` : ""; }).join("");
+  cmpBar.innerHTML = `<span class="cmp-lbl">Compare</span>${thumbs}
+    <button id="cmp-open">Compare ${COMPARE.length}</button>
+    <button id="cmp-clear" title="Clear">Clear</button>`;
+  cmpBar.querySelectorAll(".cmp-thumb").forEach(b=>b.onclick=()=>removeCompare(+b.dataset.id));
+  $("cmp-open").onclick = openCompare;
+  $("cmp-clear").onclick = ()=>{ COMPARE=[]; renderCmpBar(); if(cmpDlg.open) cmpDlg.close(); };
+}
+function openCompare(){
+  const cards = COMPARE.map(id=>CARDS.find(c=>c.id===id)).filter(Boolean);
+  if(!cards.length) return;
+  const cols = `120px repeat(${cards.length}, minmax(150px,1fr))`;
+  const attrsOf = c => (c.attrs||[]).map(attrDot).join("");
+  const awkOf = c => (c.awakenings||[]).map(awkToken).join("") || "<span class='dim'>None</span>";
+  const skOf = sid => { const s=resolvedSkill(sid); return s?.description
+    ? `${s.name?`<b>${s.name}</b><br>`:""}${s.description}${s.source==="tr"?" <span class='tr-tag'>tr</span>":""}` : "<span class='dim'>—</span>"; };
+  const rowLabel = t => `<div class="cmp-lab">${t}</div>`;
+  const cell = html => `<div class="cmp-cell">${html}</div>`;
+  const row = (label, fn) => rowLabel(label) + cards.map(fn).map(cell).join("");
+  cmpDlg.innerHTML = `
+    <button class="close" onclick="compare.close()" aria-label="Close">×</button>
+    <h2 class="cmp-title">Compare ${cards.length} cards</h2>
+    <div class="cmp-grid" style="grid-template-columns:${cols}">
+      ${rowLabel("")}${cards.map(c=>cell(`<div class="cmp-head" style="--accent:${accentOf(c)}">
+        ${avatarHTML(c)}<div class="cmp-name">${attrsOf(c)}${enName(c)}</div>
+        <div class="dim" style="font-size:11px">#${c.id}</div>
+        <button class="cmp-rm" data-id="${c.id}">remove</button></div>`)).join("")}
+      ${row("Type", c=>(c.types||[]).filter(t=>t>=0).map(t=>TYPES[t]||t).join(", "))}
+      ${row("Rarity", c=>"★"+c.rarity)}
+      ${row("Cost", c=>c.cost)}
+      ${row("HP", c=>c.hp?.max??"-")}
+      ${row("ATK", c=>c.atk?.max??"-")}
+      ${row("RCV", c=>c.rcv?.max??"-")}
+      ${row("Awakenings", c=>`<div class="awk-row">${awkOf(c)}</div>`)}
+      ${row("Active", c=>skOf(c.activeSkillId))}
+      ${row("Leader", c=>skOf(c.leaderSkillId))}
+    </div>`;
+  cmpDlg.querySelectorAll(".cmp-rm").forEach(b=>b.onclick=()=>removeCompare(+b.dataset.id));
+  if(!cmpDlg.open) cmpDlg.showModal();
 }
 
 /* ---------- filter UI ---------- */
@@ -210,7 +265,7 @@ function buildAwokenBtns(){
   AWOKEN_ORDER.forEach(id => {
     const b=document.createElement("button");
     b.className="tg awk-btn"; b.dataset.v=id;
-    b.innerHTML = awkSvg(id) + `<span class="cnt"></span>`;
+    b.innerHTML = awkToken(id) + `<span class="cnt"></span>`;
     const paint=()=>{ const n=F.awoken.filter(x=>x===id).length;
       b.classList.toggle("on", n>0); b.querySelector(".cnt").textContent = n>1?n:""; };
     b.onclick=()=>{ F.awoken.push(id); paint(); applyView(); };            // left-click: +1
