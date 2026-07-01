@@ -152,14 +152,30 @@ function skillBlock(kind, accent, sid){
   </section>`;
 }
 
+// Related-card family: BFS over the evoRootId tree + transform (henshinTo/henshinFrom) links.
+// Catches cases like #13903 ↔ #13904 that are transform-linked but have different evoRootIds.
+function evoFamily(card){
+  const byId = id => CARDS.find(c=>c.id===id);
+  const seen = new Set([card.id]), queue=[card];
+  while(queue.length && seen.size<40){
+    const c = queue.shift();
+    const rel = [];
+    if(c.evoRootId>0) CARDS.forEach(x=>{ if(x.evoRootId===c.evoRootId) rel.push(x.id); });
+    (c.henshinTo||[]).forEach(id=>rel.push(id));
+    (c.henshinFrom||[]).forEach(id=>rel.push(id));
+    rel.forEach(id=>{ if(!seen.has(id)){ const x=byId(id); if(x){ seen.add(id); queue.push(x); } } });
+  }
+  return [...seen].map(byId).filter(Boolean);
+}
+
 function openDetail(c){
   const accent = accentOf(c);
   const attrs=(c.attrs||[]).map(attrDot).join("");
   const types=(c.types||[]).filter(t=>t>=0).map(t=>`<span class="chip">${TYPES[t]||`Type ${t}`}</span>`).join("");
   const awks=(c.awakenings||[]).map(awkToken).join("") || `<span class="dim">None</span>`;
   const sa=(c.superAwakenings||[]).map(awkToken).join("");
-  // evolution line = cards sharing evoRootId (>0), sorted by id, current one flagged
-  const line = (c.evoRootId>0 ? CARDS.filter(x=>x.evoRootId===c.evoRootId) : [c]).sort((a,b)=>a.id-b.id);
+  // evolution line = evoRootId tree PLUS transform (henshin) links, transitively; sorted by id
+  const line = evoFamily(c).sort((a,b)=>a.id-b.id);
   const evoStrip = line.length>1 ? `<section class="evo">
       <div class="eyebrow" style="color:${accent}">Evolution line <span class="cd">${line.length}</span></div>
       <div class="evo-row">${line.map(m=>`<button class="evo-item${m.id===c.id?" cur":""}" data-id="${m.id}" title="#${m.id} ${enName(m)}">
