@@ -1,0 +1,31 @@
+name: Update Data
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install webp
+        run: sudo apt-get update && sudo apt-get install -y webp
+
+      - name: Run update-data.sh
+        run: ./update-data.sh
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "Update card/skill data from upstream"
+            git push
+          else
+            echo "No changes to commit."
+          fi
