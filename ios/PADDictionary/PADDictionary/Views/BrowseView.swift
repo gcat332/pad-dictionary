@@ -28,6 +28,7 @@ final class BrowseViewModel: ObservableObject {
 struct BrowseView: View {
     @ObservedObject var dataStore: DataStore
     @StateObject private var viewModel: BrowseViewModel
+    @State private var showingFilters = false
 
     init(dataStore: DataStore) {
         self.dataStore = dataStore
@@ -62,7 +63,19 @@ struct BrowseView: View {
             }
             .searchable(text: $viewModel.searchText, prompt: "Search by ID")
             .navigationTitle("Browse")
+            .sheet(isPresented: $showingFilters) {
+                FilterView(viewModel: viewModel)
+            }
             .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showingFilters = true
+                    } label: {
+                        Image(systemName: viewModel.filterState != FilterState()
+                            ? "line.3.horizontal.decrease.circle.fill"
+                            : "line.3.horizontal.decrease.circle")
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         ForEach(Array(CardSort.all.enumerated()), id: \.offset) { index, sort in
