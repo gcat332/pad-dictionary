@@ -47,4 +47,13 @@ final class BrowseViewModelTests: XCTestCase {
         viewModel.isDescending = false
         XCTAssertEqual(viewModel.cards.map(\.id), [1, 2])
     }
+
+    @MainActor
+    func testFilterStateNarrowsResults() throws {
+        try writeCards(#"[{"id":1,"name":"A","attrs":[0],"types":[1],"rarity":5,"cost":1,"maxLevel":1,"isEmpty":false,"enabled":true,"hp":{"min":1,"max":1,"scale":1},"atk":{"min":1,"max":1,"scale":1},"rcv":{"min":1,"max":1,"scale":1},"activeSkillId":0,"leaderSkillId":0,"evoRootId":0,"awakenings":[],"superAwakenings":[],"canAssist":false},{"id":2,"name":"B","attrs":[1],"types":[1],"rarity":5,"cost":1,"maxLevel":1,"isEmpty":false,"enabled":true,"hp":{"min":1,"max":1,"scale":1},"atk":{"min":1,"max":1,"scale":1},"rcv":{"min":1,"max":1,"scale":1},"activeSkillId":0,"leaderSkillId":0,"evoRootId":0,"awakenings":[],"superAwakenings":[],"canAssist":false}]"#)
+        let dataStore = DataStore(documentsDirectory: tempDir, userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
+        let viewModel = BrowseViewModel(dataStore: dataStore)
+        viewModel.filterState.attr[0] = [1]
+        XCTAssertEqual(viewModel.cards.map(\.id), [2])
+    }
 }

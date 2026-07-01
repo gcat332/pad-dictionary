@@ -6,6 +6,7 @@ final class BrowseViewModel: ObservableObject {
     @Published var searchText: String = ""
     @Published var sortIndex: Int = 0
     @Published var isDescending: Bool = true
+    @Published var filterState = FilterState()
 
     let dataStore: DataStore
 
@@ -14,9 +15,10 @@ final class BrowseViewModel: ObservableObject {
     }
 
     var cards: [Card] {
-        let filtered = searchText.isEmpty
+        let searched = searchText.isEmpty
             ? dataStore.cards
             : dataStore.cards.filter { String($0.id).contains(searchText) }
+        let filtered = searched.filter { filterState.matches($0) }
         let sort = CardSort.all[sortIndex]
         let ascending = filtered.sorted { sort.compare($0, $1, dataStore.skillLookup) }
         return isDescending ? ascending.reversed() : ascending
