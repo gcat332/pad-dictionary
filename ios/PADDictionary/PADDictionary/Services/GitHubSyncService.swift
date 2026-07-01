@@ -1,5 +1,11 @@
 import Foundation
 
+protocol GitHubSyncing {
+    func triggerUpdate() async throws
+    func pollRunStatus() async throws -> WorkflowConclusion
+    func downloadLatestData(to directory: URL) async throws
+}
+
 enum GitHubSyncError: Error, Equatable {
     case missingToken
     case unauthorized
@@ -38,7 +44,7 @@ private struct GitHubContentEntry: Codable {
     let name: String
 }
 
-final class GitHubSyncService {
+final class GitHubSyncService: GitHubSyncing {
     let owner = "gcat332"
     let repo = "pad-dictionary"
     let workflowFile = "update-data.yml"
@@ -102,6 +108,10 @@ final class GitHubSyncService {
             try await Task.sleep(nanoseconds: pollIntervalNanoseconds)
         }
         throw GitHubSyncError.timedOut
+    }
+
+    func pollRunStatus() async throws -> WorkflowConclusion {
+        try await pollRunStatus(pollIntervalNanoseconds: 5_000_000_000, maxAttempts: 60)
     }
 
     private func listSpriteFiles() async throws -> [String] {

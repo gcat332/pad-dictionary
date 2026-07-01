@@ -1,24 +1,22 @@
-//
-//  ContentView.swift
-//  PADDictionary
-//
-//  Created by gust on 1/7/2569 BE.
-//
-
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}
+    @StateObject private var dataStore = DataStore(
+        documentsDirectory: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    )
 
-#Preview {
-    ContentView()
+    var body: some View {
+        NavigationStack {
+            SyncView(dataStore: dataStore, syncService: GitHubSyncService())
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        NavigationLink {
+                            SettingsView()
+                        } label: {
+                            Image(systemName: "gearshape")
+                        }
+                    }
+                }
+        }
+    }
 }
