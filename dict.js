@@ -1,6 +1,5 @@
-// PAD Card Dictionary — JP server data shown in English.
-// Data: monsters-info/mon_ja.json (cards; EN name in otLangName.en) + skill_en.json (EN skill text by id)
-// ponytail: skill_en[id] uses GungHo's global skill-id space (verified). JP-exclusive → JP fallback + on-demand MT.
+// PAD Card Dictionary — JP server data, with EN skill text where available.
+// Data: mon_ja.json (cards), skill_ja.json (authoritative skill params), skill_en.json, and skill_tr.json.
 
 const TYPES = {0:"Evo Material",1:"Balanced",2:"Physical",3:"Healer",4:"Dragon",5:"God",
   6:"Attacker",7:"Devil",8:"Machine",12:"Awoken",14:"Enhance",15:"Redeemable"};
@@ -23,46 +22,8 @@ const SORTS = [ // ported from sort_function_list (script-json_data.js:628)
   {key:"cd",label:"Skill CD",fn:(a,b)=>(SKILLS[a.activeSkillId]?.initialCooldown||0)-(SKILLS[b.activeSkillId]?.initialCooldown||0)},
 ];
 
-// Special Search — heuristic on the English skill text (active a, leader l), multi-select with AND/OR.
-// ponytail: NOT the original's 1500-line skill engine; description regex actually handles composite
-// (type-116) skills well since the rendered text lists every sub-effect. Add categories here as needed.
-const SPECIAL = [
-  {grp:"Active Skill", items:[
-    {key:"a-orbchg", label:"Orb change",      test:a=>/(change|creates?).*\{(Fire|Water|Wood|Light|Dark|Heart)\}/i.test(a)},
-    {key:"a-heart",  label:"Makes Heart orbs",test:a=>/\{Heart\}/.test(a)},
-    {key:"a-enhance",label:"Enhances orbs",   test:a=>/enhance/i.test(a)},
-    {key:"a-board",  label:"Full board change",test:a=>/all orbs|board change|7x6/i.test(a)},
-    {key:"a-time",   label:"Move time +",     test:a=>/move time/i.test(a)},
-    {key:"a-unlock", label:"Unlock orbs",     test:a=>/remove.*\{?lock|unlock/i.test(a)},
-    {key:"a-bind",   label:"Recovers Bind",   test:a=>/bind/i.test(a)},
-    {key:"a-void",   label:"Void / Pierce",   test:a=>/void|pierce/i.test(a)},
-    {key:"a-absorb", label:"Absorb-void",     test:a=>/absorb/i.test(a)},
-    {key:"a-haste",  label:"Haste (charge)",  test:a=>/charged/i.test(a)},
-    {key:"a-grav",   label:"Gravity",         test:a=>/gravity|% of (their|enemies|enemy|current|max).*HP/i.test(a)},
-    {key:"a-poison", label:"Poison",          test:a=>/poison/i.test(a)},
-    {key:"a-jammer", label:"Jammer",          test:a=>/jammer/i.test(a)},
-    {key:"a-delay",  label:"Delay",           test:a=>/delay/i.test(a)},
-    {key:"a-nuke",   label:"Deals damage",    test:a=>/Inflicts .*damage|attack on all/i.test(a)},
-    {key:"a-counter",label:"Counterattack",   test:a=>/counter/i.test(a)},
-    {key:"a-awoken", label:"Awoken skill",    test:a=>/awoken/i.test(a)},
-    {key:"a-shield", label:"Active shield",   test:a=>/reduce.*damage|damage.*reduce/i.test(a)},
-  ]},
-  {grp:"Leader Skill", items:[
-    {key:"l-atk",    label:"ATK multiplier",  test:(a,l)=>/x ATK/i.test(l)},
-    {key:"l-hp",     label:"HP multiplier",   test:(a,l)=>/x HP/i.test(l)},
-    {key:"l-rcv",    label:"RCV multiplier",  test:(a,l)=>/x RCV/i.test(l)},
-    {key:"l-shield", label:"Damage reduction",test:(a,l)=>/reduce|less damage|damage taken/i.test(l)},
-    {key:"l-resolve",label:"Resolve / survive",test:(a,l)=>/survive|resolve/i.test(l)},
-    {key:"l-combo",  label:"Combo bonus",     test:(a,l)=>/combo/i.test(l)},
-    {key:"l-rows",   label:"Row bonus",       test:(a,l)=>/row/i.test(l)},
-    {key:"l-add",    label:"Additional/fixed dmg",test:(a,l)=>/additional|fixed|true damage/i.test(l)},
-    {key:"l-time",   label:"Move time +",     test:(a,l)=>/move time/i.test(l)},
-    {key:"l-heal",   label:"Auto-heal",       test:(a,l)=>/auto.?heal|heal .*HP|recover.*HP/i.test(l)},
-  ]},
-];
-const SPECIAL_MAP = Object.fromEntries(SPECIAL.flatMap(g => g.items.map(i => [i.key, i])));
-
-let CARDS = [], SKILLS = [];
+let CARDS = [], SKILLS = [], SKILL_EN = [], SKILL_TR = {};
+let SPECIAL_ENGINE = null;
 // filter state — attr is 3 positional slots; awoken is an array allowing duplicates (counts)
 const F = {attr:[[],[],[]], type:[], rare:[], awoken:[], inclSuper:true, assist:false, special:[], specialMode:"and", term:"", sortKey:"id", desc:true};
 
@@ -74,6 +35,19 @@ const spritePos = id => { const i=(id-1)%SPRITE_PER; return `calc(var(--cell)*-$
 const hasEN = c => !!(c.otLangName && c.otLangName.en);
 const enName = c => hasEN(c) ? c.otLangName.en : c.name;
 const skillObj = sid => SKILLS[sid] || null;
+function resolvedSkill(sid){
+  const ja = SKILLS[sid] || null;
+  const en = SKILL_EN[sid] || null;
+  if (!ja && !en) return null;
+  const enDesc = en?.description?.trim();
+  const trDesc = SKILL_TR[String(sid)]?.trim();
+  return {
+    id: sid,
+    name: en?.name?.trim() || ja?.name || "",
+    description: enDesc || trDesc || "",
+    source: enDesc ? "en" : trDesc ? "tr" : "none",
+  };
+}
 const awkId = n => [40,46,47,48].includes(n) ? `${n}-en` : n;
 const awkSvg = n => `<svg class="awk" viewBox="0 0 32 32"><use href="images/icon-awoken.svg#awoken-${awkId(n)}"/></svg>`;
 const typeSvg = t => `<svg class="ty" viewBox="0 0 32 32"><use href="images/icon-type.svg#type-${t}"/></svg>`;
@@ -86,20 +60,6 @@ function frameLayer(attr, sub){ // ported from card-avatar.css
 const avatarHTML = (c, extra="") => `<div class="ava" style="${extra}">
   <div class="icon" style="background-image:url(${spriteFile(c.id)});background-position:${spritePos(c.id)}"></div>
   ${frameLayer(c.attrs[0])}${frameLayer(c.attrs[1], true)}</div>`;
-
-/* ---------- on-demand Japanese→English (Google gtx, no key) ---------- */
-const TK = "paddict.tr";
-let trCache = {}; try { trCache = JSON.parse(localStorage.getItem(TK)) || {}; } catch {}
-async function translateJP(text){
-  if (trCache[text] !== undefined) return trCache[text];
-  try {
-    const u = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=t&q=${encodeURIComponent(text)}`;
-    const j = await (await fetch(u)).json();
-    const out = j[0].map(s => s[0]).join("");
-    trCache[text] = out; localStorage.setItem(TK, JSON.stringify(trCache));
-    return out;
-  } catch { return null; }
-}
 
 /* ---------- matching ---------- */
 function matches(c){
@@ -114,15 +74,15 @@ function matches(c){
     for (const k in need){ if ((have[k]||0) < need[k]) return false; }
   }
   if (F.assist && !c.canAssist) return false;
-  if (F.special.length){
-    const a=skillObj(c.activeSkillId)?.description||"", l=skillObj(c.leaderSkillId)?.description||"";
-    const fns = F.special.map(k => SPECIAL_MAP[k]).filter(Boolean);
-    const ok = F.specialMode==="or" ? fns.some(s=>s.test(a,l)) : fns.every(s=>s.test(a,l));
-    if (!ok) return false;
-  }
   if (F.term){
     const t=F.term, id=t.replace("#","");
-    if (!(String(c.id)===id || enName(c).toLowerCase().includes(t) || c.name.includes(t))) return false;
+    const active = resolvedSkill(c.activeSkillId);
+    const leader = resolvedSkill(c.leaderSkillId);
+    const skillText = [
+      active?.name, active?.description,
+      leader?.name, leader?.description,
+    ].filter(Boolean).join(" ").toLowerCase();
+    if (!(String(c.id)===id || enName(c).toLowerCase().includes(t) || c.name.includes(t) || skillText.includes(t))) return false;
   }
   return true;
 }
@@ -155,7 +115,11 @@ function render(list){
 }
 function applyView(){
   const fn = SORTS.find(s => s.key === F.sortKey).fn;
-  render(CARDS.filter(matches).sort((a,b) => (F.desc?-1:1)*fn(a,b)));
+  let list = CARDS.filter(matches);
+  if (F.special.length && SPECIAL_ENGINE) {
+    list = SPECIAL_ENGINE.filterCardsByLeaves(list, F.special, F.specialMode);
+  }
+  render(list.sort((a,b) => (F.desc?-1:1)*fn(a,b)));
   saveState();
 }
 
@@ -165,8 +129,10 @@ function openDetail(c){
   const types=(c.types||[]).filter(t=>t>=0).map(t=>TYPES[t]||`Type ${t}`).join(", ");
   const awks=(c.awakenings||[]).map(awkSvg).join("");
   const sa=(c.superAwakenings||[]).map(awkSvg).join("");
-  const act=skillObj(c.activeSkillId), led=skillObj(c.leaderSkillId);
-  const txt=s=>s&&s.description?s.description:"<span style='color:var(--dim)'>— (no English text)</span>";
+  const act=resolvedSkill(c.activeSkillId), led=resolvedSkill(c.leaderSkillId);
+  const txt=s=>s&&s.description
+    ? `${s.description}${s.source==="tr" ? " <span class='tr-tag'>(translated)</span>" : ""}`
+    : "<span style='color:var(--dim)'>— (no English text)</span>";
   const nm=s=>s&&s.name?` — ${s.name}`:"";
   dlg.innerHTML = `
     <div class="d-head">
@@ -185,11 +151,6 @@ function openDetail(c){
       <h3>Leader Skill${nm(led)}</h3><p>${txt(led)}</p>
     </div>`;
   dlg.showModal();
-  if (!hasEN(c)){ // JP-only → machine translate the name, mark with ~
-    translateJP(c.name).then(t => {
-      if (t && dlg.open) $("d-name").innerHTML = `${attrs}~${t} <span style="color:var(--dim);font-size:11px">(machine)</span>`;
-    });
-  }
 }
 
 /* ---------- filter UI ---------- */
@@ -228,16 +189,29 @@ function buildFilterUI(){
 }
 function buildSpecialChips(){
   const host=$("f-special"); host.innerHTML="";
-  SPECIAL.forEach(g => {
-    const lbl=document.createElement("span"); lbl.className="grp-lbl"; lbl.textContent=g.grp; host.appendChild(lbl);
-    g.items.forEach(it => {
-      const b=document.createElement("button");
-      b.className="tg"; b.dataset.v=it.key; b.textContent=it.label;
-      b.classList.toggle("on", F.special.includes(it.key));
-      b.onclick=()=>{ toggle(F.special, it.key); b.classList.toggle("on"); applyView(); };
-      host.appendChild(b);
-    });
-  });
+  if (!SPECIAL_ENGINE) return;
+  SPECIAL_ENGINE.tree.children.forEach(node => host.appendChild(specialNodeEl(node, 0)));
+}
+function specialNodeEl(node, depth){
+  if (node.type === "leaf") {
+    const b=document.createElement("button");
+    b.className="tg special-leaf"; b.dataset.v=node.key; b.textContent=node.label;
+    b.style.marginLeft = `${Math.min(depth, 5) * 10}px`;
+    b.classList.toggle("on", F.special.includes(node.key));
+    b.onclick=()=>{ toggle(F.special,node.key); b.classList.toggle("on"); applyView(); };
+    return b;
+  }
+  const details=document.createElement("details");
+  details.className="special-node";
+  details.open = depth < 1;
+  const summary=document.createElement("summary");
+  summary.textContent=node.label;
+  details.appendChild(summary);
+  const body=document.createElement("div");
+  body.className="special-children";
+  node.children.forEach(child => body.appendChild(specialNodeEl(child, depth+1)));
+  details.appendChild(body);
+  return details;
 }
 function refreshBtnStates(){
   [0,1,2].forEach(i => document.querySelectorAll(`#f-attr${i+1} .tg`).forEach(b=>b.classList.toggle("on", F.attr[i].includes(+b.dataset.v))));
@@ -291,8 +265,14 @@ restoreState();
 Promise.all([
   fetch("monsters-info/mon_ja.json").then(r=>r.json()),
   fetch("monsters-info/skill_en.json").then(r=>r.json()),
-]).then(([cards, skills]) => {
-  SKILLS=skills;
+  fetch("monsters-info/skill_ja.json").then(r=>r.json()),
+  fetch("monsters-info/skill_tr.json").then(r=>r.ok?r.json():{}).catch(()=>({})),
+]).then(([cards, skillEn, skillJa, skillTr]) => {
+  SKILLS=skillJa;
+  SKILL_EN=skillEn;
+  SKILL_TR=skillTr || {};
   CARDS=cards.filter(c=>!c.isEmpty&&c.enabled);
+  if (!window.PADEngine?.createSpecialSearchEngine) throw new Error("engine.js did not load");
+  SPECIAL_ENGINE=window.PADEngine.createSpecialSearchEngine({cards, skills: skillJa});
   buildFilterUI(); refreshBtnStates(); initPresets(); applyView();
 }).catch(e => { grid.textContent="Failed to load data: "+e.message; });

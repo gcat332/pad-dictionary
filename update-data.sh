@@ -18,7 +18,9 @@ DATA_ONLY=false
 [ "${1:-}" = "--data-only" ] && DATA_ONLY=true
 
 # sparse patterns (anchored to repo root)
-patterns=(/monsters-info/mon_ja.json /monsters-info/skill_en.json)
+#   skill_ja = authoritative skill table (type/params for the engine + JP source for translation)
+#   skill_en = English skill text where available
+patterns=(/monsters-info/mon_ja.json /monsters-info/skill_en.json /monsters-info/skill_ja.json)
 $DATA_ONLY || patterns+=(/images/cards_ja)
 
 TMP="$(mktemp -d)"
@@ -33,6 +35,7 @@ git -C "$TMP" checkout >/dev/null 2>&1
 echo "Copying card + skill data …"
 cp "$TMP/monsters-info/mon_ja.json"   monsters-info/mon_ja.json
 cp "$TMP/monsters-info/skill_en.json" monsters-info/skill_en.json
+cp "$TMP/monsters-info/skill_ja.json" monsters-info/skill_ja.json
 
 if ! $DATA_ONLY; then
   echo "Syncing JP card sprites …"
