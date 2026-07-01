@@ -39,8 +39,10 @@ function resolvedSkill(sid){
   const ja = SKILLS[sid] || null;
   const en = SKILL_EN[sid] || null;
   if (!ja && !en) return null;
-  const enDesc = en?.description?.trim();
-  const trDesc = SKILL_TR[String(sid)]?.trim();
+  // strip PAD inline formatting codes (^ff3600^ colour, ^p reset) that leak through translation
+  const clean = s => s ? s.replace(/\^[0-9a-fA-F]{6}\^/g,"").replace(/\^p/g,"").replace(/[ \t]{2,}/g," ").trim() : s;
+  const enDesc = clean(en?.description?.trim());
+  const trDesc = clean(SKILL_TR[String(sid)]?.trim());
   return {
     id: sid,
     name: en?.name?.trim() || ja?.name || "",
@@ -50,6 +52,12 @@ function resolvedSkill(sid){
 }
 const awkId = n => [40,46,47,48].includes(n) ? `${n}-en` : n;
 const awkSvg = n => `<svg class="awk" viewBox="0 0 32 32"><use href="images/icon-awoken.svg#awoken-${awkId(n)}"/></svg>`;
+// icon-awoken.svg only covers ids 0–104; newer awakenings have no glyph → labelled fallback chip (no blank gap)
+const hasAwkIcon = n => n >= 0 && n <= 104;
+const awkToken = n => hasAwkIcon(n) ? awkSvg(n) : `<span class="awk-x" title="Awakening ${n}">${n}</span>`;
+// per-card accent = its main attribute's orb colour; theming the detail panel by element
+const ATTR_ACCENT = ["#e8513b","#3b9be8","#4caf50","#f0c400","#a05bd6"];
+const accentOf = c => ATTR_ACCENT[c.attrs?.[0]] ?? "#6b7280";
 const typeSvg = t => `<svg class="ty" viewBox="0 0 32 32"><use href="images/icon-type.svg#type-${t}"/></svg>`;
 const attrDot = a => a>=0 && a<5 ? `<span class="attr ${ATTR[a][1]}" title="${ATTR[a][0]}"></span>` : "";
 function frameLayer(attr, sub){ // ported from card-avatar.css
@@ -124,32 +132,64 @@ function applyView(){
 }
 
 /* ---------- detail ---------- */
+const cdText = sid => { const s=SKILLS[sid]||SKILL_EN[sid]; if(!s||!s.initialCooldown) return "";
+  const min=s.initialCooldown-((s.maxLevel||1)-1); return min===s.initialCooldown?`CD ${min}`:`CD ${s.initialCooldown}→${min}`; };
+
+function skillBlock(kind, accent, sid){
+  const s = resolvedSkill(sid);
+  const name = s?.name ? `<span class="sk-name">${s.name}</span>` : `<span class="sk-name dim">—</span>`;
+  const cd = cdText(sid);
+  const body = s?.description
+    ? `${s.description}${s.source==="tr" ? ` <span class="tr-tag">translated</span>` : ""}`
+    : `<span class="dim">— no English text</span>`;
+  return `<section class="sk">
+    <div class="eyebrow" style="color:${accent}">${kind}${cd?`<span class="cd">${cd}</span>`:""}</div>
+    <div class="sk-title">${name}</div>
+    <p class="sk-desc">${body}</p>
+  </section>`;
+}
+
 function openDetail(c){
+  const accent = accentOf(c);
   const attrs=(c.attrs||[]).map(attrDot).join("");
-  const types=(c.types||[]).filter(t=>t>=0).map(t=>TYPES[t]||`Type ${t}`).join(", ");
-  const awks=(c.awakenings||[]).map(awkSvg).join("");
-  const sa=(c.superAwakenings||[]).map(awkSvg).join("");
-  const act=resolvedSkill(c.activeSkillId), led=resolvedSkill(c.leaderSkillId);
-  const txt=s=>s&&s.description
-    ? `${s.description}${s.source==="tr" ? " <span class='tr-tag'>(translated)</span>" : ""}`
-    : "<span style='color:var(--dim)'>— (no English text)</span>";
-  const nm=s=>s&&s.name?` — ${s.name}`:"";
+  const types=(c.types||[]).filter(t=>t>=0).map(t=>`<span class="chip">${TYPES[t]||`Type ${t}`}</span>`).join("");
+  const awks=(c.awakenings||[]).map(awkToken).join("") || `<span class="dim">None</span>`;
+  const sa=(c.superAwakenings||[]).map(awkToken).join("");
+  // evolution line = cards sharing evoRootId (>0), sorted by id, current one flagged
+  const line = (c.evoRootId>0 ? CARDS.filter(x=>x.evoRootId===c.evoRootId) : [c]).sort((a,b)=>a.id-b.id);
+  const evoStrip = line.length>1 ? `<section class="evo">
+      <div class="eyebrow" style="color:${accent}">Evolution line <span class="cd">${line.length}</span></div>
+      <div class="evo-row">${line.map(m=>`<button class="evo-item${m.id===c.id?" cur":""}" data-id="${m.id}" title="#${m.id} ${enName(m)}">
+        ${avatarHTML(m)}<span class="evo-id">#${m.id}</span></button>`).join("")}</div>
+    </section>` : "";
+
+  dlg.style.setProperty("--accent", accent);
   dlg.innerHTML = `
+    <button class="close" onclick="detail.close()" aria-label="Close">×</button>
     <div class="d-head">
       ${avatarHTML(c, "flex:none")}
-      <div>
-        <button class="close" onclick="detail.close()">×</button>
-        <div id="d-name" style="font-size:16px;font-weight:600">${attrs}${enName(c)}</div>
-        <div style="color:var(--dim);font-size:12px">#${c.id} · ${c.name}</div>
-        <div style="color:var(--dim);font-size:12px">${types} · ★${c.rarity} · Cost ${c.cost}</div>
+      <div class="d-head-info">
+        <div id="d-name" class="d-name">${attrs}${enName(c)}</div>
+        <div class="d-sub">#${c.id} · ${c.name}</div>
+        <div class="d-meta">${types}<span class="chip star">★${c.rarity}</span><span class="chip">Cost ${c.cost}</span></div>
       </div>
     </div>
     <div class="d-body">
-      <div class="stats"><div><b>HP</b>${c.hp?.max??"-"}</div><div><b>ATK</b>${c.atk?.max??"-"}</div><div><b>RCV</b>${c.rcv?.max??"-"}</div></div>
-      <h3>Awakenings</h3><div>${awks||"<span style='color:var(--dim)'>None</span>"}${sa?` <span style="color:var(--dim)">| Super:</span> ${sa}`:""}</div>
-      <h3>Active Skill${nm(act)}</h3><p>${txt(act)}</p>
-      <h3>Leader Skill${nm(led)}</h3><p>${txt(led)}</p>
+      <div class="stats">
+        <div><b>HP</b>${c.hp?.max??"-"}</div><div><b>ATK</b>${c.atk?.max??"-"}</div><div><b>RCV</b>${c.rcv?.max??"-"}</div>
+      </div>
+      <section>
+        <div class="eyebrow" style="color:${accent}">Awakenings</div>
+        <div class="awk-row">${awks}</div>
+        ${sa?`<div class="awk-row sup"><span class="sup-lbl">Super</span>${sa}</div>`:""}
+      </section>
+      ${skillBlock("Active skill", accent, c.activeSkillId)}
+      ${skillBlock("Leader skill", accent, c.leaderSkillId)}
+      ${evoStrip}
     </div>`;
+  dlg.querySelectorAll(".evo-item").forEach(b => b.onclick = () => {
+    const m = CARDS.find(x=>x.id===+b.dataset.id); if (m){ dlg.close(); openDetail(m); }
+  });
   dlg.showModal();
 }
 
@@ -190,7 +230,10 @@ function buildFilterUI(){
 function buildSpecialChips(){
   const host=$("f-special"); host.innerHTML="";
   if (!SPECIAL_ENGINE) return;
-  SPECIAL_ENGINE.tree.children.forEach(node => host.appendChild(specialNodeEl(node, 0)));
+  // skip the root-level "No Filter" leaf — clearing is done by deselecting / the Clear button
+  SPECIAL_ENGINE.tree.children
+    .filter(node => !(node.type === "leaf" && /no filter/i.test(node.label)))
+    .forEach(node => host.appendChild(specialNodeEl(node, 0)));
 }
 function specialNodeEl(node, depth){
   if (node.type === "leaf") {
