@@ -6,17 +6,19 @@ struct ContentView: View {
     )
 
     var body: some View {
-        NavigationStack {
-            SyncView(dataStore: dataStore, syncService: GitHubSyncService())
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        NavigationLink {
-                            SettingsView()
-                        } label: {
-                            Image(systemName: "gearshape")
-                        }
-                    }
-                }
+        TabView {
+            BrowseView(dataStore: dataStore)
+                .tabItem { Label("Browse", systemImage: "square.grid.2x2") }
+
+            NavigationStack {
+                SyncView(dataStore: dataStore, syncService: GitHubSyncService())
+            }
+            .tabItem { Label("Sync", systemImage: "arrow.triangle.2.circlepath") }
+
+            NavigationStack {
+                SettingsView()
+            }
+            .tabItem { Label("Settings", systemImage: "gearshape") }
         }
     }
 }
