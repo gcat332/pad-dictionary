@@ -33,6 +33,8 @@ struct Card: Codable, Identifiable, Equatable {
     let awakenings: [Int]
     let superAwakenings: [Int]
     let canAssist: Bool
+    let henshinTo: [Int]?
+    let henshinFrom: [Int]?
 
     var displayName: String { otLangName?.en ?? name }
 }
