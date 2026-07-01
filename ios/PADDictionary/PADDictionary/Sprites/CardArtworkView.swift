@@ -21,9 +21,9 @@ struct CardArtworkView: View {
         if let sheet = SpriteSheetCache.shared.image(relativePath: "images/cards_ja/\(position.sheetFile)") {
             Image(uiImage: sheet)
                 .resizable()
-                .frame(width: cellSize * 10.24, height: cellSize * 10.24)
+                .frame(width: cellSize * 10.24, height: cellSize * 10.24, alignment: .topLeading)
                 .offset(x: -1.02 * cellSize * CGFloat(position.column), y: -1.02 * cellSize * CGFloat(position.row))
-                .frame(width: cellSize, height: cellSize)
+                .frame(width: cellSize, height: cellSize, alignment: .topLeading)
                 .clipped()
         } else {
             Color.gray.opacity(0.2)
@@ -41,9 +41,9 @@ struct CardArtworkView: View {
                   let frameSheet = SpriteSheetCache.shared.image(relativePath: "images/CARDFRAME2.png") {
             Image(uiImage: frameSheet)
                 .resizable()
-                .frame(width: cellSize * 7.12, height: cellSize * 4.12)
+                .frame(width: cellSize * 7.12, height: cellSize * 4.12, alignment: .topLeading)
                 .offset(x: cellSize * CGFloat(offset.x), y: cellSize * CGFloat(offset.y))
-                .frame(width: cellSize, height: cellSize)
+                .frame(width: cellSize, height: cellSize, alignment: .topLeading)
                 .clipped()
         } else {
             Color.clear
