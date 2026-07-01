@@ -34,7 +34,9 @@ const $ = id => document.getElementById(id);
 const grid=$("grid"), q=$("q"), sortSel=$("sort"), dirBtn=$("dir"), countEl=$("count"), dlg=$("detail");
 
 const spriteFile = id => `images/cards_ja/CARDS_${String(Math.ceil(id/SPRITE_PER)).padStart(3,"0")}.webp`;
-const spritePos = id => { const i=(id-1)%SPRITE_PER; return `calc(var(--cell)*-${i%10}) calc(var(--cell)*-${Math.floor(i/10)})`; };
+// card art box = --cell, but the sheet's card pitch is 102px for a 100px art → step by 1.02×--cell (matches frame)
+const spritePos = id => { const i=(id-1)%SPRITE_PER;
+  return `calc(var(--cell)*${(-1.02*(i%10)).toFixed(3)}) calc(var(--cell)*${(-1.02*Math.floor(i/10)).toFixed(3)})`; };
 const hasEN = c => !!(c.otLangName && c.otLangName.en);
 const enName = c => hasEN(c) ? c.otLangName.en : c.name;
 const skillObj = sid => SKILLS[sid] || null;
