@@ -18,6 +18,7 @@
 - Every non-trivial type/function name introduced in one task must be reused with the exact same spelling in later tasks (see each task's **Interfaces** block).
 - UI must be genuinely usable, not a wireframe: standard iOS spacing/layout, `NavigationStack`, SF Symbols, visible feedback for every state — not just static text.
 - Implementation is done by Codex (`gpt-5.5`) per the execution role override above; Claude reviews, does not hand-edit Codex's output except to request a redo.
+- Every file that declares an `ObservableObject`/`@Published` type must explicitly `import Combine`, even if it also imports `SwiftUI` or `Foundation` — on this toolchain neither transitively re-exports it, confirmed by two real (non-sandbox) build failures during Tasks 7 and 8.
 
 ---
 
