@@ -8410,22 +8410,22 @@ const specialSearchFunctions = (function() {
     };
   }
 
-  // Any top-level leaf that isn't inside a group is tucked under a synthetic
-  // "Other" group so every filter chip has a parent. The "No Filter" sentinel is
-  // left at the root — dict.js hides it there as the clear-all control.
-  // ponytail: only builds "Other" when such orphans exist (none in current data).
-  function groupOrphanLeaves(root) {
-    const isSentinel = (n) => n.type === "leaf" && /no filter/i.test(n.label);
-    const orphans = root.children.filter((n) => n.type === "leaf" && !isSentinel(n));
-    if (!orphans.length) return root;
-    const kept = root.children.filter((n) => !orphans.includes(n));
-    const other = {
-      type: "group",
-      label: "Other",
-      path: ["Other"],
-      children: orphans.map((leaf) => ({ ...leaf, path: ["Other", leaf.label], key: ["Other", leaf.label].join(" > ") })),
-    };
-    return { ...root, children: [...kept, other] };
+  // In any group that mixes loose leaves with named subgroups, bundle the loose
+  // leaves into an "Other" subgroup (appended last) so every filter chip sits
+  // under a labelled subgroup. Recurses through the whole tree. The moved leaves
+  // keep their original key/path, so leafByKey lookups and saved presets are
+  // unaffected — only the display nesting changes. The root's "No Filter"
+  // sentinel stays put (dict.js hides it there as the clear-all control).
+  function groupLooseLeaves(node) {
+    if (node.type !== "group") return node;
+    const isRoot = node.label === "All Functions";
+    const children = node.children.map(groupLooseLeaves);
+    const loose = children.filter((c) => c.type === "leaf" && !(isRoot && /no filter/i.test(c.label)));
+    const hasSubgroups = children.some((c) => c.type === "group");
+    if (!loose.length || !hasSubgroups) return { ...node, children };
+    const kept = children.filter((c) => !loose.includes(c));
+    const other = { type: "group", label: "Other", path: node.path.concat("Other"), children: loose };
+    return { ...node, children: [...kept, other] };
   }
 
   function flattenLeaves(node, out = []) {
@@ -8457,7 +8457,7 @@ const specialSearchFunctions = (function() {
     installHelpers();
     Skills = skills || [];
     Cards = cards || [];
-    const root = groupOrphanLeaves(normalizeNode(specialSearchFunctions));
+    const root = groupLooseLeaves(normalizeNode(specialSearchFunctions));
     const leaves = flattenLeaves(root);
     const leafByKey = new Map(leaves.map((leaf) => [leaf.key, leaf]));
     const leafByPath = new Map(leaves.map((leaf) => [leaf.path.join(" > "), leaf]));
