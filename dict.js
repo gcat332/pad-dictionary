@@ -140,17 +140,52 @@ function applyView(){
 const cdText = sid => { const s=SKILLS[sid]||SKILL_EN[sid]; if(!s||!s.initialCooldown) return "";
   const min=s.initialCooldown-((s.maxLevel||1)-1); return min===s.initialCooldown?`CD ${min}`:`CD ${s.initialCooldown}→${min}`; };
 
-function skillBlock(kind, accent, sid){
+// "Skill evolution" (type 232 = one-way, 233 = looping): the skill itself upgrades into
+// a new skill after use, tracked via params → subsequent skill id(s). BFS, cycle-safe
+// (233 can loop back), capped so a malformed chain can't run away.
+function evolvedSkillChain(sid){
+  const seen = new Set([sid]), queue = [sid], chain = [];
+  while (queue.length && chain.length < 20){
+    const cur = queue.shift();
+    const s = SKILLS[cur];
+    if (!s || (s.type !== 232 && s.type !== 233)) continue;
+    for (const pid of (s.params||[])){
+      if (!seen.has(pid)){
+        seen.add(pid);
+        chain.push(pid);
+        queue.push(pid);
+      }
+    }
+  }
+  return chain;
+}
+
+function skillStageHTML(sid){
   const s = resolvedSkill(sid);
   const name = s?.name ? `<span class="sk-name">${s.name}</span>` : `<span class="sk-name dim">—</span>`;
-  const cd = cdText(sid);
   const body = s?.description
     ? `${s.description}${s.source==="tr" ? ` <span class="tr-tag">translated</span>` : ""}`
     : `<span class="dim">— no English text</span>`;
+  return { name, body };
+}
+
+function skillBlock(kind, accent, sid){
+  const { name, body } = skillStageHTML(sid);
+  const cd = cdText(sid);
+  const chain = evolvedSkillChain(sid);
+  const chainHTML = chain.map((stageId, i) => {
+    const stage = skillStageHTML(stageId);
+    return `<div class="sk-evo">
+      <div class="eyebrow sk-evo-lbl">Evolves into (${i+1}/${chain.length})</div>
+      <div class="sk-title">${stage.name}</div>
+      <p class="sk-desc">${stage.body}</p>
+    </div>`;
+  }).join("");
   return `<section class="sk">
     <div class="eyebrow" style="color:${accent}">${kind}${cd?`<span class="cd">${cd}</span>`:""}</div>
     <div class="sk-title">${name}</div>
     <p class="sk-desc">${body}</p>
+    ${chainHTML}
   </section>`;
 }
 

@@ -24,6 +24,23 @@ async function readExisting() {
   catch (e) { if (e.code === "ENOENT") return {}; throw e; }
 }
 
+// "Skill evolution" (type 232 one-way / 233 looping) skills upgrade into a subsequent
+// skill id listed in params — those chain-stage ids need translation too, even though no
+// card references them directly as activeSkillId/leaderSkillId.
+function withEvolvedSkillChains(ids, skillJa) {
+  const seen = new Set(ids);
+  const queue = [...ids];
+  while (queue.length) {
+    const cur = queue.shift();
+    const s = skillJa[cur];
+    if (!s || (s.type !== 232 && s.type !== 233)) continue;
+    for (const pid of s.params || []) {
+      if (!seen.has(pid)) { seen.add(pid); queue.push(pid); }
+    }
+  }
+  return seen;
+}
+
 function collectMissingSkillIds(cards, skillJa, skillEn) {
   const used = new Set();
   for (const c of cards) {
@@ -31,7 +48,7 @@ function collectMissingSkillIds(cards, skillJa, skillEn) {
     if (c.activeSkillId) used.add(c.activeSkillId);
     if (c.leaderSkillId) used.add(c.leaderSkillId);
   }
-  return [...used]
+  return [...withEvolvedSkillChains(used, skillJa)]
     .filter((id) => skillJa[id]?.description && !skillEn[id]?.description?.trim())
     .sort((a, b) => a - b);
 }

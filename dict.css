@@ -126,6 +126,9 @@ dialog::backdrop{background:rgba(6,8,12,.72);backdrop-filter:blur(2px)}
 .tr-tag{font-size:10px;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);
   border-radius:999px;padding:1px 6px;vertical-align:middle}
 
+.sk-evo{margin-top:10px;padding-left:10px;border-left:2px solid #313640}
+.sk-evo-lbl{color:var(--dim)!important;font-size:10px}
+
 .evo-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
 .evo-item{--cell:56px;flex:0 0 auto;background:none;border:0;padding:0;cursor:pointer;text-align:center;border-radius:8px}
 .evo-item .icon{border-radius:4px}
