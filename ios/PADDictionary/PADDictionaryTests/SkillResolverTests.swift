@@ -43,4 +43,25 @@ final class SkillResolverTests: XCTestCase {
         let ja: SkillLookup = [1: Skill(id: 1, name: "N", description: "", type: 0, maxLevel: 1, initialCooldown: 0, params: [])]
         XCTAssertEqual(SkillResolver.cooldownText(skillId: 1, skillsJA: ja, skillsEN: [:]), "")
     }
+
+    func testEvolvedChainFollowsType232ParamsUntilNonEvolvingSkill() {
+        let ja: SkillLookup = [
+            1: Skill(id: 1, name: "A", description: "", type: 232, maxLevel: 1, initialCooldown: 0, params: [2]),
+            2: Skill(id: 2, name: "B", description: "", type: 0, maxLevel: 1, initialCooldown: 0, params: []),
+        ]
+        XCTAssertEqual(SkillResolver.evolvedChain(skillId: 1, skillsJA: ja), [2])
+    }
+
+    func testEvolvedChainStopsOnCycleWithLoopingType233() {
+        let ja: SkillLookup = [
+            1: Skill(id: 1, name: "A", description: "", type: 233, maxLevel: 1, initialCooldown: 0, params: [2]),
+            2: Skill(id: 2, name: "B", description: "", type: 233, maxLevel: 1, initialCooldown: 0, params: [1]),
+        ]
+        XCTAssertEqual(SkillResolver.evolvedChain(skillId: 1, skillsJA: ja), [2])
+    }
+
+    func testEvolvedChainEmptyWhenSkillDoesNotEvolve() {
+        let ja: SkillLookup = [1: Skill(id: 1, name: "A", description: "", type: 0, maxLevel: 1, initialCooldown: 0, params: [2])]
+        XCTAssertEqual(SkillResolver.evolvedChain(skillId: 1, skillsJA: ja), [])
+    }
 }

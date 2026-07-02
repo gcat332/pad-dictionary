@@ -33,6 +33,24 @@ enum SkillResolver {
         return minCooldown == skill.initialCooldown ? "CD \(minCooldown)" : "CD \(skill.initialCooldown)→\(minCooldown)"
     }
 
+    /// Skill types 232 (one-way) and 233 (looping) upgrade into another skill after use.
+    /// BFS over `params`, cycle-safe (233 can loop back), capped like the web's `evolvedSkillChain`.
+    static func evolvedChain(skillId: Int, skillsJA: SkillLookup) -> [Int] {
+        var seen: Set<Int> = [skillId]
+        var queue: [Int] = [skillId]
+        var chain: [Int] = []
+        while !queue.isEmpty && chain.count < 20 {
+            let current = queue.removeFirst()
+            guard let skill = skillsJA[current], skill.type == 232 || skill.type == 233 else { continue }
+            for paramId in skill.params where !seen.contains(paramId) {
+                seen.insert(paramId)
+                chain.append(paramId)
+                queue.append(paramId)
+            }
+        }
+        return chain
+    }
+
     private static func trimmedNonEmpty(_ raw: String?) -> String? {
         guard let trimmed = raw?.trimmingCharacters(in: .whitespacesAndNewlines), !trimmed.isEmpty else { return nil }
         return trimmed

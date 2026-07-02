@@ -19,4 +19,6 @@ extension Color {
     static let padBorder = Color(hex: 0x3a4150)
     static let padAccent = Color(hex: 0x2f6dd0)
     static let padAccentBorder = Color(hex: 0x5b9bff)
+    static let padDesc = Color(hex: 0xd3d7de)
+    static let padEvoBorder = Color(hex: 0x313640)
 }

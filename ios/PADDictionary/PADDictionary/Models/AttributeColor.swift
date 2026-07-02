@@ -13,6 +13,21 @@ enum AttributeColor {
     static func color(for attr: Int) -> Color {
         colors.indices.contains(attr) ? colors[attr] : .gray
     }
+
+    // Matches the web's card-detail accent (dict.js ATTR_ACCENT) — a separate,
+    // slightly different palette from the attribute-dot swatches above.
+    private static let accentColors: [Color] = [
+        Color(hex: 0xe8_513b), // Fire
+        Color(hex: 0x3b_9be8), // Water
+        Color(hex: 0x4c_af50), // Wood
+        Color(hex: 0xf0_c400), // Light
+        Color(hex: 0xa0_5bd6), // Dark
+    ]
+
+    static func accent(for attrs: [Int]) -> Color {
+        guard let first = attrs.first, accentColors.indices.contains(first) else { return Color(hex: 0x6b7280) }
+        return accentColors[first]
+    }
 }
 
 struct AttributeDotView: View {

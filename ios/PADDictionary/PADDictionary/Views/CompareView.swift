@@ -107,7 +107,9 @@ struct CompareView: View {
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 2) {
-                        ForEach(card.awakenings, id: \.self) { AwakeningIconView(awakeningId: $0) }
+                        ForEach(Array(card.awakenings.enumerated()), id: \.offset) { _, awakeningId in
+                            AwakeningIconView(awakeningId: awakeningId)
+                        }
                     }
                 }
             }
