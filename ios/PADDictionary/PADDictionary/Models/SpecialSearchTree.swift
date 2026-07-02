@@ -136,6 +136,63 @@ private let othersSearchLeaves: [SpecialSearchLeaf] = [
     },
 ]
 
+private let leaderMatchingStyleLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Leader Skills > Matching Style > 5 Orbs including enhanced Matching", label: "5 Orbs including enhanced Matching", groupPath: ["Leader Skills", "Matching Style"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [150], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Matching Style > Cross(十) of Heal Orbs", label: "Cross(十) of Heal Orbs", groupPath: ["Leader Skills", "Matching Style"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [151, 209], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Matching Style > Stacked Magnifications of Cross(十)", label: "Stacked Magnifications of Cross(十)", groupPath: ["Leader Skills", "Matching Style"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [157], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Matching Style > Less remain on the board", label: "Less remain on the board", groupPath: ["Leader Skills", "Matching Style"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.leaderSkillId, types: [177], skills: ctx.skillsJA) else { return false }
+        return (skill.params.indices.contains(5) ? skill.params[5] : 0) != 0
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Matching Style > Stacking multiplier of Matching", label: "Stacking multiplier of Matching", groupPath: ["Leader Skills", "Matching Style"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.leaderSkillId, types: [235], skills: ctx.skillsJA) else { return false }
+        let param3 = skill.params.indices.contains(3) ? skill.params[3] : 0
+        return param3 != 0 && param3 != 100
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Matching Style > Awakening active", label: "Awakening active", groupPath: ["Leader Skills", "Matching Style"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [271], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Matching Style > Stacking multiplier of Awakening active", label: "Stacking multiplier of Awakening active", groupPath: ["Leader Skills", "Matching Style"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [280], skills: ctx.skillsJA)
+    },
+]
+
+private let leaderRestrictionLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Leader Skills > Restriction/Bind > [7×6 board]", label: "[7×6 board]", groupPath: ["Leader Skills", "Restriction/Bind"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [162, 186], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Restriction/Bind > [No skyfall]", label: "[No skyfall]", groupPath: ["Leader Skills", "Restriction/Bind"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [163, 177], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Restriction/Bind > Unable to less match", label: "Unable to less match", groupPath: ["Leader Skills", "Restriction/Bind"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [158], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Restriction/Bind > Designate member ID", label: "Designate member ID", groupPath: ["Leader Skills", "Restriction/Bind"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [125], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Restriction/Bind > Designate collab ID", label: "Designate collab ID", groupPath: ["Leader Skills", "Restriction/Bind"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [175], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Restriction/Bind > Designate Evo type", label: "Designate Evo type", groupPath: ["Leader Skills", "Restriction/Bind"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [203], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Restriction/Bind > Floating rate based on the number of attrs/types", label: "Floating rate based on the number of attrs/types", groupPath: ["Leader Skills", "Restriction/Bind"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [229], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Restriction/Bind > Limit the total rarity of the team", label: "Limit the total rarity of the team", groupPath: ["Leader Skills", "Restriction/Bind"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [217], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Restriction/Bind > Team's rarity required different", label: "Team's rarity required different", groupPath: ["Leader Skills", "Restriction/Bind"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [245], skills: ctx.skillsJA)
+    },
+]
+
 enum SpecialSearchTree {
-    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves
+    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves
 }

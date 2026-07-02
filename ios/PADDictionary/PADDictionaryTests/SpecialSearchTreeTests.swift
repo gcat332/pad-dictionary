@@ -102,7 +102,7 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testOthersSearchLeafCount() {
         let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
         XCTAssertEqual(othersLeaves.count, 23)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 43)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 59)
     }
 
     private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
@@ -111,5 +111,39 @@ final class SpecialSearchTreeTests: XCTestCase {
 
     private func makeCardWithMaxLevel(_ maxLevel: Int) -> Card {
         Card(id: 1, name: "Card", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: maxLevel, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: 0, leaderSkillId: 0, evoRootId: 1, awakenings: [], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: false, evoBaseId: 0, syncAwakening: nil)
+    }
+
+    func testFiveOrbsIncludingEnhancedMatching() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 150, maxLevel: 1, initialCooldown: 0, params: [])]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Leader Skills > Matching Style > 5 Orbs including enhanced Matching").matches(makeCardWithLeaderSkill(10), ctx))
+    }
+
+    func testStackingMultiplierOfMatchingRequiresNonDefaultParam() {
+        let skills: SkillLookup = [
+            10: Skill(id: 10, name: "S", description: "", type: 235, maxLevel: 1, initialCooldown: 0, params: [0, 0, 0, 150]),
+            11: Skill(id: 11, name: "S", description: "", type: 235, maxLevel: 1, initialCooldown: 0, params: [0, 0, 0, 100]),
+        ]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        let leafObj = leaf("Leader Skills > Matching Style > Stacking multiplier of Matching")
+        XCTAssertTrue(leafObj.matches(makeCardWithLeaderSkill(10), ctx))
+        XCTAssertFalse(leafObj.matches(makeCardWithLeaderSkill(11), ctx))
+    }
+
+    func testDesignateMemberId() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 125, maxLevel: 1, initialCooldown: 0, params: [])]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Leader Skills > Restriction/Bind > Designate member ID").matches(makeCardWithLeaderSkill(10), ctx))
+    }
+
+    func testMatchingStyleAndRestrictionLeafCounts() {
+        let matching = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Matching Style"] }
+        let restriction = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Restriction/Bind"] }
+        XCTAssertEqual(matching.count, 7)
+        XCTAssertEqual(restriction.count, 9)
+    }
+
+    private func makeCardWithLeaderSkill(_ leaderSkillId: Int) -> Card {
+        Card(id: 1, name: "Card", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: 0, leaderSkillId: leaderSkillId, evoRootId: 1, awakenings: [], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: false, evoBaseId: 0, syncAwakening: nil)
     }
 }
