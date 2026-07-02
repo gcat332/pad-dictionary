@@ -3,7 +3,7 @@ import XCTest
 
 final class CardSortTests: XCTestCase {
     private func makeCard(id: Int, rarity: Int = 1, cost: Int = 1, attrs: [Int] = [0], hp: Int = 100, atk: Int = 100, rcv: Int = 100, activeSkillId: Int = 0) -> Card {
-        Card(id: id, name: "Card \(id)", otLangName: nil, attrs: attrs, types: [1], rarity: rarity, cost: cost, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: hp, max: hp, scale: 1), atk: StatRange(min: atk, max: atk, scale: 1), rcv: StatRange(min: rcv, max: rcv, scale: 1), activeSkillId: activeSkillId, leaderSkillId: 0, evoRootId: id, awakenings: [], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil)
+        Card(id: id, name: "Card \(id)", otLangName: nil, attrs: attrs, types: [1], rarity: rarity, cost: cost, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: hp, max: hp, scale: 1), atk: StatRange(min: atk, max: atk, scale: 1), rcv: StatRange(min: rcv, max: rcv, scale: 1), activeSkillId: activeSkillId, leaderSkillId: 0, evoRootId: id, awakenings: [], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0,0,0,0,0], isUltEvo: false, evoBaseId: 0, syncAwakening: nil)
     }
 
     private func sort(_ id: String) -> CardSort {

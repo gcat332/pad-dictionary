@@ -26,7 +26,7 @@ final class DataStoreTests: XCTestCase {
 
     @MainActor
     func testReloadDecodesCachedFiles() throws {
-        let cardJSON = #"[{"id":1,"name":"Tyrra","attrs":[0],"types":[4],"rarity":2,"cost":2,"maxLevel":5,"isEmpty":false,"enabled":true,"hp":{"min":52,"max":144,"scale":1},"atk":{"min":57,"max":71,"scale":1},"rcv":{"min":8,"max":13,"scale":1},"activeSkillId":1,"leaderSkillId":51,"evoRootId":1929,"awakenings":[21,21],"superAwakenings":[],"canAssist":false}]"#
+        let cardJSON = #"[{"id":1,"name":"Tyrra","attrs":[0],"types":[4],"rarity":2,"cost":2,"maxLevel":5,"isEmpty":false,"enabled":true,"hp":{"min":52,"max":144,"scale":1},"atk":{"min":57,"max":71,"scale":1},"rcv":{"min":8,"max":13,"scale":1},"activeSkillId":1,"leaderSkillId":51,"evoRootId":1929,"awakenings":[21,21],"superAwakenings":[],"canAssist":false,"orbSkinOrBgmId":0,"badgeId":0,"feedExp":0,"sellPrice":0,"limitBreakIncr":0,"sellMP":0,"latentAwakeningId":0,"stackable":false,"skillBanner":false,"evoMaterials":[0,0,0,0,0],"isUltEvo":false,"evoBaseId":0}]"#
         try Data(cardJSON.utf8).write(to: tempDir.appendingPathComponent("monsters-info/mon_ja.json"))
         try Data("[]".utf8).write(to: tempDir.appendingPathComponent("monsters-info/skill_ja.json"))
         try Data("[]".utf8).write(to: tempDir.appendingPathComponent("monsters-info/skill_en.json"))

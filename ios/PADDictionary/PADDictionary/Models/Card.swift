@@ -35,6 +35,19 @@ struct Card: Codable, Identifiable, Equatable {
     let canAssist: Bool
     let henshinTo: [Int]?
     let henshinFrom: [Int]?
+    let orbSkinOrBgmId: Int
+    let badgeId: Int
+    let feedExp: Int
+    let sellPrice: Int
+    let limitBreakIncr: Int
+    let sellMP: Int
+    let latentAwakeningId: Int
+    let stackable: Bool
+    let skillBanner: Bool
+    let evoMaterials: [Int]
+    let isUltEvo: Bool
+    let evoBaseId: Int
+    let syncAwakening: Int?
 
     var displayName: String { otLangName?.en ?? name }
 }

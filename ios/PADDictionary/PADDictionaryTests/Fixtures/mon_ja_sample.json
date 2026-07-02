@@ -17,7 +17,19 @@
     "evoRootId": 0,
     "awakenings": [],
     "superAwakenings": [],
-    "canAssist": false
+    "canAssist": false,
+    "orbSkinOrBgmId": 0,
+    "badgeId": 0,
+    "feedExp": 0,
+    "sellPrice": 0,
+    "limitBreakIncr": 0,
+    "sellMP": 0,
+    "latentAwakeningId": 0,
+    "stackable": false,
+    "skillBanner": false,
+    "evoMaterials": [0, 0, 0, 0, 0],
+    "isUltEvo": false,
+    "evoBaseId": 0
   },
   {
     "id": 1,
@@ -38,6 +50,18 @@
     "awakenings": [21, 21],
     "superAwakenings": [],
     "canAssist": false,
+    "orbSkinOrBgmId": 0,
+    "badgeId": 0,
+    "feedExp": 0,
+    "sellPrice": 0,
+    "limitBreakIncr": 0,
+    "sellMP": 0,
+    "latentAwakeningId": 0,
+    "stackable": false,
+    "skillBanner": false,
+    "evoMaterials": [0, 0, 0, 0, 0],
+    "isUltEvo": false,
+    "evoBaseId": 0,
     "otLangName": { "cht": "提拉", "chs": "提拉", "en": "Tyrra", "ko": "티라" }
   }
 ]
