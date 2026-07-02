@@ -9,9 +9,9 @@ struct AwakeningIconView: View {
                let sheet = SpriteSheetCache.shared.image(relativePath: "images/awoken.png") {
                 Image(uiImage: sheet)
                     .resizable()
-                    .frame(width: 32, height: 4608)
+                    .frame(width: 96, height: 4608)
                     .offset(y: CGFloat(yOffset))
-                    .frame(width: 32, height: 32)
+                    .frame(width: 32, height: 32, alignment: .topLeading)
                     .clipped()
             } else {
                 Text("\(awakeningId)")
