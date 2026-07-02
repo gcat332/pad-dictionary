@@ -789,6 +789,47 @@ private let activeOrbsColorChangeLeaves: [SpecialSearchLeaf] = [
     },
 ]
 
+private let activeRandomCreateOrbsLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > Random Create Orbs > Create 15×2 color Orbs", label: "Create 15×2 color Orbs", groupPath: ["Active Skill", "Random Create Orbs"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [141], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let sk = skill.params
+        let p0 = sk.indices.contains(0) ? sk[0] : 0
+        let p1 = sk.indices.contains(1) ? sk[1] : 0
+        return Bin.unflags(p1).count == 2 && p0 == 15
+    },
+    SpecialSearchLeaf(id: "Active Skill > Random Create Orbs > Create 30 Orbs", label: "Create 30 Orbs", groupPath: ["Active Skill", "Random Create Orbs"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [141], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let sk = skill.params
+        let p0 = sk.indices.contains(0) ? sk[0] : 0
+        let p1 = sk.indices.contains(1) ? sk[1] : 0
+        return Bin.unflags(p1).count * p0 == 30
+    },
+    SpecialSearchLeaf(id: "Active Skill > Random Create Orbs > Orb Color > 6 color Orbs", label: "6 color Orbs", groupPath: ["Active Skill", "Random Create Orbs", "Orb Color"]) { card, ctx in
+        ActiveSkillEffects.generateOrbsParse(card, skills: ctx.skillsJA).contains { ($0.to & 0b11_1111) == 0b11_1111 }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Random Create Orbs > Orb Color > Fire Orbs", label: "Fire Orbs", groupPath: ["Active Skill", "Random Create Orbs", "Orb Color"]) { card, ctx in
+        ActiveSkillEffects.generateOrbsParse(card, skills: ctx.skillsJA).contains { $0.to & 0b1 != 0 }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Random Create Orbs > Orb Color > Water Orbs", label: "Water Orbs", groupPath: ["Active Skill", "Random Create Orbs", "Orb Color"]) { card, ctx in
+        ActiveSkillEffects.generateOrbsParse(card, skills: ctx.skillsJA).contains { $0.to & 0b10 != 0 }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Random Create Orbs > Orb Color > Wood Orbs", label: "Wood Orbs", groupPath: ["Active Skill", "Random Create Orbs", "Orb Color"]) { card, ctx in
+        ActiveSkillEffects.generateOrbsParse(card, skills: ctx.skillsJA).contains { $0.to & 0b100 != 0 }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Random Create Orbs > Orb Color > Light Orbs", label: "Light Orbs", groupPath: ["Active Skill", "Random Create Orbs", "Orb Color"]) { card, ctx in
+        ActiveSkillEffects.generateOrbsParse(card, skills: ctx.skillsJA).contains { $0.to & 0b1000 != 0 }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Random Create Orbs > Orb Color > Dark Orbs", label: "Dark Orbs", groupPath: ["Active Skill", "Random Create Orbs", "Orb Color"]) { card, ctx in
+        ActiveSkillEffects.generateOrbsParse(card, skills: ctx.skillsJA).contains { $0.to & 0b1_0000 != 0 }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Random Create Orbs > Orb Color > Heart Orbs", label: "Heart Orbs", groupPath: ["Active Skill", "Random Create Orbs", "Orb Color"]) { card, ctx in
+        ActiveSkillEffects.generateOrbsParse(card, skills: ctx.skillsJA).contains { $0.to & 0b10_0000 != 0 }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Random Create Orbs > Orb Color > Jammers/Poison Orbs", label: "Jammers/Poison Orbs", groupPath: ["Active Skill", "Random Create Orbs", "Orb Color"]) { card, ctx in
+        ActiveSkillEffects.generateOrbsParse(card, skills: ctx.skillsJA).contains { $0.to & 0b11_1100_0000 != 0 }
+    },
+]
+
 enum SpecialSearchTree {
-    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves + activeOrbsStatesLeaves + activeBoardStatesLeaves + activeSkillConditionalLeaves + activeOtherLeaves + activeOrbsDropLeaves + activeChangeBoardLeaves + activeOrbsColorChangeLeaves
+    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves + activeOrbsStatesLeaves + activeBoardStatesLeaves + activeSkillConditionalLeaves + activeOtherLeaves + activeOrbsDropLeaves + activeChangeBoardLeaves + activeOrbsColorChangeLeaves + activeRandomCreateOrbsLeaves
 }
