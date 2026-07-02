@@ -31,12 +31,14 @@ final class BrowseViewModel: ObservableObject {
 
 struct BrowseView: View {
     @ObservedObject var dataStore: DataStore
+    @ObservedObject var compareStore: CompareStore
     @StateObject private var viewModel: BrowseViewModel
     @State private var showingFilters = false
     @State private var showingSpecialSearch = false
 
-    init(dataStore: DataStore) {
+    init(dataStore: DataStore, compareStore: CompareStore) {
         self.dataStore = dataStore
+        self.compareStore = compareStore
         _viewModel = StateObject(wrappedValue: BrowseViewModel(dataStore: dataStore))
     }
 
@@ -44,6 +46,7 @@ struct BrowseView: View {
 
     var body: some View {
         NavigationStack {
+            ZStack(alignment: .bottom) {
             Group {
                 if dataStore.cards.isEmpty {
                     ContentUnavailableView(
@@ -56,15 +59,30 @@ struct BrowseView: View {
                         LazyVGrid(columns: columns, spacing: 12) {
                             ForEach(viewModel.cards) { card in
                                 NavigationLink {
-                                    CardDetailView(card: card, dataStore: dataStore)
+                                    CardDetailView(card: card, dataStore: dataStore, compareStore: compareStore)
                                 } label: {
                                     CardArtworkView(card: card, cellSize: 64)
+                                        .overlay(alignment: .topTrailing) {
+                                            if compareStore.contains(card.id) {
+                                                Image(systemName: "checkmark.circle.fill")
+                                                    .foregroundStyle(.blue)
+                                                    .background(Circle().fill(.white))
+                                                    .padding(2)
+                                            }
+                                        }
                                 }
+                                .simultaneousGesture(
+                                    LongPressGesture(minimumDuration: 0.4).onEnded { _ in
+                                        compareStore.toggle(card.id)
+                                    }
+                                )
                             }
                         }
                         .padding()
                     }
                 }
+            }
+            CompareBar(compareStore: compareStore, dataStore: dataStore)
             }
             .searchable(text: $viewModel.searchText, prompt: "Search by ID")
             .navigationTitle("Browse")

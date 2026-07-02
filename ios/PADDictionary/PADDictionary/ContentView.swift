@@ -4,10 +4,11 @@ struct ContentView: View {
     @StateObject private var dataStore = DataStore(
         documentsDirectory: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     )
+    @StateObject private var compareStore = CompareStore()
 
     var body: some View {
         TabView {
-            BrowseView(dataStore: dataStore)
+            BrowseView(dataStore: dataStore, compareStore: compareStore)
                 .tabItem { Label("Browse", systemImage: "square.grid.2x2") }
 
             NavigationStack {
