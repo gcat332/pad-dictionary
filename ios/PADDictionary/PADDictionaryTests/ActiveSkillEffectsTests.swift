@@ -82,4 +82,31 @@ final class ActiveSkillEffectsTests: XCTestCase {
         let skills: SkillLookup = [10: skill(10, type: 228, params: [3, 0, 0, 0, 25])]
         XCTAssertEqual(ActiveSkillEffects.rcvBuffSkillType(makeCard(activeSkillId: 10), skills: skills), 1)
     }
+
+    func testGetSkillMinCD() {
+        let withLevels = Skill(id: 1, name: "S", description: "", type: 5, maxLevel: 6, initialCooldown: 8, params: [])
+        XCTAssertEqual(ActiveSkillEffects.getSkillMinCD(withLevels), 3)
+    }
+
+    func testHasOneCDUnwrapsType232Once() {
+        let skills: SkillLookup = [
+            10: Skill(id: 10, name: "S", description: "", type: 232, maxLevel: 1, initialCooldown: 99, params: [20]),
+            20: Skill(id: 20, name: "S", description: "", type: 5, maxLevel: 1, initialCooldown: 1, params: []),
+        ]
+        XCTAssertTrue(ActiveSkillEffects.hasOneCD(makeCard(activeSkillId: 10), skills: skills))
+    }
+
+    func testHasOneCDFalseWhenNoActiveSkill() {
+        XCTAssertFalse(ActiveSkillEffects.hasOneCD(makeCard(activeSkillId: 0), skills: [:]))
+    }
+
+    func testHasSkillLoopLessThan4() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 5, maxLevel: 6, initialCooldown: 8, params: [])]
+        XCTAssertTrue(ActiveSkillEffects.hasSkillLoopLessThan4(makeCard(activeSkillId: 10), skills: skills))
+    }
+
+    func testHasSkillLoopLessThan4FalseWhenCantLoopTypePresent() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 214, maxLevel: 1, initialCooldown: 8, params: [])]
+        XCTAssertFalse(ActiveSkillEffects.hasSkillLoopLessThan4(makeCard(activeSkillId: 10), skills: skills))
+    }
 }

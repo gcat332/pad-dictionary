@@ -176,4 +176,33 @@ enum ActiveSkillEffects {
         let parsed = matched.map(rcvBuffParse)
         return parsed.first(where: { $0.rate != 0 })?.skilltype ?? rcvBuffParse(nil).skilltype
     }
+
+    static func getSkillMinCD(_ skill: Skill) -> Int {
+        skill.initialCooldown - (skill.maxLevel - 1)
+    }
+
+    private static func unwrapOnceForLoopCheck(_ skill: Skill, skills: SkillLookup) -> Skill {
+        guard skill.type == 232, let lastParam = skill.params.last, let unwrapped = skills[lastParam] else { return skill }
+        return unwrapped
+    }
+
+    static func hasOneCD(_ card: Card, skills: SkillLookup) -> Bool {
+        guard card.activeSkillId != 0, let baseSkill = skills[card.activeSkillId] else { return false }
+        let skill = unwrapOnceForLoopCheck(baseSkill, skills: skills)
+        return getSkillMinCD(skill) <= 1
+    }
+
+    static func hasSkillLoopLessThan4(_ card: Card, skills: SkillLookup) -> Bool {
+        guard card.activeSkillId != 0, let baseSkill = skills[card.activeSkillId] else { return false }
+        let skill = unwrapOnceForLoopCheck(baseSkill, skills: skills)
+        let cantLoop = SkillChainMatcher.resolveAll(skillId: skill.id, types: [202, 214, 218, 250, 268], skills: skills, searchRandom: true)
+        guard cantLoop.isEmpty else { return false }
+        let minCD = getSkillMinCD(skill)
+        var realCD = minCD
+        let skillBoost = SkillChainMatcher.resolveAll(skillId: skill.id, types: [146], skills: skills, searchRandom: false)
+        if !skillBoost.isEmpty {
+            realCD = skillBoost.reduce(realCD) { cd, subSkill in cd - (subSkill.params.first ?? 0) * 3 }
+        }
+        return minCD > 1 && realCD <= 4
+    }
 }
