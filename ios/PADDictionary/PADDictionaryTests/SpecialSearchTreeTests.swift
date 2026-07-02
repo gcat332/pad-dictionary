@@ -102,7 +102,7 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testOthersSearchLeafCount() {
         let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
         XCTAssertEqual(othersLeaves.count, 23)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 262)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 263)
     }
 
     private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
@@ -179,7 +179,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let reduceShield = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Reduce Shield"] }
         XCTAssertEqual(hpScale.count, 6)
         XCTAssertEqual(reduceShield.count, 9)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 262)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 263)
     }
 
     private func makeCardWithActiveSkill(_ activeSkillId: Int) -> Card {
@@ -239,7 +239,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let forEnemy = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "For Enemy"] }
         XCTAssertEqual(buff.count, 9)
         XCTAssertEqual(forEnemy.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 262)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 263)
     }
 
     func testIncreaseDamageCapLeaderUsesBitmask() {
@@ -321,8 +321,8 @@ final class SpecialSearchTreeTests: XCTestCase {
         let conditional = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "Skill use is conditional"] }
         let other = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "Other"] }
         XCTAssertEqual(conditional.count, 6)
-        XCTAssertEqual(other.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 262)
+        XCTAssertEqual(other.count, 7)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 263)
     }
 
     func testOrbsDropLeaves() {
@@ -529,5 +529,12 @@ final class SpecialSearchTreeTests: XCTestCase {
         XCTAssertFalse(leaf("Leader Skills > Extra Effects > Adds combo").matches(makeCardWithLeaderSkill(1953), ctx))
         XCTAssertTrue(leaf("Leader Skills > Extra Effects > Adds combo").matches(makeCardWithLeaderSkill(2378), ctx))
         XCTAssertFalse(leaf("Leader Skills > Extra Effects > Fixed damage inflicts").matches(makeCardWithLeaderSkill(2378), ctx))
+    }
+
+    func testSeamlessBuffLeaf() {
+        let skills: SkillLookup = [10881: Skill(id: 10881, name: "S", description: "", type: 51, maxLevel: 11, initialCooldown: 13, params: [3])]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Active Skill > Seamless Buff (Round ≥CD)").matches(makeCardWithActiveSkill(10881), ctx))
+        XCTAssertFalse(leaf("Active Skill > Seamless Buff (Round ≥CD)").matches(makeCard(), ctx))
     }
 }

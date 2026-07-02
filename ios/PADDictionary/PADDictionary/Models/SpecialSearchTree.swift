@@ -648,6 +648,9 @@ private let activeOtherLeaves: [SpecialSearchLeaf] = [
     SpecialSearchLeaf(id: "Active Skill > Other > Not Evolved active", label: "Not Evolved active", groupPath: ["Active Skill", "Other"]) { card, ctx in
         !SkillChainMatcher.matches(skillId: card.activeSkillId, types: [232, 233], skills: ctx.skillsJA, searchRandom: true)
     },
+    SpecialSearchLeaf(id: "Active Skill > Seamless Buff (Round ≥CD)", label: "Seamless Buff (Round ≥CD)", groupPath: ["Active Skill", "Other"]) { card, ctx in
+        SeamlessBuff.matches(card, skills: ctx.skillsJA)
+    },
 ]
 
 private let activeOrbsDropLeaves: [SpecialSearchLeaf] = [
