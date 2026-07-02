@@ -17,6 +17,7 @@ struct CardDetailView: View {
             }
             .padding()
         }
+        .background(Color.padBackground)
         .navigationTitle("#\(card.id)")
     }
 
@@ -24,11 +25,14 @@ struct CardDetailView: View {
         HStack(alignment: .top, spacing: 12) {
             CardArtworkView(card: card, cellSize: 80)
             VStack(alignment: .leading, spacing: 4) {
-                Text(card.displayName).font(.title2.bold())
+                HStack(spacing: 4) {
+                    ForEach(card.attrs, id: \.self) { AttributeDotView(attr: $0) }
+                    Text(card.displayName).font(.title2.bold())
+                }
                 Text("#\(card.id) · \(card.name)").font(.caption).foregroundStyle(.secondary)
                 HStack(spacing: 6) {
                     ForEach(card.types.filter { $0 >= 0 }, id: \.self) { type in
-                        chip(CardTypeNames.name(for: type))
+                        typeChip(type)
                     }
                     chip("★\(card.rarity)")
                     chip("Cost \(card.cost)")
@@ -51,8 +55,22 @@ struct CardDetailView: View {
             .font(.caption)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .background(.secondary.opacity(0.2))
+            .background(Color.padPanel)
+            .overlay(Capsule().stroke(Color.padBorder))
             .clipShape(Capsule())
+    }
+
+    private func typeChip(_ type: Int) -> some View {
+        HStack(spacing: 4) {
+            TypeIconView(type: type, size: 14)
+            Text(CardTypeNames.name(for: type))
+        }
+        .font(.caption)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(Color.padPanel)
+        .overlay(Capsule().stroke(Color.padBorder))
+        .clipShape(Capsule())
     }
 
     private var statsRow: some View {

@@ -27,6 +27,7 @@ struct CompareView: View {
                 }
             }
             .padding()
+            .background(Color.padBackground)
             .navigationTitle("Compare \(cards.count) cards")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -45,7 +46,7 @@ struct CompareView: View {
             ForEach(Array(rowLabels.enumerated()), id: \.offset) { index, label in
                 Text(label)
                     .font(.caption.bold())
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.padDim)
                     .frame(height: rowHeights[index], alignment: .leading)
             }
         }
@@ -55,7 +56,7 @@ struct CompareView: View {
     private func cardColumn(_ card: Card) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             columnHeader(card).frame(height: rowHeights[0])
-            cell(card.types.filter { $0 >= 0 }.map { CardTypeNames.name(for: $0) }.joined(separator: ", ")).frame(height: rowHeights[1])
+            typeCell(card).frame(height: rowHeights[1])
             cell("★\(card.rarity)").frame(height: rowHeights[2])
             cell("\(card.cost)").frame(height: rowHeights[3])
             statCell(card.hp.max, isBest: bestIds(for: \.hp.max).contains(card.id)).frame(height: rowHeights[4])
@@ -72,7 +73,7 @@ struct CompareView: View {
         VStack(spacing: 4) {
             CardArtworkView(card: card, cellSize: 56)
             Text(card.displayName).font(.caption.bold()).lineLimit(1)
-            Text("#\(card.id)").font(.caption2).foregroundStyle(.secondary)
+            Text("#\(card.id)").font(.caption2).foregroundStyle(Color.padDim)
             Button(role: .destructive) {
                 compareStore.remove(card.id)
             } label: {
@@ -85,17 +86,24 @@ struct CompareView: View {
         Text(text).font(.caption).frame(maxWidth: .infinity, alignment: .leading)
     }
 
+    private func typeCell(_ card: Card) -> some View {
+        HStack(spacing: 4) {
+            ForEach(card.types.filter { $0 >= 0 }, id: \.self) { TypeIconView(type: $0, size: 14) }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
     private func statCell(_ value: Int, isBest: Bool) -> some View {
         Text("\(value)")
             .font(isBest ? .caption.bold() : .caption)
-            .foregroundStyle(isBest ? Color.accentColor : Color.primary)
+            .foregroundStyle(isBest ? Color.padAccentBorder : Color.padText)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func awakeningsCell(_ card: Card) -> some View {
         Group {
             if card.awakenings.isEmpty {
-                Text("None").font(.caption2).foregroundStyle(.secondary)
+                Text("None").font(.caption2).foregroundStyle(Color.padDim)
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 2) {
@@ -114,7 +122,7 @@ struct CompareView: View {
             if let resolved, !resolved.description.isEmpty {
                 Text(resolved.description).font(.caption2).lineLimit(4)
             } else {
-                Text("—").font(.caption2).foregroundStyle(.secondary)
+                Text("—").font(.caption2).foregroundStyle(Color.padDim)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

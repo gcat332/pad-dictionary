@@ -42,13 +42,17 @@ struct SettingsView: View {
             } footer: {
                 Text(viewModel.isSaved ? "A token is saved in Keychain." : "No token saved yet.")
             }
+            .listRowBackground(Color.padPanel)
 
             if viewModel.isSaved {
                 Section {
                     Button("Remove Saved Token", role: .destructive) { viewModel.clear() }
                 }
+                .listRowBackground(Color.padPanel)
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color.padBackground)
         .navigationTitle("Settings")
     }
 }

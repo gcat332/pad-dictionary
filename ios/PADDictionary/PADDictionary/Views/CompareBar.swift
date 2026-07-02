@@ -8,7 +8,7 @@ struct CompareBar: View {
     var body: some View {
         if !compareStore.ids.isEmpty {
             HStack(spacing: 8) {
-                Text("Compare").font(.caption).foregroundStyle(.secondary)
+                Text("Compare").font(.caption).foregroundStyle(Color.padDim)
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 6) {
                         ForEach(compareStore.ids, id: \.self) { id in
@@ -32,7 +32,8 @@ struct CompareBar: View {
                 }
             }
             .padding(8)
-            .background(.thinMaterial)
+            .background(Color.padPanel)
+            .overlay(alignment: .top) { Rectangle().fill(Color.padBorder).frame(height: 1) }
             .sheet(isPresented: $showingCompare) {
                 CompareView(cardIds: compareStore.ids, dataStore: dataStore, compareStore: compareStore)
             }

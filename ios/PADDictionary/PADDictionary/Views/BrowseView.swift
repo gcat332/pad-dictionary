@@ -35,7 +35,6 @@ struct BrowseView: View {
     @ObservedObject var compareStore: CompareStore
     @StateObject private var viewModel: BrowseViewModel
     @State private var showingFilters = false
-    @State private var showingSpecialSearch = false
 
     init(dataStore: DataStore, compareStore: CompareStore) {
         self.dataStore = dataStore
@@ -83,31 +82,21 @@ struct BrowseView: View {
                     }
                 }
             }
+            .background(Color.padBackground)
             CompareBar(compareStore: compareStore, dataStore: dataStore)
             }
+            .background(Color.padBackground)
             .searchable(text: $viewModel.searchText, prompt: "Search by ID")
             .navigationTitle("Browse")
             .sheet(isPresented: $showingFilters) {
                 FilterView(viewModel: viewModel)
             }
-            .sheet(isPresented: $showingSpecialSearch) {
-                SpecialSearchView(viewModel: viewModel)
-            }
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showingSpecialSearch = true
-                    } label: {
-                        Image(systemName: !viewModel.selectedSpecialSearchKeys.isEmpty
-                            ? "list.bullet.rectangle.fill"
-                            : "list.bullet.rectangle")
-                    }
-                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showingFilters = true
                     } label: {
-                        Image(systemName: viewModel.filterState != FilterState()
+                        Image(systemName: (viewModel.filterState != FilterState() || !viewModel.selectedSpecialSearchKeys.isEmpty)
                             ? "line.3.horizontal.decrease.circle.fill"
                             : "line.3.horizontal.decrease.circle")
                     }

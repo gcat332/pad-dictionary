@@ -21,5 +21,7 @@ struct ContentView: View {
             }
             .tabItem { Label("Settings", systemImage: "gearshape") }
         }
+        .tint(Color.padAccent)
+        .preferredColorScheme(.dark)
     }
 }

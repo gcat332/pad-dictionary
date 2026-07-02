@@ -67,15 +67,15 @@ struct SyncView: View {
 
             if let lastSynced = dataStore.lastSyncedAt {
                 Text("Last updated \(lastSynced.formatted(date: .abbreviated, time: .shortened))")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.padDim)
             } else {
                 Text("No data yet — run an update to get started.")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.padDim)
             }
 
             Text("\(dataStore.cards.count) cards cached")
                 .font(.caption)
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(Color.padDim)
 
             statusView
 
@@ -89,6 +89,8 @@ struct SyncView: View {
             .disabled(isBusy)
         }
         .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.padBackground)
         .navigationTitle("Sync")
     }
 
