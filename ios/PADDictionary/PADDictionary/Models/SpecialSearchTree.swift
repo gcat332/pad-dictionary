@@ -729,6 +729,66 @@ private let activeChangeBoardLeaves: [SpecialSearchLeaf] = [
     },
 ]
 
+private let activeOrbsColorChangeLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > Orbs Color Change > To Color > To Fire", label: "To Fire", groupPath: ["Active Skill", "Orbs Color Change", "To Color"]) { card, ctx in
+        let parsed = SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [9, 20, 154], skills: ctx.skillsJA, searchRandom: false).flatMap(ActiveSkillEffects.orbsChangeParse)
+        return parsed.contains { $0.to.contains(0) }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Color Change > To Color > To Water", label: "To Water", groupPath: ["Active Skill", "Orbs Color Change", "To Color"]) { card, ctx in
+        let parsed = SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [9, 20, 154], skills: ctx.skillsJA, searchRandom: false).flatMap(ActiveSkillEffects.orbsChangeParse)
+        return parsed.contains { $0.to.contains(1) }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Color Change > To Color > To Wood", label: "To Wood", groupPath: ["Active Skill", "Orbs Color Change", "To Color"]) { card, ctx in
+        let parsed = SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [9, 20, 154], skills: ctx.skillsJA, searchRandom: false).flatMap(ActiveSkillEffects.orbsChangeParse)
+        return parsed.contains { $0.to.contains(2) }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Color Change > To Color > To Light", label: "To Light", groupPath: ["Active Skill", "Orbs Color Change", "To Color"]) { card, ctx in
+        let parsed = SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [9, 20, 154], skills: ctx.skillsJA, searchRandom: false).flatMap(ActiveSkillEffects.orbsChangeParse)
+        return parsed.contains { $0.to.contains(3) }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Color Change > To Color > To Dark", label: "To Dark", groupPath: ["Active Skill", "Orbs Color Change", "To Color"]) { card, ctx in
+        let parsed = SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [9, 20, 154], skills: ctx.skillsJA, searchRandom: false).flatMap(ActiveSkillEffects.orbsChangeParse)
+        return parsed.contains { $0.to.contains(4) }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Color Change > To Color > To Heal", label: "To Heal", groupPath: ["Active Skill", "Orbs Color Change", "To Color"]) { card, ctx in
+        let parsed = SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [9, 20, 154], skills: ctx.skillsJA, searchRandom: false).flatMap(ActiveSkillEffects.orbsChangeParse)
+        return parsed.contains { $0.to.contains(5) }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Color Change > To Color > To Jammers/Poison", label: "To Jammers/Poison", groupPath: ["Active Skill", "Orbs Color Change", "To Color"]) { card, ctx in
+        let parsed = SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [9, 20, 154], skills: ctx.skillsJA, searchRandom: false).flatMap(ActiveSkillEffects.orbsChangeParse)
+        return parsed.contains { $0.to.contains(6) || $0.to.contains(7) || $0.to.contains(8) || $0.to.contains(9) }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Color Change > From Color > From Fire", label: "From Fire", groupPath: ["Active Skill", "Orbs Color Change", "From Color"]) { card, ctx in
+        let parsed = SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [9, 20, 154], skills: ctx.skillsJA, searchRandom: false).flatMap(ActiveSkillEffects.orbsChangeParse)
+        return parsed.contains { $0.from.contains(0) }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Color Change > From Color > From Water", label: "From Water", groupPath: ["Active Skill", "Orbs Color Change", "From Color"]) { card, ctx in
+        let parsed = SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [9, 20, 154], skills: ctx.skillsJA, searchRandom: false).flatMap(ActiveSkillEffects.orbsChangeParse)
+        return parsed.contains { $0.from.contains(1) }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Color Change > From Color > From Wood", label: "From Wood", groupPath: ["Active Skill", "Orbs Color Change", "From Color"]) { card, ctx in
+        let parsed = SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [9, 20, 154], skills: ctx.skillsJA, searchRandom: false).flatMap(ActiveSkillEffects.orbsChangeParse)
+        return parsed.contains { $0.from.contains(2) }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Color Change > From Color > From Light", label: "From Light", groupPath: ["Active Skill", "Orbs Color Change", "From Color"]) { card, ctx in
+        let parsed = SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [9, 20, 154], skills: ctx.skillsJA, searchRandom: false).flatMap(ActiveSkillEffects.orbsChangeParse)
+        return parsed.contains { $0.from.contains(3) }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Color Change > From Color > From Dark", label: "From Dark", groupPath: ["Active Skill", "Orbs Color Change", "From Color"]) { card, ctx in
+        let parsed = SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [9, 20, 154], skills: ctx.skillsJA, searchRandom: false).flatMap(ActiveSkillEffects.orbsChangeParse)
+        return parsed.contains { $0.from.contains(4) }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Color Change > From Color > From Heart", label: "From Heart", groupPath: ["Active Skill", "Orbs Color Change", "From Color"]) { card, ctx in
+        let parsed = SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [9, 20, 154], skills: ctx.skillsJA, searchRandom: false).flatMap(ActiveSkillEffects.orbsChangeParse)
+        return parsed.contains { $0.from.contains(5) }
+    },
+    // Web bug ported verbatim: this leaf checks `.from.includes(6)` but `.to.includes(7/8/9)` — NOT a typo we fix.
+    SpecialSearchLeaf(id: "Active Skill > Orbs Color Change > From Color > From Jammers/Poison", label: "From Jammers/Poison", groupPath: ["Active Skill", "Orbs Color Change", "From Color"]) { card, ctx in
+        let parsed = SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [9, 20, 154], skills: ctx.skillsJA, searchRandom: false).flatMap(ActiveSkillEffects.orbsChangeParse)
+        return parsed.contains { $0.from.contains(6) || $0.to.contains(7) || $0.to.contains(8) || $0.to.contains(9) }
+    },
+]
+
 enum SpecialSearchTree {
-    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves + activeOrbsStatesLeaves + activeBoardStatesLeaves + activeSkillConditionalLeaves + activeOtherLeaves + activeOrbsDropLeaves + activeChangeBoardLeaves
+    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves + activeOrbsStatesLeaves + activeBoardStatesLeaves + activeSkillConditionalLeaves + activeOtherLeaves + activeOrbsDropLeaves + activeChangeBoardLeaves + activeOrbsColorChangeLeaves
 }

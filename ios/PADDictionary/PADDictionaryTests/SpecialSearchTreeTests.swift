@@ -102,7 +102,7 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testOthersSearchLeafCount() {
         let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
         XCTAssertEqual(othersLeaves.count, 23)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 195)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 209)
     }
 
     private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
@@ -179,7 +179,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let reduceShield = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Reduce Shield"] }
         XCTAssertEqual(hpScale.count, 6)
         XCTAssertEqual(reduceShield.count, 9)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 195)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 209)
     }
 
     private func makeCardWithActiveSkill(_ activeSkillId: Int) -> Card {
@@ -239,7 +239,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let forEnemy = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "For Enemy"] }
         XCTAssertEqual(buff.count, 9)
         XCTAssertEqual(forEnemy.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 195)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 209)
     }
 
     func testIncreaseDamageCapLeaderUsesBitmask() {
@@ -322,7 +322,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let other = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "Other"] }
         XCTAssertEqual(conditional.count, 6)
         XCTAssertEqual(other.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 195)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 209)
     }
 
     func testOrbsDropLeaves() {
@@ -371,5 +371,19 @@ final class SpecialSearchTreeTests: XCTestCase {
         XCTAssertFalse(leaf("Active Skill > Change all Orbs on Board > Include Color > Include Water").matches(makeCardWithActiveSkill(1), ctx))
         XCTAssertTrue(leaf("Active Skill > Change all Orbs on Board > Include Color > Include Water").matches(makeCardWithActiveSkill(2), ctx))
         XCTAssertTrue(leaf("Active Skill > Change all Orbs on Board > Include Color > Include Jammers/Poison").matches(makeCardWithActiveSkill(3), ctx))
+    }
+
+    func testOrbsColorChangeLeaves() {
+        let skills: SkillLookup = [
+            1: Skill(id: 1, name: "S", description: "", type: 9, maxLevel: 1, initialCooldown: 0, params: [1, 0]), // Water -> Fire
+            2: Skill(id: 2, name: "S", description: "", type: 9, maxLevel: 1, initialCooldown: 0, params: [4, 5]), // Dark -> Heal
+        ]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Active Skill > Orbs Color Change > To Color > To Fire").matches(makeCardWithActiveSkill(1), ctx))
+        XCTAssertFalse(leaf("Active Skill > Orbs Color Change > To Color > To Water").matches(makeCardWithActiveSkill(1), ctx))
+        XCTAssertTrue(leaf("Active Skill > Orbs Color Change > From Color > From Water").matches(makeCardWithActiveSkill(1), ctx))
+        XCTAssertTrue(leaf("Active Skill > Orbs Color Change > To Color > To Heal").matches(makeCardWithActiveSkill(2), ctx))
+        XCTAssertTrue(leaf("Active Skill > Orbs Color Change > From Color > From Dark").matches(makeCardWithActiveSkill(2), ctx))
+        XCTAssertFalse(leaf("Active Skill > Orbs Color Change > From Color > From Jammers/Poison").matches(makeCardWithActiveSkill(2), ctx))
     }
 }
