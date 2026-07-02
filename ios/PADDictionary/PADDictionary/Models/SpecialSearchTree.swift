@@ -78,6 +78,64 @@ private let awakeningLeaves: [SpecialSearchLeaf] = [
     },
 ]
 
+private let othersSearchLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Others Search > Sold in stores > Will get Orbs skin", label: "Will get Orbs skin", groupPath: ["Others Search", "Sold in stores"]) { card, _ in
+        card.orbSkinOrBgmId > 0 && card.orbSkinOrBgmId < 10000
+    },
+    SpecialSearchLeaf(id: "Others Search > Sold in stores > Will get BGM", label: "Will get BGM", groupPath: ["Others Search", "Sold in stores"]) { card, _ in
+        card.orbSkinOrBgmId >= 10000
+    },
+    SpecialSearchLeaf(id: "Others Search > Sold in stores > Will get Team Badge", label: "Will get Team Badge", groupPath: ["Others Search", "Sold in stores"]) { card, _ in
+        card.badgeId != 0
+    },
+    SpecialSearchLeaf(id: "Others Search > Only Additional display > Show Original Name", label: "Show Original Name", groupPath: ["Others Search", "Only Additional display"]) { _, _ in true },
+    SpecialSearchLeaf(id: "Others Search > Only Additional display > Show Feed EXP", label: "Show Feed EXP", groupPath: ["Others Search", "Only Additional display"]) { card, _ in card.feedExp > 0 },
+    SpecialSearchLeaf(id: "Others Search > Only Additional display > Show Sell Price", label: "Show Sell Price", groupPath: ["Others Search", "Only Additional display"]) { card, _ in card.sellPrice > 0 },
+    SpecialSearchLeaf(id: "Others Search > Only Additional display > Show Sell Monster Point(MP)", label: "Show Sell Monster Point(MP)", groupPath: ["Others Search", "Only Additional display"]) { _, _ in true },
+    SpecialSearchLeaf(id: "Others Search > Only Additional display > Show Card Types", label: "Show Card Types", groupPath: ["Others Search", "Only Additional display"]) { _, _ in true },
+    SpecialSearchLeaf(id: "Others Search > Only Additional display > Show Card Cost", label: "Show Card Cost", groupPath: ["Others Search", "Only Additional display"]) { _, _ in true },
+    SpecialSearchLeaf(id: "Others Search > Only Additional display > Show Card Group ID", label: "Show Card Group ID", groupPath: ["Others Search", "Only Additional display"]) { _, _ in true },
+    SpecialSearchLeaf(id: "Others Search > Water Att. & Attacker Type(Tanjiro)", label: "Water Att. & Attacker Type(Tanjiro)", groupPath: ["Others Search"]) { card, _ in
+        card.attrs.contains(1) || card.types.contains(6)
+    },
+    SpecialSearchLeaf(id: "Others Search > Level limit unable break", label: "Level limit unable break", groupPath: ["Others Search"]) { card, _ in
+        card.limitBreakIncr == 0
+    },
+    SpecialSearchLeaf(id: "Others Search > Able to lv110, but no Super Awoken", label: "Able to lv110, but no Super Awoken", groupPath: ["Others Search"]) { card, _ in
+        card.limitBreakIncr > 0 && card.superAwakenings.isEmpty
+    },
+    SpecialSearchLeaf(id: "Others Search > Raise ≥50% at lv110", label: "Raise ≥50% at lv110", groupPath: ["Others Search"]) { card, _ in
+        card.limitBreakIncr >= 50
+    },
+    SpecialSearchLeaf(id: "Others Search > Max level is lv1", label: "Max level is lv1", groupPath: ["Others Search"]) { card, _ in
+        card.maxLevel == 1
+    },
+    SpecialSearchLeaf(id: "Others Search > Tradable(Less than 100MP)", label: "Tradable(Less than 100MP)", groupPath: ["Others Search"]) { card, _ in
+        card.sellMP < 100
+    },
+    SpecialSearchLeaf(id: "Others Search > Have 3 types", label: "Have 3 types", groupPath: ["Others Search"]) { card, _ in
+        card.types.filter { $0 >= 0 }.count >= 3
+    },
+    SpecialSearchLeaf(id: "Others Search > Have 3 Attrs", label: "Have 3 Attrs", groupPath: ["Others Search"]) { card, _ in
+        card.attrs.filter { $0 >= 0 && $0 < 6 }.count >= 3
+    },
+    SpecialSearchLeaf(id: "Others Search > 3 attrs are different", label: "3 attrs are different", groupPath: ["Others Search"]) { card, _ in
+        Set(card.attrs.filter { $0 >= 0 && $0 < 6 }).count >= 3
+    },
+    SpecialSearchLeaf(id: "Others Search > All Latent TAMADRA", label: "All Latent TAMADRA", groupPath: ["Others Search"]) { card, _ in
+        card.latentAwakeningId > 0
+    },
+    SpecialSearchLeaf(id: "Others Search > Stacked material", label: "Stacked material", groupPath: ["Others Search"]) { card, _ in
+        card.stackable
+    },
+    SpecialSearchLeaf(id: "Others Search > Not stacked material", label: "Not stacked material", groupPath: ["Others Search"]) { card, _ in
+        !card.stackable && card.types.contains { [0, 12, 14, 15].contains($0) }
+    },
+    SpecialSearchLeaf(id: "Others Search > Hava banner when use skill", label: "Hava banner when use skill", groupPath: ["Others Search"]) { card, _ in
+        card.skillBanner
+    },
+]
+
 enum SpecialSearchTree {
-    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves
+    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves
 }

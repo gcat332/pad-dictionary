@@ -77,4 +77,39 @@ final class SpecialSearchTreeTests: XCTestCase {
         XCTAssertEqual(evoLeaves.count, 9)
         XCTAssertEqual(awakeningLeaves.count, 11)
     }
+
+    func testWillGetOrbsSkinVsBgm() {
+        var card = makeCard()
+        card = withOrbSkinOrBgmId(card, 500)
+        XCTAssertTrue(leaf("Others Search > Sold in stores > Will get Orbs skin").matches(card, emptyContext))
+        card = withOrbSkinOrBgmId(card, 20000)
+        XCTAssertTrue(leaf("Others Search > Sold in stores > Will get BGM").matches(card, emptyContext))
+        XCTAssertFalse(leaf("Others Search > Sold in stores > Will get Orbs skin").matches(card, emptyContext))
+    }
+
+    func testHave3TypesAnd3Attrs() {
+        let card = makeCard(attrs: [0, 1, 2], types: [1, 2, 3])
+        XCTAssertTrue(leaf("Others Search > Have 3 types").matches(card, emptyContext))
+        XCTAssertTrue(leaf("Others Search > Have 3 Attrs").matches(card, emptyContext))
+        XCTAssertTrue(leaf("Others Search > 3 attrs are different").matches(card, emptyContext))
+    }
+
+    func testMaxLevelIsLv1() {
+        XCTAssertTrue(leaf("Others Search > Max level is lv1").matches(makeCardWithMaxLevel(1), emptyContext))
+        XCTAssertFalse(leaf("Others Search > Max level is lv1").matches(makeCardWithMaxLevel(10), emptyContext))
+    }
+
+    func testOthersSearchLeafCount() {
+        let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
+        XCTAssertEqual(othersLeaves.count, 23)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 43)
+    }
+
+    private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
+        Card(id: card.id, name: card.name, otLangName: card.otLangName, attrs: card.attrs, types: card.types, rarity: card.rarity, cost: card.cost, maxLevel: card.maxLevel, isEmpty: card.isEmpty, enabled: card.enabled, hp: card.hp, atk: card.atk, rcv: card.rcv, activeSkillId: card.activeSkillId, leaderSkillId: card.leaderSkillId, evoRootId: card.evoRootId, awakenings: card.awakenings, superAwakenings: card.superAwakenings, canAssist: card.canAssist, henshinTo: card.henshinTo, henshinFrom: card.henshinFrom, orbSkinOrBgmId: value, badgeId: card.badgeId, feedExp: card.feedExp, sellPrice: card.sellPrice, limitBreakIncr: card.limitBreakIncr, sellMP: card.sellMP, latentAwakeningId: card.latentAwakeningId, stackable: card.stackable, skillBanner: card.skillBanner, evoMaterials: card.evoMaterials, isUltEvo: card.isUltEvo, evoBaseId: card.evoBaseId, syncAwakening: card.syncAwakening)
+    }
+
+    private func makeCardWithMaxLevel(_ maxLevel: Int) -> Card {
+        Card(id: 1, name: "Card", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: maxLevel, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: 0, leaderSkillId: 0, evoRootId: 1, awakenings: [], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: false, evoBaseId: 0, syncAwakening: nil)
+    }
 }
