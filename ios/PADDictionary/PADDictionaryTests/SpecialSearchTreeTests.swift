@@ -102,7 +102,7 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testOthersSearchLeafCount() {
         let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
         XCTAssertEqual(othersLeaves.count, 23)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 153)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 165)
     }
 
     private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
@@ -179,7 +179,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let reduceShield = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Reduce Shield"] }
         XCTAssertEqual(hpScale.count, 6)
         XCTAssertEqual(reduceShield.count, 9)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 153)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 165)
     }
 
     private func makeCardWithActiveSkill(_ activeSkillId: Int) -> Card {
@@ -239,7 +239,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let forEnemy = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "For Enemy"] }
         XCTAssertEqual(buff.count, 9)
         XCTAssertEqual(forEnemy.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 153)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 165)
     }
 
     func testIncreaseDamageCapLeaderUsesBitmask() {
@@ -293,5 +293,35 @@ final class SpecialSearchTreeTests: XCTestCase {
         let board = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "Board States Change"] }
         XCTAssertEqual(orbs.count, 7)
         XCTAssertEqual(board.count, 9)
+    }
+
+    func testEnableRequireHPRange() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 225, maxLevel: 1, initialCooldown: 0, params: [])]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Active Skill > Skill use is conditional > Enable require HP range").matches(makeCardWithActiveSkill(10), ctx))
+    }
+
+    func testEvolvedVsNotEvolvedActive() {
+        let skills: SkillLookup = [
+            10: Skill(id: 10, name: "S", description: "", type: 232, maxLevel: 1, initialCooldown: 0, params: [20]),
+            11: Skill(id: 11, name: "S", description: "", type: 5, maxLevel: 1, initialCooldown: 0, params: []),
+        ]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Active Skill > Other > Evolved active").matches(makeCardWithActiveSkill(10), ctx))
+        XCTAssertTrue(leaf("Active Skill > Other > Not Evolved active").matches(makeCardWithActiveSkill(11), ctx))
+    }
+
+    func testOneCDLeaf() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 5, maxLevel: 1, initialCooldown: 1, params: [])]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Active Skill > Other > 1 CD").matches(makeCardWithActiveSkill(10), ctx))
+    }
+
+    func testPhase3bFinalLeafCounts() {
+        let conditional = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "Skill use is conditional"] }
+        let other = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "Other"] }
+        XCTAssertEqual(conditional.count, 6)
+        XCTAssertEqual(other.count, 6)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 165)
     }
 }

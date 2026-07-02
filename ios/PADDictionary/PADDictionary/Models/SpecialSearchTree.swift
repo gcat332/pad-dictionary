@@ -557,6 +557,48 @@ private let activeBoardStatesLeaves: [SpecialSearchLeaf] = [
     },
 ]
 
+private let activeSkillConditionalLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > Skill use is conditional > Enable require HP range", label: "Enable require HP range", groupPath: ["Active Skill", "Skill use is conditional"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [225], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Skill use is conditional > Enable require Dungeon Stage", label: "Enable require Dungeon Stage", groupPath: ["Active Skill", "Skill use is conditional"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [234], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Skill use is conditional > Delay active after skill use", label: "Delay active after skill use", groupPath: ["Active Skill", "Skill use is conditional"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [248], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Skill use is conditional > Enable require number of Orbs", label: "Enable require number of Orbs", groupPath: ["Active Skill", "Skill use is conditional"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [255], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Skill use is conditional > Has limit of times a skill can be used", label: "Has limit of times a skill can be used", groupPath: ["Active Skill", "Skill use is conditional"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [268], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Skill use is conditional > Enable require BUFF state", label: "Enable require BUFF state", groupPath: ["Active Skill", "Skill use is conditional"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [275], skills: ctx.skillsJA, searchRandom: true)
+    },
+]
+
+private let activeOtherLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > Other > 1 CD", label: "1 CD", groupPath: ["Active Skill", "Other"]) { card, ctx in
+        ActiveSkillEffects.hasOneCD(card, skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Other > Skill Loop less than 4 card", label: "Skill Loop less than 4 card", groupPath: ["Active Skill", "Other"]) { card, ctx in
+        ActiveSkillEffects.hasSkillLoopLessThan4(card, skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Other > Time pause", label: "Time pause", groupPath: ["Active Skill", "Other"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [5, 246, 247], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Other > Random effect active", label: "Random effect active", groupPath: ["Active Skill", "Other"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [118], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Other > Evolved active", label: "Evolved active", groupPath: ["Active Skill", "Other"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [232, 233], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Other > Not Evolved active", label: "Not Evolved active", groupPath: ["Active Skill", "Other"]) { card, ctx in
+        !SkillChainMatcher.matches(skillId: card.activeSkillId, types: [232, 233], skills: ctx.skillsJA, searchRandom: true)
+    },
+]
+
 enum SpecialSearchTree {
-    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves + activeOrbsStatesLeaves + activeBoardStatesLeaves
+    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves + activeOrbsStatesLeaves + activeBoardStatesLeaves + activeSkillConditionalLeaves + activeOtherLeaves
 }
