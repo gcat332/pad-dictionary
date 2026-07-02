@@ -33,6 +33,7 @@ struct BrowseView: View {
     @ObservedObject var dataStore: DataStore
     @StateObject private var viewModel: BrowseViewModel
     @State private var showingFilters = false
+    @State private var showingSpecialSearch = false
 
     init(dataStore: DataStore) {
         self.dataStore = dataStore
@@ -70,7 +71,19 @@ struct BrowseView: View {
             .sheet(isPresented: $showingFilters) {
                 FilterView(viewModel: viewModel)
             }
+            .sheet(isPresented: $showingSpecialSearch) {
+                SpecialSearchView(viewModel: viewModel)
+            }
             .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showingSpecialSearch = true
+                    } label: {
+                        Image(systemName: !viewModel.selectedSpecialSearchKeys.isEmpty
+                            ? "list.bullet.rectangle.fill"
+                            : "list.bullet.rectangle")
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showingFilters = true
