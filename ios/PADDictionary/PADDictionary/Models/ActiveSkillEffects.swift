@@ -205,4 +205,109 @@ enum ActiveSkillEffects {
         }
         return minCD > 1 && realCD <= 4
     }
+
+    static func boardChangeColorTypes(_ skill: Skill?) -> [Int] {
+        guard let skill else { return [] }
+        let sk = skill.params
+        if let sentinelIndex = sk.firstIndex(of: -1) {
+            return Array(sk[0..<sentinelIndex])
+        }
+        return sk
+    }
+
+    static func orbsChangeParse(_ skill: Skill) -> [(from: [Int], to: [Int])] {
+        let sk = skill.params
+        func at(_ i: Int) -> Int { sk.indices.contains(i) ? sk[i] : 0 }
+        switch skill.type {
+        case 9:
+            return [(from: [at(0)], to: [at(1)])]
+        case 20:
+            if sk.count >= 3 && at(1) == at(3) {
+                return [(from: [at(0), at(2)], to: [at(1)])]
+            } else {
+                return [(from: [at(0)], to: [at(1)]), (from: [at(2)], to: [at(3)])]
+            }
+        case 154:
+            let from = at(0) != 0 ? at(0) : 1
+            let to = at(1) != 0 ? at(1) : 1
+            return [(from: Bin.unflags(from), to: Bin.unflags(to))]
+        default:
+            return []
+        }
+    }
+
+    static func generateOrbsParse(_ card: Card, skills: SkillLookup) -> [(count: Int, to: Int, exclude: Int)] {
+        var out: [(count: Int, to: Int, exclude: Int)] = []
+        let matched = SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [141, 208], skills: skills, searchRandom: false)
+        for skill in matched {
+            let sk = skill.params
+            func at(_ i: Int) -> Int { sk.indices.contains(i) ? sk[i] : 0 }
+            if skill.type == 141 {
+                out.append((count: at(0), to: at(1) != 0 ? at(1) : 1, exclude: at(2)))
+            } else {
+                out.append((count: at(0), to: at(1) != 0 ? at(1) : 1, exclude: at(2)))
+                out.append((count: at(3), to: at(4) != 0 ? at(4) : 1, exclude: at(5)))
+            }
+        }
+        return out
+    }
+
+    static func shapeThisRowOk(_ line: Int, _ lineNumber: Int) -> Bool {
+        if lineNumber <= 0 { return true }
+        return line >= 0 && (line & lineNumber) == lineNumber && (line & lineNumber.notNeighbour()) == 0
+    }
+
+    static func shapeUpsideDownRowOk(_ line: Int, _ lineNumber: Int) -> Bool {
+        if lineNumber <= 0 { return true }
+        return line > 0 ? (line & lineNumber) == 0 : true
+    }
+
+    private static func shapeLineCandidates() -> [Int] {
+        var arr: [Int] = []
+        var lineNum = 0b111
+        while lineNum < 0b1000000 { arr.append(lineNum); lineNum <<= 1 }
+        return arr
+    }
+
+    static func shapeIsCross(_ sk: [Int]) -> Bool {
+        func at(_ i: Int) -> Int { sk.indices.contains(i) ? sk[i] : 0 }
+        let lineNumArr = shapeLineCandidates()
+        for ri in 1..<4 {
+            let candidates = lineNumArr.filter { shapeThisRowOk(at(ri), $0) }
+            if candidates.isEmpty { continue }
+            let filtered = candidates.filter { ln in
+                let ln2 = (ln << 1) & (ln >> 1)
+                return shapeThisRowOk(at(ri - 1), ln2)
+                    && shapeThisRowOk(at(ri + 1), ln2)
+                    && shapeUpsideDownRowOk(at(ri - 2), ln2)
+                    && shapeUpsideDownRowOk(at(ri + 2), ln2)
+            }
+            if !filtered.isEmpty { return true }
+        }
+        return false
+    }
+
+    static func shapeIsLShape(_ sk: [Int]) -> Bool {
+        func at(_ i: Int) -> Int { sk.indices.contains(i) ? sk[i] : 0 }
+        let lineNumArr = shapeLineCandidates()
+        for ri in 0..<5 {
+            let candidates = lineNumArr.filter { shapeThisRowOk(at(ri), $0) }
+            if candidates.isEmpty { continue }
+            let filtered = candidates.filter { ln in
+                let ln2 = ln & ~(ln >> 1)
+                let ln3 = ln & ~(ln << 1)
+                let up = shapeUpsideDownRowOk(at(ri + 1), ln) && (
+                    (shapeThisRowOk(at(ri - 1), ln2) && shapeThisRowOk(at(ri - 2), ln2) && shapeUpsideDownRowOk(at(ri - 3), ln2))
+                    || (shapeThisRowOk(at(ri - 1), ln3) && shapeThisRowOk(at(ri - 2), ln3) && shapeUpsideDownRowOk(at(ri - 3), ln3))
+                )
+                let down = shapeUpsideDownRowOk(at(ri - 1), ln) && (
+                    (shapeThisRowOk(at(ri + 1), ln2) && shapeThisRowOk(at(ri + 2), ln2) && shapeUpsideDownRowOk(at(ri + 3), ln2))
+                    || (shapeThisRowOk(at(ri + 1), ln3) && shapeThisRowOk(at(ri + 2), ln3) && shapeUpsideDownRowOk(at(ri + 3), ln3))
+                )
+                return up || down
+            }
+            if !filtered.isEmpty { return true }
+        }
+        return false
+    }
 }
