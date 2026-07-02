@@ -18,4 +18,13 @@ enum SkillChainMatcher {
         }
         return nil
     }
+
+    static func resolveAll(skillId: Int, types: Set<Int>, skills: SkillLookup, searchRandom: Bool = false) -> [Skill] {
+        guard let skill = skills[skillId] else { return [] }
+        if types.contains(skill.type) { return [skill] }
+        guard wrapperTypes.contains(skill.type) else { return [] }
+        if skill.type == 118 && !searchRandom { return [] }
+        let params = skill.type == 248 ? Array(skill.params.dropFirst()) : skill.params
+        return params.reversed().flatMap { resolveAll(skillId: $0, types: types, skills: skills, searchRandom: searchRandom) }
+    }
 }

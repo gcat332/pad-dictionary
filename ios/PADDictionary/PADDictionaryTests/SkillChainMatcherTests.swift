@@ -60,4 +60,19 @@ final class SkillChainMatcherTests: XCTestCase {
         let skills: SkillLookup = [1: skill(1, type: 5)]
         XCTAssertNil(SkillChainMatcher.resolve(skillId: 1, types: [236], skills: skills))
     }
+
+    func testResolveAllReturnsEveryMatchAcrossBranches() {
+        let skills: SkillLookup = [
+            1: skill(1, type: 232, params: [2, 3]),
+            2: skill(2, type: 236),
+            3: skill(3, type: 236),
+        ]
+        let all = SkillChainMatcher.resolveAll(skillId: 1, types: [236], skills: skills)
+        XCTAssertEqual(Set(all.map(\.id)), [2, 3])
+    }
+
+    func testResolveAllReturnsEmptyWhenNoMatch() {
+        let skills: SkillLookup = [1: skill(1, type: 5)]
+        XCTAssertEqual(SkillChainMatcher.resolveAll(skillId: 1, types: [236], skills: skills), [])
+    }
 }
