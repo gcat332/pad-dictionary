@@ -428,6 +428,79 @@ private let activeForEnemyLeaves: [SpecialSearchLeaf] = [
     },
 ]
 
+private let activePlayerTeamLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > For player team > Increase Damage Cap > Increase Damage Cap - Any", label: "Increase Damage Cap - Any", groupPath: ["Active Skill", "For player team", "Increase Damage Cap"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [241, 246, 247, 258, 263, 266], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > Increase Damage Cap > Increase Damage Cap - Self", label: "Increase Damage Cap - Self", groupPath: ["Active Skill", "For player team", "Increase Damage Cap"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [241, 246, 247, 258, 266], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        switch skill.type {
+        case 258: return (skill.params.indices.contains(2) ? skill.params[2] : 0) & 0b1 != 0
+        case 266: return (skill.params.indices.contains(2) ? skill.params[2] : 0) & 0b100 != 0
+        default: return true
+        }
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > Increase Damage Cap > Increase Damage Cap - Leader", label: "Increase Damage Cap - Leader", groupPath: ["Active Skill", "For player team", "Increase Damage Cap"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [258], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        return (skill.params.indices.contains(2) ? skill.params[2] : 0) & 0b110 != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > Increase Damage Cap > Increase Damage Cap - Sub", label: "Increase Damage Cap - Sub", groupPath: ["Active Skill", "For player team", "Increase Damage Cap"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [258], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        return (skill.params.indices.contains(2) ? skill.params[2] : 0) & 0b1000 != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > Increase Damage Cap > Increase Damage Cap - Neighbor", label: "Increase Damage Cap - Neighbor", groupPath: ["Active Skill", "For player team", "Increase Damage Cap"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [266], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        return (skill.params.indices.contains(2) ? skill.params[2] : 0) & 0b11 != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > Increase Damage Cap > Increase Damage Cap - Attr./Types", label: "Increase Damage Cap - Attr./Types", groupPath: ["Active Skill", "For player team", "Increase Damage Cap"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [263], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > Card slot ATK rate change > Card slot ATK rate change - Any", label: "Card slot ATK rate change - Any", groupPath: ["Active Skill", "For player team", "Card slot ATK rate change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [230, 269], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > Card slot ATK rate change > Card slot ATK rate change - Self", label: "Card slot ATK rate change - Self", groupPath: ["Active Skill", "For player team", "Card slot ATK rate change"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [230, 269], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        switch skill.type {
+        case 230: return (skill.params.indices.contains(1) ? skill.params[1] : 0) & 0b1 != 0
+        case 269: return (skill.params.indices.contains(1) ? skill.params[1] : 0) & 0b100 != 0
+        default: return true
+        }
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > Card slot ATK rate change > Card slot ATK rate change - Leader", label: "Card slot ATK rate change - Leader", groupPath: ["Active Skill", "For player team", "Card slot ATK rate change"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [230], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        return (skill.params.indices.contains(1) ? skill.params[1] : 0) & 0b110 != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > Card slot ATK rate change > Card slot ATK rate change - Sub", label: "Card slot ATK rate change - Sub", groupPath: ["Active Skill", "For player team", "Card slot ATK rate change"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [230], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        return (skill.params.indices.contains(1) ? skill.params[1] : 0) & 0b1000 != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > Card slot ATK rate change > Card slot ATK rate change - Neighbor", label: "Card slot ATK rate change - Neighbor", groupPath: ["Active Skill", "For player team", "Card slot ATK rate change"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [269], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        return (skill.params.indices.contains(1) ? skill.params[1] : 0) & 0b11 != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > ↑Increase skills charge", label: "↑Increase skills charge", groupPath: ["Active Skill", "For player team"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [146], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > Change Leader", label: "Change Leader", groupPath: ["Active Skill", "For player team"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [93, 227], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > Change member's Attr", label: "Change member's Attr", groupPath: ["Active Skill", "For player team"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [142, 274], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > ↓Reduce skills charge", label: "↓Reduce skills charge", groupPath: ["Active Skill", "For player team"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [218], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > Bind team active skill", label: "Bind team active skill", groupPath: ["Active Skill", "For player team"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [214], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > Bind card self", label: "Bind card self", groupPath: ["Active Skill", "For player team"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [267], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > For player team > Remove card self's assist", label: "Remove card self's assist", groupPath: ["Active Skill", "For player team"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [250], skills: ctx.skillsJA, searchRandom: true)
+    },
+]
+
 enum SpecialSearchTree {
-    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves
+    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves
 }

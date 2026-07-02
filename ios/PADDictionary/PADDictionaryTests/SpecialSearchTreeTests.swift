@@ -102,7 +102,7 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testOthersSearchLeafCount() {
         let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
         XCTAssertEqual(othersLeaves.count, 23)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 119)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 137)
     }
 
     private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
@@ -179,7 +179,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let reduceShield = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Reduce Shield"] }
         XCTAssertEqual(hpScale.count, 6)
         XCTAssertEqual(reduceShield.count, 9)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 119)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 137)
     }
 
     private func makeCardWithActiveSkill(_ activeSkillId: Int) -> Card {
@@ -239,6 +239,35 @@ final class SpecialSearchTreeTests: XCTestCase {
         let forEnemy = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "For Enemy"] }
         XCTAssertEqual(buff.count, 9)
         XCTAssertEqual(forEnemy.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 119)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 137)
+    }
+
+    func testIncreaseDamageCapLeaderUsesBitmask() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 258, maxLevel: 1, initialCooldown: 0, params: [0, 0, 0b110])]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Active Skill > For player team > Increase Damage Cap > Increase Damage Cap - Leader").matches(makeCardWithActiveSkill(10), ctx))
+        XCTAssertFalse(leaf("Active Skill > For player team > Increase Damage Cap > Increase Damage Cap - Sub").matches(makeCardWithActiveSkill(10), ctx))
+    }
+
+    func testIncreaseDamageCapSelfSwitchesOnType() {
+        let skills: SkillLookup = [
+            10: Skill(id: 10, name: "S", description: "", type: 258, maxLevel: 1, initialCooldown: 0, params: [0, 0, 0b1]),
+            11: Skill(id: 11, name: "S", description: "", type: 241, maxLevel: 1, initialCooldown: 0, params: []),
+        ]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        let leafObj = leaf("Active Skill > For player team > Increase Damage Cap > Increase Damage Cap - Self")
+        XCTAssertTrue(leafObj.matches(makeCardWithActiveSkill(10), ctx))
+        XCTAssertTrue(leafObj.matches(makeCardWithActiveSkill(11), ctx))
+    }
+
+    func testBindTeamActiveSkill() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 214, maxLevel: 1, initialCooldown: 0, params: [])]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Active Skill > For player team > Bind team active skill").matches(makeCardWithActiveSkill(10), ctx))
+    }
+
+    func testForPlayerTeamLeafCount() {
+        let count = SpecialSearchTree.leaves.filter { $0.groupPath.starts(with: ["Active Skill", "For player team"]) }.count
+        XCTAssertEqual(count, 18)
     }
 }
