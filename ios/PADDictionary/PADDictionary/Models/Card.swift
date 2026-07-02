@@ -48,6 +48,8 @@ struct Card: Codable, Identifiable, Equatable {
     let isUltEvo: Bool
     let evoBaseId: Int
     let syncAwakening: Int?
+    let is8Latent: Bool?
+    let searchFlags: [Int]?
 
     var displayName: String { otLangName?.en ?? name }
 }
