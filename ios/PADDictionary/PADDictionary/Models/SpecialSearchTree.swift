@@ -501,6 +501,62 @@ private let activePlayerTeamLeaves: [SpecialSearchLeaf] = [
     },
 ]
 
+private let activeOrbsStatesLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > Orbs States Change > Unlock", label: "Unlock", groupPath: ["Active Skill", "Orbs States Change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [172], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs States Change > Lock(Any color)", label: "Lock(Any color)", groupPath: ["Active Skill", "Orbs States Change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [152], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs States Change > Lock(≥6 color)", label: "Lock(≥6 color)", groupPath: ["Active Skill", "Orbs States Change"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [152], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let param0 = skill.params.indices.contains(0) ? skill.params[0] : 0
+        return (param0 & 0b111111) == 0b111111
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs States Change > Enhanced Orbs", label: "Enhanced Orbs", groupPath: ["Active Skill", "Orbs States Change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [52, 91, 140], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs States Change > Add Combo Drop", label: "Add Combo Drop", groupPath: ["Active Skill", "Orbs States Change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [190], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs States Change > Add Nail", label: "Add Nail", groupPath: ["Active Skill", "Orbs States Change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [262], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs States Change > Bind self matchable", label: "Bind self matchable", groupPath: ["Active Skill", "Orbs States Change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [215], skills: ctx.skillsJA, searchRandom: true)
+    },
+]
+
+private let activeBoardStatesLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > Board States Change > Replaces all Orbs", label: "Replaces all Orbs", groupPath: ["Active Skill", "Board States Change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [10], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Board States Change > Destory Orbs", label: "Destory Orbs", groupPath: ["Active Skill", "Board States Change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [277], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Board States Change > No Skyfall", label: "No Skyfall", groupPath: ["Active Skill", "Board States Change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [184], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Board States Change > Creates Roulette Orb", label: "Creates Roulette Orb", groupPath: ["Active Skill", "Board States Change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [207, 249], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Board States Change > Creates Cloud", label: "Creates Cloud", groupPath: ["Active Skill", "Board States Change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [238], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Board States Change > Creates Seal", label: "Creates Seal", groupPath: ["Active Skill", "Board States Change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [239], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Board States Change > Creates Deep Dark Orb", label: "Creates Deep Dark Orb", groupPath: ["Active Skill", "Board States Change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [251], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Board States Change > Change Board Size", label: "Change Board Size", groupPath: ["Active Skill", "Board States Change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [244], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Board States Change > Fixed starting position", label: "Fixed starting position", groupPath: ["Active Skill", "Board States Change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [273], skills: ctx.skillsJA, searchRandom: true)
+    },
+]
+
 enum SpecialSearchTree {
-    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves
+    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves + activeOrbsStatesLeaves + activeBoardStatesLeaves
 }
