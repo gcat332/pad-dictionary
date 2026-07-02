@@ -7,6 +7,8 @@ final class BrowseViewModel: ObservableObject {
     @Published var sortIndex: Int = 0
     @Published var isDescending: Bool = true
     @Published var filterState = FilterState()
+    @Published var selectedSpecialSearchKeys: Set<String> = []
+    @Published var specialSearchMode: MatchMode = .and
 
     let dataStore: DataStore
 
@@ -19,8 +21,10 @@ final class BrowseViewModel: ObservableObject {
             ? dataStore.cards
             : dataStore.cards.filter { String($0.id).contains(searchText) }
         let filtered = searched.filter { filterState.matches($0) }
+        let context = SpecialSearchContext(cardsById: dataStore.cardsById, skillsJA: dataStore.skillLookup)
+        let specialFiltered = SpecialSearchEngine.filter(filtered, selectedKeys: selectedSpecialSearchKeys, mode: specialSearchMode, context: context)
         let sort = CardSort.all[sortIndex]
-        let ascending = filtered.sorted { sort.compare($0, $1, dataStore.skillLookup) }
+        let ascending = specialFiltered.sorted { sort.compare($0, $1, dataStore.skillLookup) }
         return isDescending ? ascending.reversed() : ascending
     }
 }
