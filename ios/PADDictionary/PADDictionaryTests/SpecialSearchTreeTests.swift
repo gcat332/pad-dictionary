@@ -102,7 +102,7 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testOthersSearchLeafCount() {
         let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
         XCTAssertEqual(othersLeaves.count, 23)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 251)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 260)
     }
 
     private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
@@ -139,8 +139,8 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testMatchingStyleAndRestrictionLeafCounts() {
         let matching = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Matching Style"] }
         let restriction = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Restriction/Bind"] }
-        XCTAssertEqual(matching.count, 7)
-        XCTAssertEqual(restriction.count, 9)
+        XCTAssertEqual(matching.count, 12)
+        XCTAssertEqual(restriction.count, 13)
     }
 
     func testReduceDamageWhenRcvChecksParam2() {
@@ -179,7 +179,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let reduceShield = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Reduce Shield"] }
         XCTAssertEqual(hpScale.count, 6)
         XCTAssertEqual(reduceShield.count, 9)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 251)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 260)
     }
 
     private func makeCardWithActiveSkill(_ activeSkillId: Int) -> Card {
@@ -239,7 +239,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let forEnemy = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "For Enemy"] }
         XCTAssertEqual(buff.count, 9)
         XCTAssertEqual(forEnemy.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 251)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 260)
     }
 
     func testIncreaseDamageCapLeaderUsesBitmask() {
@@ -322,7 +322,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let other = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "Other"] }
         XCTAssertEqual(conditional.count, 6)
         XCTAssertEqual(other.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 251)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 260)
     }
 
     func testOrbsDropLeaves() {
@@ -471,5 +471,51 @@ final class SpecialSearchTreeTests: XCTestCase {
         let ctx = SpecialSearchContext(cardsById: [:], skillsJA: [:])
         XCTAssertTrue(leaf("Awakenings > 3 same Killer, or 2 with latent").matches(threeKillers, ctx))
         XCTAssertFalse(leaf("Awakenings > 3 same Killer, or 2 with latent").matches(makeCard(), ctx))
+    }
+
+    func testLeaderSkillFlagLeaves() {
+        // real example: card 290, searchFlags [35651593, 0] — bits 0 (Multiple Att.) and 3 (Same Attr Combo) set
+        let multiAttrCard = Card(id: 290, name: "Card 290", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: 0, leaderSkillId: 0, evoRootId: 288, awakenings: [], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: false, evoBaseId: 289, syncAwakening: nil, is8Latent: nil, searchFlags: [35651593, 0])
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: [:])
+        XCTAssertTrue(leaf("Leader Skills > Matching Style > Multiple Att.").matches(multiAttrCard, ctx))
+        XCTAssertTrue(leaf("Leader Skills > Matching Style > Same Attribute Combo Matching").matches(multiAttrCard, ctx))
+        XCTAssertFalse(leaf("Leader Skills > Matching Style > Orb Matching").matches(multiAttrCard, ctx))
+        XCTAssertFalse(leaf("Leader Skills > Matching Style > Combo Matching").matches(multiAttrCard, ctx))
+        XCTAssertFalse(leaf("Leader Skills > Matching Style > L Shape Matching").matches(multiAttrCard, ctx))
+        XCTAssertFalse(leaf("Leader Skills > Matching Style > Multiple Att.").matches(makeCard(), ctx))
+
+        // real example: card 187, searchFlags [8192, 0] — bit 13 (HP Percentage Activation)
+        let hpActivationCard = Card(id: 187, name: "Card 187", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: 0, leaderSkillId: 0, evoRootId: 187, awakenings: [], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: false, evoBaseId: 0, syncAwakening: nil, is8Latent: nil, searchFlags: [8192, 0])
+        XCTAssertTrue(leaf("Leader Skills > Restriction/Bind > HP Percentage Activation").matches(hpActivationCard, ctx))
+        XCTAssertFalse(leaf("Leader Skills > Restriction/Bind > Attribute Enchantment").matches(hpActivationCard, ctx))
+        XCTAssertFalse(leaf("Leader Skills > Restriction/Bind > Type Enchantment").matches(hpActivationCard, ctx))
+        XCTAssertFalse(leaf("Leader Skills > Restriction/Bind > Skill Use Activation").matches(hpActivationCard, ctx))
+
+        // real example: card 221, searchFlags [1024, 0] — bit 10 (Type Enchantment)
+        let typeEnchantCard = Card(id: 221, name: "Card 221", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: 0, leaderSkillId: 0, evoRootId: 221, awakenings: [], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: false, evoBaseId: 0, syncAwakening: nil, is8Latent: nil, searchFlags: [1024, 0])
+        XCTAssertTrue(leaf("Leader Skills > Restriction/Bind > Type Enchantment").matches(typeEnchantCard, ctx))
+
+        // real example: card 700, searchFlags [17408, 0] — bit 14 (Skill Use Activation) is also set alongside bit 13
+        let skillUseCard = Card(id: 700, name: "Card 700", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: 0, leaderSkillId: 0, evoRootId: 699, awakenings: [], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: false, evoBaseId: 699, syncAwakening: nil, is8Latent: nil, searchFlags: [17408, 0])
+        XCTAssertTrue(leaf("Leader Skills > Restriction/Bind > Skill Use Activation").matches(skillUseCard, ctx))
+
+        // real example: card 441, searchFlags [4, 0] — bit 2 (Combo Matching)
+        let comboCard = Card(id: 441, name: "Card 441", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: 0, leaderSkillId: 0, evoRootId: 441, awakenings: [], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: false, evoBaseId: 0, syncAwakening: nil, is8Latent: nil, searchFlags: [4, 0])
+        XCTAssertTrue(leaf("Leader Skills > Matching Style > Combo Matching").matches(comboCard, ctx))
+
+        // real example: card 451, searchFlags [33554946, 0] — bit 1 (Orb Matching)
+        let orbMatchCard = Card(id: 451, name: "Card 451", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: 0, leaderSkillId: 0, evoRootId: 451, awakenings: [], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: false, evoBaseId: 0, syncAwakening: nil, is8Latent: nil, searchFlags: [33554946, 0])
+        XCTAssertTrue(leaf("Leader Skills > Matching Style > Orb Matching").matches(orbMatchCard, ctx))
+
+        // real example: card 2170, searchFlags [1040, 0] — bit 4 (L Shape Matching)
+        let lShapeCard = Card(id: 2170, name: "Card 2170", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: 0, leaderSkillId: 0, evoRootId: 2169, awakenings: [], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: false, evoBaseId: 2169, syncAwakening: nil, is8Latent: nil, searchFlags: [1040, 0])
+        XCTAssertTrue(leaf("Leader Skills > Matching Style > L Shape Matching").matches(lShapeCard, ctx))
+
+        // real example: card 1, searchFlags [1049088, 0] — bit 9 (Attribute Enchantment) among others
+        let attrEnchantCard = Card(id: 1, name: "Card 1", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: 0, leaderSkillId: 0, evoRootId: 1929, awakenings: [21, 21], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: false, evoBaseId: 1929, syncAwakening: nil, is8Latent: nil, searchFlags: [1049088, 0])
+        XCTAssertTrue(leaf("Leader Skills > Restriction/Bind > Attribute Enchantment").matches(attrEnchantCard, ctx))
+
+        // nil searchFlags never matches any bit
+        XCTAssertFalse(leaf("Leader Skills > Matching Style > Multiple Att.").matches(makeCard(), ctx))
     }
 }

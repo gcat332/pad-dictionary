@@ -12,6 +12,11 @@ struct SpecialSearchLeaf: Identifiable {
     let matches: (Card, SpecialSearchContext) -> Bool
 }
 
+private func leaderSkillFlag(_ card: Card, bit: Int) -> Bool {
+    guard let flags = card.searchFlags, flags.indices.contains(0) else { return false }
+    return flags[0] & (1 << bit) != 0
+}
+
 private let evoTypeLeaves: [SpecialSearchLeaf] = [
     SpecialSearchLeaf(id: "Evo type > Transform > No Transform", label: "No Transform", groupPath: ["Evo type", "Transform"]) { card, _ in
         card.henshinFrom == nil && card.henshinTo == nil
@@ -150,6 +155,21 @@ private let othersSearchLeaves: [SpecialSearchLeaf] = [
 ]
 
 private let leaderMatchingStyleLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Leader Skills > Matching Style > Multiple Att.", label: "Multiple Att.", groupPath: ["Leader Skills", "Matching Style"]) { card, _ in
+        leaderSkillFlag(card, bit: 0)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Matching Style > Orb Matching", label: "Orb Matching", groupPath: ["Leader Skills", "Matching Style"]) { card, _ in
+        leaderSkillFlag(card, bit: 1)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Matching Style > Combo Matching", label: "Combo Matching", groupPath: ["Leader Skills", "Matching Style"]) { card, _ in
+        leaderSkillFlag(card, bit: 2)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Matching Style > Same Attribute Combo Matching", label: "Same Attribute Combo Matching", groupPath: ["Leader Skills", "Matching Style"]) { card, _ in
+        leaderSkillFlag(card, bit: 3)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Matching Style > L Shape Matching", label: "L Shape Matching", groupPath: ["Leader Skills", "Matching Style"]) { card, _ in
+        leaderSkillFlag(card, bit: 4)
+    },
     SpecialSearchLeaf(id: "Leader Skills > Matching Style > 5 Orbs including enhanced Matching", label: "5 Orbs including enhanced Matching", groupPath: ["Leader Skills", "Matching Style"]) { card, ctx in
         SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [150], skills: ctx.skillsJA)
     },
@@ -177,6 +197,18 @@ private let leaderMatchingStyleLeaves: [SpecialSearchLeaf] = [
 ]
 
 private let leaderRestrictionLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Leader Skills > Restriction/Bind > Attribute Enchantment", label: "Attribute Enchantment", groupPath: ["Leader Skills", "Restriction/Bind"]) { card, _ in
+        leaderSkillFlag(card, bit: 9)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Restriction/Bind > Type Enchantment", label: "Type Enchantment", groupPath: ["Leader Skills", "Restriction/Bind"]) { card, _ in
+        leaderSkillFlag(card, bit: 10)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Restriction/Bind > HP Percentage Activation", label: "HP Percentage Activation", groupPath: ["Leader Skills", "Restriction/Bind"]) { card, _ in
+        leaderSkillFlag(card, bit: 13)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Restriction/Bind > Skill Use Activation", label: "Skill Use Activation", groupPath: ["Leader Skills", "Restriction/Bind"]) { card, _ in
+        leaderSkillFlag(card, bit: 14)
+    },
     SpecialSearchLeaf(id: "Leader Skills > Restriction/Bind > [7×6 board]", label: "[7×6 board]", groupPath: ["Leader Skills", "Restriction/Bind"]) { card, ctx in
         SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [162, 186], skills: ctx.skillsJA)
     },
