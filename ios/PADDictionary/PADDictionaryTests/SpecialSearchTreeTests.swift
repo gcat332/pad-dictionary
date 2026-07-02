@@ -74,8 +74,8 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testEvoTypeAndAwakeningsLeafCounts() {
         let evoLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Evo type" }
         let awakeningLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Awakenings" }
-        XCTAssertEqual(evoLeaves.count, 9)
-        XCTAssertEqual(awakeningLeaves.count, 11)
+        XCTAssertEqual(evoLeaves.count, 10)
+        XCTAssertEqual(awakeningLeaves.count, 12)
     }
 
     func testWillGetOrbsSkinVsBgm() {
@@ -102,7 +102,7 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testOthersSearchLeafCount() {
         let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
         XCTAssertEqual(othersLeaves.count, 23)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 249)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 251)
     }
 
     private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
@@ -179,7 +179,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let reduceShield = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Reduce Shield"] }
         XCTAssertEqual(hpScale.count, 6)
         XCTAssertEqual(reduceShield.count, 9)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 249)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 251)
     }
 
     private func makeCardWithActiveSkill(_ activeSkillId: Int) -> Card {
@@ -239,7 +239,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let forEnemy = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "For Enemy"] }
         XCTAssertEqual(buff.count, 9)
         XCTAssertEqual(forEnemy.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 249)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 251)
     }
 
     func testIncreaseDamageCapLeaderUsesBitmask() {
@@ -322,7 +322,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let other = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "Other"] }
         XCTAssertEqual(conditional.count, 6)
         XCTAssertEqual(other.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 249)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 251)
     }
 
     func testOrbsDropLeaves() {
@@ -453,5 +453,23 @@ final class SpecialSearchTreeTests: XCTestCase {
         XCTAssertTrue(leaf("Active Skill > Damage Enemy - Numerical damage > Target > Target - Designate Attr").matches(makeCardWithActiveSkill(8), ctx))
         XCTAssertTrue(leaf("Active Skill > Damage Enemy - Numerical damage > Damage > Damage - By remaining HP").matches(makeCardWithActiveSkill(5), ctx))
         XCTAssertTrue(leaf("Active Skill > Damage Enemy - Numerical damage > Damage > Damage - Team attrs ATK").matches(makeCardWithActiveSkill(7), ctx))
+    }
+
+    func testReincarnationLeaf() {
+        let card = makeCard(id: 123, isUltEvo: false, evoBaseId: 122)
+        // (existing makeCard doesn't take is8Latent/awakenings for evo-base wiring directly;
+        // build the card manually here to set is8Latent and a matching cardsById)
+        let reincarnated = Card(id: 123, name: "Card 123", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: 0, leaderSkillId: 0, evoRootId: 122, awakenings: [52, 12, 12], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: false, evoBaseId: 122, syncAwakening: nil, is8Latent: true, searchFlags: nil)
+        let ctx = SpecialSearchContext(cardsById: [123: reincarnated], skillsJA: [:])
+        XCTAssertTrue(leaf("Evo type > Reincarnation/Super Rein..").matches(reincarnated, ctx))
+        XCTAssertFalse(leaf("Evo type > Reincarnation/Super Rein..").matches(card, ctx))
+    }
+
+    func testThreeSameKillerOrTwoWithLatentLeaf() {
+        // real example: card 396 — 4 killer-32(god) awakenings among its 9, is8Latent true, isUltEvo true
+        let threeKillers = Card(id: 396, name: "Card 396", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: 0, leaderSkillId: 0, evoRootId: 130, awakenings: [32, 32, 32], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: true, evoBaseId: 131, syncAwakening: nil, is8Latent: true, searchFlags: nil)
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: [:])
+        XCTAssertTrue(leaf("Awakenings > 3 same Killer, or 2 with latent").matches(threeKillers, ctx))
+        XCTAssertFalse(leaf("Awakenings > 3 same Killer, or 2 with latent").matches(makeCard(), ctx))
     }
 }

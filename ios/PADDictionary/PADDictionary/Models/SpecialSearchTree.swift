@@ -40,6 +40,9 @@ private let evoTypeLeaves: [SpecialSearchLeaf] = [
     SpecialSearchLeaf(id: "Evo type > Ordeal Evo", label: "Ordeal Evo", groupPath: ["Evo type"]) { card, _ in
         card.evoMaterials.first == 0xFFFF
     },
+    SpecialSearchLeaf(id: "Evo type > Reincarnation/Super Rein..", label: "Reincarnation/Super Rein..", groupPath: ["Evo type"]) { card, ctx in
+        isReincarnated(card, cardsById: ctx.cardsById)
+    },
 ]
 
 private let awakeningLeaves: [SpecialSearchLeaf] = [
@@ -69,6 +72,16 @@ private let awakeningLeaves: [SpecialSearchLeaf] = [
     },
     SpecialSearchLeaf(id: "Awakenings > Have Sync Awoken", label: "Have Sync Awoken", groupPath: ["Awakenings"]) { card, _ in
         (card.syncAwakening ?? 0) != 0
+    },
+    SpecialSearchLeaf(id: "Awakenings > 3 same Killer, or 2 with latent", label: "3 same Killer, or 2 with latent", groupPath: ["Awakenings"]) { card, _ in
+        func count(_ awoken: Int) -> Int {
+            card.awakenings.filter { $0 == awoken }.count + (card.superAwakenings.contains(awoken) ? 1 : 0)
+        }
+        guard let hasAwokenKiller = TypeKiller.all.first(where: { count($0.awoken) >= 2 }) else { return false }
+        if count(hasAwokenKiller.awoken) >= 3 { return true }
+        return card.types.filter { $0 >= 0 }
+            .compactMap { TypeKiller.entry(forType: $0)?.allowableLatent }
+            .contains { $0.contains(hasAwokenKiller.latent) }
     },
     SpecialSearchLeaf(id: "Awakenings > Full Awakening (9 / 8 for weapon)", label: "Full Awakening (9 / 8 for weapon)", groupPath: ["Awakenings"]) { card, _ in
         card.awakenings.count >= (card.awakenings.contains(49) ? 8 : 9)
