@@ -102,7 +102,7 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testOthersSearchLeafCount() {
         let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
         XCTAssertEqual(othersLeaves.count, 23)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 165)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 181)
     }
 
     private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
@@ -179,7 +179,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let reduceShield = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Reduce Shield"] }
         XCTAssertEqual(hpScale.count, 6)
         XCTAssertEqual(reduceShield.count, 9)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 165)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 181)
     }
 
     private func makeCardWithActiveSkill(_ activeSkillId: Int) -> Card {
@@ -239,7 +239,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let forEnemy = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "For Enemy"] }
         XCTAssertEqual(buff.count, 9)
         XCTAssertEqual(forEnemy.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 165)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 181)
     }
 
     func testIncreaseDamageCapLeaderUsesBitmask() {
@@ -322,6 +322,35 @@ final class SpecialSearchTreeTests: XCTestCase {
         let other = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "Other"] }
         XCTAssertEqual(conditional.count, 6)
         XCTAssertEqual(other.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 165)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 181)
+    }
+
+    func testOrbsDropLeaves() {
+        let skills: SkillLookup = [
+            1: Skill(id: 1, name: "S", description: "", type: 180, maxLevel: 1, initialCooldown: 0, params: []),
+            2: Skill(id: 2, name: "S", description: "", type: 205, maxLevel: 1, initialCooldown: 0, params: [0b11_1111]),
+            3: Skill(id: 3, name: "S", description: "", type: 205, maxLevel: 1, initialCooldown: 0, params: [0b1]),
+            4: Skill(id: 4, name: "S", description: "", type: 126, maxLevel: 1, initialCooldown: 0, params: [0b1, 99, 0, 100]),
+            5: Skill(id: 5, name: "S", description: "", type: 126, maxLevel: 1, initialCooldown: 0, params: [0b10, 1, 0, 50]),
+            6: Skill(id: 6, name: "S", description: "", type: 226, maxLevel: 1, initialCooldown: 0, params: []),
+            7: Skill(id: 7, name: "S", description: "", type: 243, maxLevel: 1, initialCooldown: 0, params: []),
+            8: Skill(id: 8, name: "S", description: "", type: 253, maxLevel: 1, initialCooldown: 0, params: []),
+        ]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Active Skill > Orbs Drop > Drop Enhanced Orbs").matches(makeCardWithActiveSkill(1), ctx))
+        XCTAssertTrue(leaf("Active Skill > Orbs Drop > Drop locked orbs(any color)").matches(makeCardWithActiveSkill(2), ctx))
+        XCTAssertTrue(leaf("Active Skill > Orbs Drop > Drop locked orbs(≥6 color)").matches(makeCardWithActiveSkill(2), ctx))
+        XCTAssertFalse(leaf("Active Skill > Orbs Drop > Drop locked orbs(≥6 color)").matches(makeCardWithActiveSkill(3), ctx))
+        XCTAssertTrue(leaf("Active Skill > Orbs Drop > Drop rate increases > Drop rate increases").matches(makeCardWithActiveSkill(4), ctx))
+        XCTAssertTrue(leaf("Active Skill > Orbs Drop > Drop rate increases > Drop rate - Attr. - Fire").matches(makeCardWithActiveSkill(4), ctx))
+        XCTAssertFalse(leaf("Active Skill > Orbs Drop > Drop rate increases > Drop rate - Attr. - Fire").matches(makeCardWithActiveSkill(5), ctx))
+        XCTAssertTrue(leaf("Active Skill > Orbs Drop > Drop rate increases > Drop rate - Attr. - Water").matches(makeCardWithActiveSkill(5), ctx))
+        XCTAssertTrue(leaf("Active Skill > Orbs Drop > Drop rate increases > Drop rate - 99 turns").matches(makeCardWithActiveSkill(4), ctx))
+        XCTAssertFalse(leaf("Active Skill > Orbs Drop > Drop rate increases > Drop rate - 99 turns").matches(makeCardWithActiveSkill(5), ctx))
+        XCTAssertTrue(leaf("Active Skill > Orbs Drop > Drop rate increases > Drop rate - 100% rate").matches(makeCardWithActiveSkill(4), ctx))
+        XCTAssertFalse(leaf("Active Skill > Orbs Drop > Drop rate increases > Drop rate - 100% rate").matches(makeCardWithActiveSkill(5), ctx))
+        XCTAssertTrue(leaf("Active Skill > Orbs Drop > Drop Nail Orbs").matches(makeCardWithActiveSkill(6), ctx))
+        XCTAssertTrue(leaf("Active Skill > Orbs Drop > Drop Thorn Orbs").matches(makeCardWithActiveSkill(7), ctx))
+        XCTAssertTrue(leaf("Active Skill > Orbs Drop > Prediction of falling").matches(makeCardWithActiveSkill(8), ctx))
     }
 }

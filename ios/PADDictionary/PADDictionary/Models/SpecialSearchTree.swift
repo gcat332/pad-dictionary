@@ -599,6 +599,77 @@ private let activeOtherLeaves: [SpecialSearchLeaf] = [
     },
 ]
 
+private let activeOrbsDropLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Drop Enhanced Orbs", label: "Drop Enhanced Orbs", groupPath: ["Active Skill", "Orbs Drop"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [180], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Drop locked orbs(any color)", label: "Drop locked orbs(any color)", groupPath: ["Active Skill", "Orbs Drop"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [205], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Drop locked orbs(≥6 color)", label: "Drop locked orbs(≥6 color)", groupPath: ["Active Skill", "Orbs Drop"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [205], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let p0 = skill.params.indices.contains(0) ? skill.params[0] : 0
+        return (p0 & 0b11_1111) == 0b11_1111
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Drop rate increases > Drop rate increases", label: "Drop rate increases", groupPath: ["Active Skill", "Orbs Drop", "Drop rate increases"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [126], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Drop rate increases > Drop rate - Attr. - Fire", label: "Drop rate - Attr. - Fire", groupPath: ["Active Skill", "Orbs Drop", "Drop rate increases"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [126], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let p0 = skill.params.indices.contains(0) ? skill.params[0] : 0
+        return p0 & 0b1 != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Drop rate increases > Drop rate - Attr. - Water", label: "Drop rate - Attr. - Water", groupPath: ["Active Skill", "Orbs Drop", "Drop rate increases"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [126], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let p0 = skill.params.indices.contains(0) ? skill.params[0] : 0
+        return p0 & 0b10 != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Drop rate increases > Drop rate - Attr. - Wood", label: "Drop rate - Attr. - Wood", groupPath: ["Active Skill", "Orbs Drop", "Drop rate increases"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [126], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let p0 = skill.params.indices.contains(0) ? skill.params[0] : 0
+        return p0 & 0b100 != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Drop rate increases > Drop rate - Attr. - Light", label: "Drop rate - Attr. - Light", groupPath: ["Active Skill", "Orbs Drop", "Drop rate increases"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [126], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let p0 = skill.params.indices.contains(0) ? skill.params[0] : 0
+        return p0 & 0b1000 != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Drop rate increases > Drop rate - Attr. - Dark", label: "Drop rate - Attr. - Dark", groupPath: ["Active Skill", "Orbs Drop", "Drop rate increases"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [126], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let p0 = skill.params.indices.contains(0) ? skill.params[0] : 0
+        return p0 & 0b1_0000 != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Drop rate increases > Drop rate - Attr. - Heart", label: "Drop rate - Attr. - Heart", groupPath: ["Active Skill", "Orbs Drop", "Drop rate increases"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [126], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let p0 = skill.params.indices.contains(0) ? skill.params[0] : 0
+        return p0 & 0b10_0000 != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Drop rate increases > Drop rate - Attr. - Jammers/Poison", label: "Drop rate - Attr. - Jammers/Poison", groupPath: ["Active Skill", "Orbs Drop", "Drop rate increases"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [126], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let p0 = skill.params.indices.contains(0) ? skill.params[0] : 0
+        return p0 & 0b11_1100_0000 != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Drop rate increases > Drop rate - 99 turns", label: "Drop rate - 99 turns", groupPath: ["Active Skill", "Orbs Drop", "Drop rate increases"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [126], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let p1 = skill.params.indices.contains(1) ? skill.params[1] : 0
+        return p1 >= 99
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Drop rate increases > Drop rate - 100% rate", label: "Drop rate - 100% rate", groupPath: ["Active Skill", "Orbs Drop", "Drop rate increases"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [126], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let p3 = skill.params.indices.contains(3) ? skill.params[3] : 0
+        return p3 == 100
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Drop Nail Orbs", label: "Drop Nail Orbs", groupPath: ["Active Skill", "Orbs Drop"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [226], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Drop Thorn Orbs", label: "Drop Thorn Orbs", groupPath: ["Active Skill", "Orbs Drop"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [243], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Orbs Drop > Prediction of falling", label: "Prediction of falling", groupPath: ["Active Skill", "Orbs Drop"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [253], skills: ctx.skillsJA, searchRandom: true)
+    },
+]
+
 enum SpecialSearchTree {
-    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves + activeOrbsStatesLeaves + activeBoardStatesLeaves + activeSkillConditionalLeaves + activeOtherLeaves
+    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves + activeOrbsStatesLeaves + activeBoardStatesLeaves + activeSkillConditionalLeaves + activeOtherLeaves + activeOrbsDropLeaves
 }
