@@ -102,7 +102,7 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testOthersSearchLeafCount() {
         let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
         XCTAssertEqual(othersLeaves.count, 23)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 59)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 75)
     }
 
     private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
@@ -141,6 +141,24 @@ final class SpecialSearchTreeTests: XCTestCase {
         let restriction = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Restriction/Bind"] }
         XCTAssertEqual(matching.count, 7)
         XCTAssertEqual(restriction.count, 9)
+    }
+
+    func testReduceDamageWhenRcvChecksParam2() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 198, maxLevel: 1, initialCooldown: 0, params: [0, 0, 50, 0])]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Leader Skills > Extra Effects > Reduce damage when rcv").matches(makeCardWithLeaderSkill(10), ctx))
+        XCTAssertFalse(leaf("Leader Skills > Extra Effects > Recover Awkn Skill bind when rcv").matches(makeCardWithLeaderSkill(10), ctx))
+    }
+
+    func testCounterattack() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 41, maxLevel: 1, initialCooldown: 0, params: [])]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Leader Skills > Extra Effects > Counterattack").matches(makeCardWithLeaderSkill(10), ctx))
+    }
+
+    func testExtraEffectsLeafCount() {
+        let extra = SpecialSearchTree.leaves.filter { $0.groupPath.starts(with: ["Leader Skills", "Extra Effects"]) }
+        XCTAssertEqual(extra.count, 16)
     }
 
     private func makeCardWithLeaderSkill(_ leaderSkillId: Int) -> Card {

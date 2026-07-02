@@ -193,6 +193,59 @@ private let leaderRestrictionLeaves: [SpecialSearchLeaf] = [
     },
 ]
 
+private let leaderExtraEffectsLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Increased drop rewards > Increase Item Drop rate", label: "Increase Item Drop rate", groupPath: ["Leader Skills", "Extra Effects", "Increased drop rewards"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [53], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Increased drop rewards > Increase Coin rate", label: "Increase Coin rate", groupPath: ["Leader Skills", "Extra Effects", "Increased drop rewards"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [54], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Increased drop rewards > Increase Exp rate", label: "Increase Exp rate", groupPath: ["Leader Skills", "Extra Effects", "Increased drop rewards"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [148], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Increased drop rewards > Increase Plus Point rate", label: "Increase Plus Point rate", groupPath: ["Leader Skills", "Extra Effects", "Increased drop rewards"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [264], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Increased drop rewards > Increase Part Break drop rate", label: "Increase Part Break drop rate", groupPath: ["Leader Skills", "Extra Effects", "Increased drop rewards"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [265], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Move time changes", label: "Move time changes", groupPath: ["Leader Skills", "Extra Effects", "Other"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [15, 185], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Fixed move time", label: "Fixed move time", groupPath: ["Leader Skills", "Extra Effects", "Other"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [178], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Impart Awakenings", label: "Impart Awakenings", groupPath: ["Leader Skills", "Extra Effects", "Other"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [213], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Bonus attack when matching Orbs", label: "Bonus attack when matching Orbs", groupPath: ["Leader Skills", "Extra Effects", "Other"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [12], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Recovers HP when matching Orbs", label: "Recovers HP when matching Orbs", groupPath: ["Leader Skills", "Extra Effects", "Other"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [13], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Reduce damage when rcv", label: "Reduce damage when rcv", groupPath: ["Leader Skills", "Extra Effects", "Other"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.leaderSkillId, types: [198], skills: ctx.skillsJA) else { return false }
+        return (skill.params.indices.contains(2) ? skill.params[2] : 0) != 0
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Recover Awkn Skill bind when rcv", label: "Recover Awkn Skill bind when rcv", groupPath: ["Leader Skills", "Extra Effects", "Other"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.leaderSkillId, types: [198], skills: ctx.skillsJA) else { return false }
+        return (skill.params.indices.contains(3) ? skill.params[3] : 0) != 0
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Counterattack", label: "Counterattack", groupPath: ["Leader Skills", "Extra Effects", "Other"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [41], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Voids Poison dmg", label: "Voids Poison dmg", groupPath: ["Leader Skills", "Extra Effects", "Other"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [197], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Resolve", label: "Resolve", groupPath: ["Leader Skills", "Extra Effects", "Other"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [14], skills: ctx.skillsJA)
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Prediction of falling (LS)", label: "Prediction of falling (LS)", groupPath: ["Leader Skills", "Extra Effects", "Other"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [254], skills: ctx.skillsJA)
+    },
+]
+
 enum SpecialSearchTree {
-    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves
+    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves
 }
