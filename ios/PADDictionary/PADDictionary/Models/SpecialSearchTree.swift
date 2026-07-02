@@ -670,6 +670,65 @@ private let activeOrbsDropLeaves: [SpecialSearchLeaf] = [
     },
 ]
 
+private let activeChangeBoardLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > Change all Orbs on Board > Changes all Orbs to any", label: "Changes all Orbs to any", groupPath: ["Active Skill", "Change all Orbs on Board"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [71], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Change all Orbs on Board > Colors Count > To 1 color(Farm)", label: "To 1 color(Farm)", groupPath: ["Active Skill", "Change all Orbs on Board", "Colors Count"]) { card, ctx in
+        let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [71], skills: ctx.skillsJA, searchRandom: true)
+        return ActiveSkillEffects.boardChangeColorTypes(skill).count == 1
+    },
+    SpecialSearchLeaf(id: "Active Skill > Change all Orbs on Board > Colors Count > To 2 color", label: "To 2 color", groupPath: ["Active Skill", "Change all Orbs on Board", "Colors Count"]) { card, ctx in
+        let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [71], skills: ctx.skillsJA, searchRandom: true)
+        return ActiveSkillEffects.boardChangeColorTypes(skill).count == 2
+    },
+    SpecialSearchLeaf(id: "Active Skill > Change all Orbs on Board > Colors Count > To 3 color", label: "To 3 color", groupPath: ["Active Skill", "Change all Orbs on Board", "Colors Count"]) { card, ctx in
+        let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [71], skills: ctx.skillsJA, searchRandom: true)
+        return ActiveSkillEffects.boardChangeColorTypes(skill).count == 3
+    },
+    SpecialSearchLeaf(id: "Active Skill > Change all Orbs on Board > Colors Count > To 4 color", label: "To 4 color", groupPath: ["Active Skill", "Change all Orbs on Board", "Colors Count"]) { card, ctx in
+        let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [71], skills: ctx.skillsJA, searchRandom: true)
+        return ActiveSkillEffects.boardChangeColorTypes(skill).count == 4
+    },
+    SpecialSearchLeaf(id: "Active Skill > Change all Orbs on Board > Colors Count > To 5 color", label: "To 5 color", groupPath: ["Active Skill", "Change all Orbs on Board", "Colors Count"]) { card, ctx in
+        let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [71], skills: ctx.skillsJA, searchRandom: true)
+        return ActiveSkillEffects.boardChangeColorTypes(skill).count == 5
+    },
+    SpecialSearchLeaf(id: "Active Skill > Change all Orbs on Board > Colors Count > To ≥6 color", label: "To ≥6 color", groupPath: ["Active Skill", "Change all Orbs on Board", "Colors Count"]) { card, ctx in
+        let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [71], skills: ctx.skillsJA, searchRandom: true)
+        return ActiveSkillEffects.boardChangeColorTypes(skill).count >= 6
+    },
+    SpecialSearchLeaf(id: "Active Skill > Change all Orbs on Board > Include Color > Include Fire", label: "Include Fire", groupPath: ["Active Skill", "Change all Orbs on Board", "Include Color"]) { card, ctx in
+        let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [71], skills: ctx.skillsJA, searchRandom: true)
+        return ActiveSkillEffects.boardChangeColorTypes(skill).contains(0)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Change all Orbs on Board > Include Color > Include Water", label: "Include Water", groupPath: ["Active Skill", "Change all Orbs on Board", "Include Color"]) { card, ctx in
+        let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [71], skills: ctx.skillsJA, searchRandom: true)
+        return ActiveSkillEffects.boardChangeColorTypes(skill).contains(1)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Change all Orbs on Board > Include Color > Include Wood", label: "Include Wood", groupPath: ["Active Skill", "Change all Orbs on Board", "Include Color"]) { card, ctx in
+        let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [71], skills: ctx.skillsJA, searchRandom: true)
+        return ActiveSkillEffects.boardChangeColorTypes(skill).contains(2)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Change all Orbs on Board > Include Color > Include Light", label: "Include Light", groupPath: ["Active Skill", "Change all Orbs on Board", "Include Color"]) { card, ctx in
+        let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [71], skills: ctx.skillsJA, searchRandom: true)
+        return ActiveSkillEffects.boardChangeColorTypes(skill).contains(3)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Change all Orbs on Board > Include Color > Include Dark", label: "Include Dark", groupPath: ["Active Skill", "Change all Orbs on Board", "Include Color"]) { card, ctx in
+        let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [71], skills: ctx.skillsJA, searchRandom: true)
+        return ActiveSkillEffects.boardChangeColorTypes(skill).contains(4)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Change all Orbs on Board > Include Color > Include Heart", label: "Include Heart", groupPath: ["Active Skill", "Change all Orbs on Board", "Include Color"]) { card, ctx in
+        let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [71], skills: ctx.skillsJA, searchRandom: true)
+        return ActiveSkillEffects.boardChangeColorTypes(skill).contains(5)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Change all Orbs on Board > Include Color > Include Jammers/Poison", label: "Include Jammers/Poison", groupPath: ["Active Skill", "Change all Orbs on Board", "Include Color"]) { card, ctx in
+        let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [71], skills: ctx.skillsJA, searchRandom: true)
+        let colors = ActiveSkillEffects.boardChangeColorTypes(skill)
+        return colors.contains(6) || colors.contains(7) || colors.contains(8) || colors.contains(9)
+    },
+]
+
 enum SpecialSearchTree {
-    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves + activeOrbsStatesLeaves + activeBoardStatesLeaves + activeSkillConditionalLeaves + activeOtherLeaves + activeOrbsDropLeaves
+    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves + activeOrbsStatesLeaves + activeBoardStatesLeaves + activeSkillConditionalLeaves + activeOtherLeaves + activeOrbsDropLeaves + activeChangeBoardLeaves
 }
