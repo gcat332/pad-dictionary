@@ -165,6 +165,99 @@
     return skill.initialCooldown - (skill.maxLevel - 1);
   }
 
+  // Restored from old/script-universal_function.js — dropped during the extraction that
+  // produced this file (calling it threw ReferenceError). Verbatim port.
+  function getSkillAddCombo(card) {
+    const searchTypeArray = [192, 194, 206, 209, 210, 219, 220, 235, 271, 280];
+    const skills = getCardLeaderSkills(card, searchTypeArray);
+    return skills.map(skill=>{
+      switch (skill.type) {
+        case 192:
+        case 194:
+        case 271: case 280:
+          return skill.params[3] ?? 0;
+        case 206:
+          return skill.params[6] ?? 0;
+        case 209:
+          return skill.params[0] ?? 0;
+        case 210:
+        case 219:
+          return skill.params[2] ?? 0;
+        case 220:
+          return skill.params[1] ?? 0;
+        case 235:
+          return skill.params[5] ?? 0;
+        default:
+          return 0;
+      }
+    }).reduce((p,v)=>p+v, 0);
+  }
+
+  // Restored from old/script-universal_function.js — dropped during the extraction that
+  // produced this file (calling it threw ReferenceError). Verbatim port.
+  function getSkillFixedDamage(card) {
+    const searchTypeArray = [199, 200, 201, 223, 235, 271, 280];
+    const skills = getCardLeaderSkills(card, searchTypeArray);
+    return skills.map(skill=>{
+      switch (skill.type) {
+        case 199:
+        case 200:
+          return skill.params[2] ?? 0;
+        case 201:
+          return skill.params[5] ?? 0;
+        case 223:
+          return skill.params[1] ?? 0;
+        case 235:
+          return skill.params[6] ?? 0;
+        case 271: case 280:
+          return skill.params[4] ?? 0;
+        default:
+          return 0;
+      }
+    }).reduce((p,v)=>p+v, 0);
+  }
+
+  // Restored from old/script-json_data.js — dropped during the extraction that produced
+  // this file (calling it threw ReferenceError). Verbatim port.
+  const typekiller_for_type = [
+    {type:0,awoken:39,latent:16,typeKiller:[]}, //0进化
+    {type:12,awoken:40,latent:17,typeKiller:[]}, //12觉醒
+    {type:14,awoken:41,latent:18,typeKiller:[]}, //14强化
+    {type:15,awoken:42,latent:19,typeKiller:[]}, //15卖钱
+    {type:5,awoken:32,latent:20,typeKiller:[7]}, //5神
+    {type:4,awoken:31,latent:21,typeKiller:[8,3]}, //4龙
+    {type:7,awoken:33,latent:22,typeKiller:[5]}, //7恶魔
+    {type:8,awoken:34,latent:23,typeKiller:[5,1]}, //8机械
+    {type:1,awoken:35,latent:24,typeKiller:[5,4,7,8,1,6,2,3]}, //1平衡
+    {type:6,awoken:36,latent:25,typeKiller:[7,2]}, //6攻击
+    {type:2,awoken:37,latent:26,typeKiller:[8,3]}, //2体力
+    {type:3,awoken:38,latent:27,typeKiller:[4,6]}, //3回复
+    {type:9,awoken:null,latent:null,typeKiller:[]}, //特殊保护
+  ];
+  typekiller_for_type.forEach(t=>
+    {
+      t.allowableLatent = t.typeKiller.concat([0,12,14,15]) //补充4种特殊杀
+      .map(tn=>
+        typekiller_for_type.find(_t=>_t.type == tn).latent
+      );
+    }
+  );
+
+  // Restored from old/script-universal_function.js — dropped during the extraction that
+  // produced this file (calling it threw ReferenceError). Verbatim port.
+  function isReincarnated(card) {
+    return card.is8Latent && !card.isUltEvo && (card.evoBaseId || card.evoRootId) != card.id && (card.awakenings.includes(49) ? isReincarnated(Cards[card.evoBaseId]) : true);
+  }
+
+  // Restored equivalent of old/script.js's Card#leaderSkillTypes getter (backed by the
+  // LeaderSkillType/LeaderSkillType_MatchingStyle/LeaderSkillType_Restriction_Bind class
+  // hierarchy, which read card.searchFlags bitmasks). Cards here are plain data objects,
+  // not class instances, so ported as a direct bit-check helper instead of restoring the
+  // classes. Bit indices verified against old/script.js's getters verbatim.
+  function leaderSkillFlag(card, bitIndex, flagsIndex = 0) {
+    return Boolean((card.searchFlags?.[flagsIndex] ?? 0) & (1 << bitIndex));
+  }
+
 let merge_skill = false;
 
 class Attributes {
@@ -7400,19 +7493,19 @@ const specialSearchFunctions = (function() {
 		
 			{group:true,name:"Matching Style",otLangName:{chs:"匹配模式",cht:"匹配模式"}, functions: [
 				{name:"Multiple Att.",otLangName:{chs:"杂色",cht:"雜色"},
-					function:cards=>cards.filter(card=>card.leaderSkillTypes.matchMode.multipleAttr)
+					function:cards=>cards.filter(card=>leaderSkillFlag(card, 0))
 				},
 				{name:"Orb Matching",otLangName:{chs:"长串消除",cht:"長串消除"},
-					function:cards=>cards.filter(card=>card.leaderSkillTypes.matchMode.rowMatch)
+					function:cards=>cards.filter(card=>leaderSkillFlag(card, 1))
 				},
 				{name:"Combo Matching",otLangName:{chs:"连击",cht:"連擊"},
-					function:cards=>cards.filter(card=>card.leaderSkillTypes.matchMode.combo)
+					function:cards=>cards.filter(card=>leaderSkillFlag(card, 2))
 				},
 				{name:"Same Attribute Combo Matching",otLangName:{chs:"同色多串",cht:"同色多串"},
-					function:cards=>cards.filter(card=>card.leaderSkillTypes.matchMode.sameColor)
+					function:cards=>cards.filter(card=>leaderSkillFlag(card, 3))
 				},
 				{name:"L Shape Matching",otLangName:{chs:"L消除",cht:"L消除"},
-					function:cards=>cards.filter(card=>card.leaderSkillTypes.matchMode.LShape)
+					function:cards=>cards.filter(card=>leaderSkillFlag(card, 4))
 				},
 				{name:"5 Orbs including enhanced Matching",otLangName:{chs:"5珠含强化消除",cht:"5珠含強化消除"},
 					function:cards=>cards.filter(card=>{
@@ -7549,10 +7642,10 @@ const specialSearchFunctions = (function() {
 			]},
 			{group:true,name:"Restriction/Bind",otLangName:{chs:"限制",cht:"限制"}, functions: [
 				{name:"Attribute Enchantment",otLangName:{chs:"属性增强",cht:"屬性增强"},
-					function:cards=>cards.filter(card=>card.leaderSkillTypes.restriction.attrEnhance)
+					function:cards=>cards.filter(card=>leaderSkillFlag(card, 9))
 				},
 				{name:"Type Enchantment",otLangName:{chs:"类型增强",cht:"類型增强"},
-					function:cards=>cards.filter(card=>card.leaderSkillTypes.restriction.typeEnhance)
+					function:cards=>cards.filter(card=>leaderSkillFlag(card, 10))
 				},
 				{name:"[7×6 board]",otLangName:{chs:"【7×6 板面】",cht:"【7×6 板面】"},
 					function:cards=>cards.filter(card=>{
@@ -7569,10 +7662,10 @@ const specialSearchFunctions = (function() {
 					})
 				},
 				{name:"HP Percentage Activation",otLangName:{chs:"HP 比例激活",cht:"HP 比例激活"},
-					function:cards=>cards.filter(card=>card.leaderSkillTypes.restriction.HpRange)
+					function:cards=>cards.filter(card=>leaderSkillFlag(card, 13))
 				},
 				{name:"Skill Use Activation",otLangName:{chs:"使用技能激活",cht:"使用技能激活"},
-					function:cards=>cards.filter(card=>card.leaderSkillTypes.restriction.useSkill)
+					function:cards=>cards.filter(card=>leaderSkillFlag(card, 14))
 				},
 				{name:"Unable to less match",otLangName:{chs:"要求长串消除",cht:"要求長串消除"},
 					function:cards=>{
