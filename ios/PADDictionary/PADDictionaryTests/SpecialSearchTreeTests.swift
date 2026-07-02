@@ -102,7 +102,7 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testOthersSearchLeafCount() {
         let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
         XCTAssertEqual(othersLeaves.count, 23)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 75)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 90)
     }
 
     private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
@@ -159,6 +159,27 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testExtraEffectsLeafCount() {
         let extra = SpecialSearchTree.leaves.filter { $0.groupPath.starts(with: ["Leader Skills", "Extra Effects"]) }
         XCTAssertEqual(extra.count, 16)
+    }
+
+    func testHPScaleBucket() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 23, maxLevel: 1, initialCooldown: 0, params: [0, 0, 250])]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Leader Skills > HP Scale > HP Scale [2, 3)").matches(makeCardWithLeaderSkill(10), ctx))
+        XCTAssertFalse(leaf("Leader Skills > HP Scale > HP Scale [3, ∞)").matches(makeCardWithLeaderSkill(10), ctx))
+    }
+
+    func testReduceShieldBucket() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 16, maxLevel: 1, initialCooldown: 0, params: [80])]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Leader Skills > Reduce Shield > Reduce Damage [75%, 100%]").matches(makeCardWithLeaderSkill(10), ctx))
+    }
+
+    func testFinalLeafCounts() {
+        let hpScale = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "HP Scale"] }
+        let reduceShield = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Reduce Shield"] }
+        XCTAssertEqual(hpScale.count, 6)
+        XCTAssertEqual(reduceShield.count, 9)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 90)
     }
 
     private func makeCardWithLeaderSkill(_ leaderSkillId: Int) -> Card {

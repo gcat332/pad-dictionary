@@ -246,6 +246,79 @@ private let leaderExtraEffectsLeaves: [SpecialSearchLeaf] = [
     },
 ]
 
+private let leaderHPScaleLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Leader Skills > HP Scale > HP Scale [3, ∞)", label: "HP Scale [3, ∞)", groupPath: ["Leader Skills", "HP Scale"]) { card, ctx in
+        guard let skill = ctx.skillsJA[card.leaderSkillId] else { return false }
+        return LeaderSkillScale.hpScale(skill, skills: ctx.skillsJA) >= 3
+    },
+    SpecialSearchLeaf(id: "Leader Skills > HP Scale > HP Scale [2, 3)", label: "HP Scale [2, 3)", groupPath: ["Leader Skills", "HP Scale"]) { card, ctx in
+        guard let skill = ctx.skillsJA[card.leaderSkillId] else { return false }
+        let scale = LeaderSkillScale.hpScale(skill, skills: ctx.skillsJA)
+        return scale >= 2 && scale < 3
+    },
+    SpecialSearchLeaf(id: "Leader Skills > HP Scale > HP Scale [1.5, 2)", label: "HP Scale [1.5, 2)", groupPath: ["Leader Skills", "HP Scale"]) { card, ctx in
+        guard let skill = ctx.skillsJA[card.leaderSkillId] else { return false }
+        let scale = LeaderSkillScale.hpScale(skill, skills: ctx.skillsJA)
+        return scale >= 1.5 && scale < 2
+    },
+    SpecialSearchLeaf(id: "Leader Skills > HP Scale > HP Scale (1, 1.5)", label: "HP Scale (1, 1.5)", groupPath: ["Leader Skills", "HP Scale"]) { card, ctx in
+        guard let skill = ctx.skillsJA[card.leaderSkillId] else { return false }
+        let scale = LeaderSkillScale.hpScale(skill, skills: ctx.skillsJA)
+        return scale > 1 && scale < 1.5
+    },
+    SpecialSearchLeaf(id: "Leader Skills > HP Scale > HP Scale == 1", label: "HP Scale == 1", groupPath: ["Leader Skills", "HP Scale"]) { card, ctx in
+        guard let skill = ctx.skillsJA[card.leaderSkillId] else { return false }
+        return LeaderSkillScale.hpScale(skill, skills: ctx.skillsJA) == 1
+    },
+    SpecialSearchLeaf(id: "Leader Skills > HP Scale > HP Scale [0, 1)", label: "HP Scale [0, 1)", groupPath: ["Leader Skills", "HP Scale"]) { card, ctx in
+        guard let skill = ctx.skillsJA[card.leaderSkillId] else { return false }
+        return LeaderSkillScale.hpScale(skill, skills: ctx.skillsJA) < 1
+    },
+]
+
+private let leaderReduceShieldLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Leader Skills > Reduce Shield > Reduce Damage [75%, 100%]", label: "Reduce Damage [75%, 100%]", groupPath: ["Leader Skills", "Reduce Shield"]) { card, ctx in
+        guard let skill = ctx.skillsJA[card.leaderSkillId] else { return false }
+        return LeaderSkillScale.reduceScale(skill, skills: ctx.skillsJA) >= 0.75
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Reduce Shield > Reduce Damage [50%, 75%)", label: "Reduce Damage [50%, 75%)", groupPath: ["Leader Skills", "Reduce Shield"]) { card, ctx in
+        guard let skill = ctx.skillsJA[card.leaderSkillId] else { return false }
+        let scale = LeaderSkillScale.reduceScale(skill, skills: ctx.skillsJA)
+        return scale >= 0.5 && scale < 0.75
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Reduce Shield > Reduce Damage [25%, 50%)", label: "Reduce Damage [25%, 50%)", groupPath: ["Leader Skills", "Reduce Shield"]) { card, ctx in
+        guard let skill = ctx.skillsJA[card.leaderSkillId] else { return false }
+        let scale = LeaderSkillScale.reduceScale(skill, skills: ctx.skillsJA)
+        return scale >= 0.25 && scale < 0.5
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Reduce Shield > Reduce Damage (0%, 25%)", label: "Reduce Damage (0%, 25%)", groupPath: ["Leader Skills", "Reduce Shield"]) { card, ctx in
+        guard let skill = ctx.skillsJA[card.leaderSkillId] else { return false }
+        let scale = LeaderSkillScale.reduceScale(skill, skills: ctx.skillsJA)
+        return scale > 0 && scale < 0.25
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Reduce Shield > Reduce Damage == 0", label: "Reduce Damage == 0", groupPath: ["Leader Skills", "Reduce Shield"]) { card, ctx in
+        guard let skill = ctx.skillsJA[card.leaderSkillId] else { return false }
+        return LeaderSkillScale.reduceScale(skill, skills: ctx.skillsJA) == 0
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Reduce Shield > Reduce Damage - Must all Att.", label: "Reduce Damage - Must all Att.", groupPath: ["Leader Skills", "Reduce Shield"]) { card, ctx in
+        guard let skill = ctx.skillsJA[card.leaderSkillId] else { return false }
+        return LeaderSkillScale.reduceScale(skill, allAttr: true, skills: ctx.skillsJA) > 0
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Reduce Shield > Reduce Damage - Exclude HP-line", label: "Reduce Damage - Exclude HP-line", groupPath: ["Leader Skills", "Reduce Shield"]) { card, ctx in
+        guard let skill = ctx.skillsJA[card.leaderSkillId] else { return false }
+        return LeaderSkillScale.reduceScale(skill, noHPneed: true, skills: ctx.skillsJA) > 0
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Reduce Shield > Reduce Damage - Exclude chance", label: "Reduce Damage - Exclude chance", groupPath: ["Leader Skills", "Reduce Shield"]) { card, ctx in
+        // Web's 4th argument to getReduceScale here is a no-op (function only declares 2 params) — ported as identical to the base call.
+        guard let skill = ctx.skillsJA[card.leaderSkillId] else { return false }
+        return LeaderSkillScale.reduceScale(skill, skills: ctx.skillsJA) > 0
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Reduce Shield > Reduce Damage - Unconditional", label: "Reduce Damage - Unconditional", groupPath: ["Leader Skills", "Reduce Shield"]) { card, ctx in
+        guard let skill = ctx.skillsJA[card.leaderSkillId] else { return false }
+        return LeaderSkillScale.reduceScaleUnconditional(skill, skills: ctx.skillsJA) > 0
+    },
+]
+
 enum SpecialSearchTree {
-    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves
+    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves
 }
