@@ -102,7 +102,7 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testOthersSearchLeafCount() {
         let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
         XCTAssertEqual(othersLeaves.count, 23)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 90)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 104)
     }
 
     private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
@@ -179,7 +179,43 @@ final class SpecialSearchTreeTests: XCTestCase {
         let reduceShield = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Reduce Shield"] }
         XCTAssertEqual(hpScale.count, 6)
         XCTAssertEqual(reduceShield.count, 9)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 90)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 104)
+    }
+
+    private func makeCardWithActiveSkill(_ activeSkillId: Int) -> Card {
+        Card(id: 1, name: "Card", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: activeSkillId, leaderSkillId: 0, evoRootId: 1, awakenings: [], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: false, evoBaseId: 0, syncAwakening: nil)
+    }
+
+    func testTwoVoidsRequiresAttrAndDamageAbsorb() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 173, maxLevel: 1, initialCooldown: 0, params: [5, 1, 0, 1])]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Active Skill > Voids Absorption > Combination > 2 Voids (attr. & damage)").matches(makeCardWithActiveSkill(10), ctx))
+        XCTAssertFalse(leaf("Active Skill > Voids Absorption > Combination > 3 Voids (attr. & damage & void)").matches(makeCardWithActiveSkill(10), ctx))
+    }
+
+    func testThreeUnbinds() {
+        let skills: SkillLookup = [
+            10: Skill(id: 10, name: "S", description: "", type: 117, maxLevel: 1, initialCooldown: 0, params: [3, 0, 0, 0, 2]),
+            11: Skill(id: 11, name: "S", description: "", type: 196, maxLevel: 1, initialCooldown: 0, params: [4]),
+        ]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Active Skill > Recovers Bind Status > Other > Unbind menber bind").matches(makeCardWithActiveSkill(10), ctx))
+        XCTAssertTrue(leaf("Active Skill > Recovers Bind Status > Other > Unbind unmatchable").matches(makeCardWithActiveSkill(11), ctx))
+    }
+
+    func testDamageSelf() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 195, maxLevel: 1, initialCooldown: 0, params: [50])]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Active Skill > Player's HP change > Damage self").matches(makeCardWithActiveSkill(10), ctx))
+    }
+
+    func testActiveSkillFirstSliceLeafCounts() {
+        let voids = SpecialSearchTree.leaves.filter { $0.groupPath.starts(with: ["Active Skill", "Voids Absorption"]) }
+        let recovers = SpecialSearchTree.leaves.filter { $0.groupPath.starts(with: ["Active Skill", "Recovers Bind Status"]) }
+        let hpChange = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "Player's HP change"] }
+        XCTAssertEqual(voids.count, 6)
+        XCTAssertEqual(recovers.count, 4)
+        XCTAssertEqual(hpChange.count, 4)
     }
 
     private func makeCardWithLeaderSkill(_ leaderSkillId: Int) -> Card {

@@ -319,6 +319,61 @@ private let leaderReduceShieldLeaves: [SpecialSearchLeaf] = [
     },
 ]
 
+private let activeVoidsAbsorptionLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > Voids Absorption > Combination > 2 Voids (attr. & damage)", label: "2 Voids (attr. & damage)", groupPath: ["Active Skill", "Voids Absorption", "Combination"]) { card, ctx in
+        let t = ActiveSkillEffects.voidsAbsorptionTurns(card, skills: ctx.skillsJA)
+        return t.attrAbsorb > 0 && t.damageAbsorb > 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Voids Absorption > Combination > 3 Voids (attr. & damage & void)", label: "3 Voids (attr. & damage & void)", groupPath: ["Active Skill", "Voids Absorption", "Combination"]) { card, ctx in
+        let t = ActiveSkillEffects.voidsAbsorptionTurns(card, skills: ctx.skillsJA)
+        return t.attrAbsorb > 0 && t.damageAbsorb > 0 && t.damageVoid > 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Voids Absorption > Voids attribute absorption", label: "Voids attribute absorption", groupPath: ["Active Skill", "Voids Absorption"]) { card, ctx in
+        ActiveSkillEffects.voidsAbsorptionTurns(card, skills: ctx.skillsJA).attrAbsorb > 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Voids Absorption > Voids combo absorption", label: "Voids combo absorption", groupPath: ["Active Skill", "Voids Absorption"]) { card, ctx in
+        ActiveSkillEffects.voidsAbsorptionTurns(card, skills: ctx.skillsJA).comboAbsorb > 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Voids Absorption > Voids damage absorption", label: "Voids damage absorption", groupPath: ["Active Skill", "Voids Absorption"]) { card, ctx in
+        ActiveSkillEffects.voidsAbsorptionTurns(card, skills: ctx.skillsJA).damageAbsorb > 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Voids Absorption > Pierce through damage void", label: "Pierce through damage void", groupPath: ["Active Skill", "Voids Absorption"]) { card, ctx in
+        ActiveSkillEffects.voidsAbsorptionTurns(card, skills: ctx.skillsJA).damageVoid > 0
+    },
+]
+
+private let activeRecoversBindLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > Recovers Bind Status > Combination > 3 Unbinds", label: "3 Unbinds", groupPath: ["Active Skill", "Recovers Bind Status", "Combination"]) { card, ctx in
+        let t = ActiveSkillEffects.unbindTurns(card, skills: ctx.skillsJA)
+        return t.normal > 0 && t.awakenings > 0 && t.matches > 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Recovers Bind Status > Other > Unbind menber bind", label: "Unbind menber bind", groupPath: ["Active Skill", "Recovers Bind Status", "Other"]) { card, ctx in
+        ActiveSkillEffects.unbindTurns(card, skills: ctx.skillsJA).normal > 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Recovers Bind Status > Other > Unbind awakenings bind", label: "Unbind awakenings bind", groupPath: ["Active Skill", "Recovers Bind Status", "Other"]) { card, ctx in
+        ActiveSkillEffects.unbindTurns(card, skills: ctx.skillsJA).awakenings > 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Recovers Bind Status > Other > Unbind unmatchable", label: "Unbind unmatchable", groupPath: ["Active Skill", "Recovers Bind Status", "Other"]) { card, ctx in
+        ActiveSkillEffects.unbindTurns(card, skills: ctx.skillsJA).matches > 0
+    },
+]
+
+private let activePlayerHPChangeLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > Player's HP change > Heal after turn", label: "Heal after turn", groupPath: ["Active Skill", "Player's HP change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [179], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Player's HP change > Heal immediately", label: "Heal immediately", groupPath: ["Active Skill", "Player's HP change"]) { card, ctx in
+        let h = ActiveSkillEffects.healImmediatelyRate(card, skills: ctx.skillsJA)
+        return h.vampire != 0 || h.selfRcv != 0 || h.constValue != 0 || h.scale != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Player's HP change > Change team maximum HP", label: "Change team maximum HP", groupPath: ["Active Skill", "Player's HP change"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [237], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Player's HP change > Damage self", label: "Damage self", groupPath: ["Active Skill", "Player's HP change"]) { card, ctx in
+        ActiveSkillEffects.damageSelfRate(card, skills: ctx.skillsJA) > 0
+    },
+]
+
 enum SpecialSearchTree {
-    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves
+    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves
 }
