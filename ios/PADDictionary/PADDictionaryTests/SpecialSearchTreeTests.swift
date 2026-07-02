@@ -102,7 +102,7 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testOthersSearchLeafCount() {
         let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
         XCTAssertEqual(othersLeaves.count, 23)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 231)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 249)
     }
 
     private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
@@ -179,7 +179,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let reduceShield = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Reduce Shield"] }
         XCTAssertEqual(hpScale.count, 6)
         XCTAssertEqual(reduceShield.count, 9)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 231)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 249)
     }
 
     private func makeCardWithActiveSkill(_ activeSkillId: Int) -> Card {
@@ -239,7 +239,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let forEnemy = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "For Enemy"] }
         XCTAssertEqual(buff.count, 9)
         XCTAssertEqual(forEnemy.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 231)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 249)
     }
 
     func testIncreaseDamageCapLeaderUsesBitmask() {
@@ -322,7 +322,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let other = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "Other"] }
         XCTAssertEqual(conditional.count, 6)
         XCTAssertEqual(other.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 231)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 249)
     }
 
     func testOrbsDropLeaves() {
@@ -425,5 +425,33 @@ final class SpecialSearchTreeTests: XCTestCase {
         XCTAssertTrue(leaf("Active Skill > Create Fixed Position Orbs > Create vertical Heart").matches(makeCardWithActiveSkill(4), ctx))
         XCTAssertTrue(leaf("Active Skill > Create Fixed Position Orbs > Create horizontals").matches(makeCardWithActiveSkill(5), ctx))
         XCTAssertTrue(leaf("Active Skill > Create Fixed Position Orbs > Create ≥2 horizontals").matches(makeCardWithActiveSkill(5), ctx))
+    }
+
+    func testDamageEnemyLeaves() {
+        let skills: SkillLookup = [
+            1: Skill(id: 1, name: "S", description: "", type: 6, maxLevel: 1, initialCooldown: 0, params: []),
+            2: Skill(id: 2, name: "S", description: "", type: 161, maxLevel: 1, initialCooldown: 0, params: []),
+            3: Skill(id: 3, name: "S", description: "", type: 55, maxLevel: 1, initialCooldown: 0, params: [100]),
+            4: Skill(id: 4, name: "S", description: "", type: 56, maxLevel: 1, initialCooldown: 0, params: [100]),
+            5: Skill(id: 5, name: "S", description: "", type: 110, maxLevel: 1, initialCooldown: 0, params: [1]),
+            6: Skill(id: 6, name: "S", description: "", type: 110, maxLevel: 1, initialCooldown: 0, params: [0]),
+            7: Skill(id: 7, name: "S", description: "", type: 144, maxLevel: 1, initialCooldown: 0, params: [0, 0, 1]),
+            8: Skill(id: 8, name: "S", description: "", type: 42, maxLevel: 1, initialCooldown: 0, params: []),
+        ]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Active Skill > Damage Enemy - Gravity > Any").matches(makeCardWithActiveSkill(1), ctx))
+        XCTAssertTrue(leaf("Active Skill > Damage Enemy - Gravity > Current HP").matches(makeCardWithActiveSkill(1), ctx))
+        XCTAssertFalse(leaf("Active Skill > Damage Enemy - Gravity > Max HP").matches(makeCardWithActiveSkill(1), ctx))
+        XCTAssertTrue(leaf("Active Skill > Damage Enemy - Gravity > Max HP").matches(makeCardWithActiveSkill(2), ctx))
+        XCTAssertTrue(leaf("Active Skill > Damage Enemy - Fixed damage > Single").matches(makeCardWithActiveSkill(3), ctx))
+        XCTAssertFalse(leaf("Active Skill > Damage Enemy - Fixed damage > Mass").matches(makeCardWithActiveSkill(3), ctx))
+        XCTAssertTrue(leaf("Active Skill > Damage Enemy - Fixed damage > Mass").matches(makeCardWithActiveSkill(4), ctx))
+        XCTAssertTrue(leaf("Active Skill > Damage Enemy - Numerical damage > Target > Target - Single").matches(makeCardWithActiveSkill(5), ctx))
+        XCTAssertFalse(leaf("Active Skill > Damage Enemy - Numerical damage > Target > Target - Mass").matches(makeCardWithActiveSkill(5), ctx))
+        XCTAssertTrue(leaf("Active Skill > Damage Enemy - Numerical damage > Target > Target - Mass").matches(makeCardWithActiveSkill(6), ctx))
+        XCTAssertTrue(leaf("Active Skill > Damage Enemy - Numerical damage > Target > Target - Single").matches(makeCardWithActiveSkill(7), ctx))
+        XCTAssertTrue(leaf("Active Skill > Damage Enemy - Numerical damage > Target > Target - Designate Attr").matches(makeCardWithActiveSkill(8), ctx))
+        XCTAssertTrue(leaf("Active Skill > Damage Enemy - Numerical damage > Damage > Damage - By remaining HP").matches(makeCardWithActiveSkill(5), ctx))
+        XCTAssertTrue(leaf("Active Skill > Damage Enemy - Numerical damage > Damage > Damage - Team attrs ATK").matches(makeCardWithActiveSkill(7), ctx))
     }
 }

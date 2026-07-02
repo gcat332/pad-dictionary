@@ -921,6 +921,74 @@ private let activeCreateFixedPositionOrbsLeaves: [SpecialSearchLeaf] = [
     },
 ]
 
+private let activeDamageEnemyLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Gravity > Any", label: "Any", groupPath: ["Active Skill", "Damage Enemy - Gravity"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [6, 161, 261], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Gravity > Current HP", label: "Current HP", groupPath: ["Active Skill", "Damage Enemy - Gravity"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [6, 261], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Gravity > Max HP", label: "Max HP", groupPath: ["Active Skill", "Damage Enemy - Gravity"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [161], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Gravity > Breaking Shield", label: "Breaking Shield", groupPath: ["Active Skill", "Damage Enemy - Gravity"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [259, 272], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Gravity > Park Breaking", label: "Park Breaking", groupPath: ["Active Skill", "Damage Enemy - Gravity"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [276], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Fixed damage > Any", label: "Any", groupPath: ["Active Skill", "Damage Enemy - Fixed damage"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [55, 188, 56], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Fixed damage > Single", label: "Single", groupPath: ["Active Skill", "Damage Enemy - Fixed damage"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [55, 188], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Fixed damage > Mass", label: "Mass", groupPath: ["Active Skill", "Damage Enemy - Fixed damage"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [56], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Numerical damage > Target > Target - Single", label: "Target - Single", groupPath: ["Active Skill", "Damage Enemy - Numerical damage", "Target"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [2, 35, 37, 59, 84, 86, 110, 115, 144], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        switch skill.type {
+        case 110: return (skill.params.first ?? 0) != 0
+        case 144: return (skill.params.indices.contains(2) ? skill.params[2] : 0) != 0
+        default: return true
+        }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Numerical damage > Target > Target - Mass", label: "Target - Mass", groupPath: ["Active Skill", "Damage Enemy - Numerical damage", "Target"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [0, 1, 58, 85, 87, 110, 143, 144], skills: ctx.skillsJA, searchRandom: true), skill.id != 0 else { return false }
+        switch skill.type {
+        case 110: return (skill.params.first ?? 0) == 0
+        case 144: return (skill.params.indices.contains(2) ? skill.params[2] : 0) == 0
+        default: return true
+        }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Numerical damage > Target > Target - Designate Attr", label: "Target - Designate Attr", groupPath: ["Active Skill", "Damage Enemy - Numerical damage", "Target"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [42], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Numerical damage > Attribute > Actors self attr.", label: "Actors self attr.", groupPath: ["Active Skill", "Damage Enemy - Numerical damage", "Attribute"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [2, 35], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Numerical damage > Damage > Damage - Rate by Actors self ATK", label: "Damage - Rate by Actors self ATK", groupPath: ["Active Skill", "Damage Enemy - Numerical damage", "Damage"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [0, 2, 35, 37, 58, 59, 84, 85, 115], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        return skill.id != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Numerical damage > Damage > Damage - Fixed Attr Number", label: "Damage - Fixed Attr Number", groupPath: ["Active Skill", "Damage Enemy - Numerical damage", "Damage"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [1, 42, 86, 87], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Numerical damage > Damage > Damage - By remaining HP", label: "Damage - By remaining HP", groupPath: ["Active Skill", "Damage Enemy - Numerical damage", "Damage"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [110], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Numerical damage > Damage > Damage - Team total HP", label: "Damage - Team total HP", groupPath: ["Active Skill", "Damage Enemy - Numerical damage", "Damage"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [143], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Numerical damage > Damage > Damage - Team attrs ATK", label: "Damage - Team attrs ATK", groupPath: ["Active Skill", "Damage Enemy - Numerical damage", "Damage"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [144], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Damage Enemy - Numerical damage > Damage > Numerical ATK - Special - Vampire", label: "Numerical ATK - Special - Vampire", groupPath: ["Active Skill", "Damage Enemy - Numerical damage", "Damage"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [35, 115], skills: ctx.skillsJA, searchRandom: true)
+    },
+]
+
 enum SpecialSearchTree {
-    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves + activeOrbsStatesLeaves + activeBoardStatesLeaves + activeSkillConditionalLeaves + activeOtherLeaves + activeOrbsDropLeaves + activeChangeBoardLeaves + activeOrbsColorChangeLeaves + activeRandomCreateOrbsLeaves + activeCreateFixedPositionOrbsLeaves
+    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves + activeOrbsStatesLeaves + activeBoardStatesLeaves + activeSkillConditionalLeaves + activeOtherLeaves + activeOrbsDropLeaves + activeChangeBoardLeaves + activeOrbsColorChangeLeaves + activeRandomCreateOrbsLeaves + activeCreateFixedPositionOrbsLeaves + activeDamageEnemyLeaves
 }
