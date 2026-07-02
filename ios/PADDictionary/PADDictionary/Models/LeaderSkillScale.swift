@@ -107,4 +107,37 @@ enum LeaderSkillScale {
         }
         return scale
     }
+
+    static func skillAddCombo(_ card: Card, skills: SkillLookup) -> Int {
+        let matched = SkillChainMatcher.resolveAll(skillId: card.leaderSkillId, types: [192, 194, 206, 209, 210, 219, 220, 235, 271, 280], skills: skills, searchRandom: false)
+        return matched.reduce(0) { total, skill in
+            let sk = skill.params
+            func p(_ i: Int) -> Int { sk[safe: i] ?? 0 }
+            switch skill.type {
+            case 192, 194, 271, 280: return total + p(3)
+            case 206: return total + p(6)
+            case 209: return total + p(0)
+            case 210, 219: return total + p(2)
+            case 220: return total + p(1)
+            case 235: return total + p(5)
+            default: return total
+            }
+        }
+    }
+
+    static func skillFixedDamage(_ card: Card, skills: SkillLookup) -> Int {
+        let matched = SkillChainMatcher.resolveAll(skillId: card.leaderSkillId, types: [199, 200, 201, 223, 235, 271, 280], skills: skills, searchRandom: false)
+        return matched.reduce(0) { total, skill in
+            let sk = skill.params
+            func p(_ i: Int) -> Int { sk[safe: i] ?? 0 }
+            switch skill.type {
+            case 199, 200: return total + p(2)
+            case 201: return total + p(5)
+            case 223: return total + p(1)
+            case 235: return total + p(6)
+            case 271, 280: return total + p(4)
+            default: return total
+            }
+        }
+    }
 }

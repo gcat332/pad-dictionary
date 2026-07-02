@@ -102,7 +102,7 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testOthersSearchLeafCount() {
         let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
         XCTAssertEqual(othersLeaves.count, 23)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 260)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 262)
     }
 
     private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
@@ -158,7 +158,7 @@ final class SpecialSearchTreeTests: XCTestCase {
 
     func testExtraEffectsLeafCount() {
         let extra = SpecialSearchTree.leaves.filter { $0.groupPath.starts(with: ["Leader Skills", "Extra Effects"]) }
-        XCTAssertEqual(extra.count, 16)
+        XCTAssertEqual(extra.count, 18)
     }
 
     func testHPScaleBucket() {
@@ -179,7 +179,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let reduceShield = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Reduce Shield"] }
         XCTAssertEqual(hpScale.count, 6)
         XCTAssertEqual(reduceShield.count, 9)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 260)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 262)
     }
 
     private func makeCardWithActiveSkill(_ activeSkillId: Int) -> Card {
@@ -239,7 +239,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let forEnemy = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "For Enemy"] }
         XCTAssertEqual(buff.count, 9)
         XCTAssertEqual(forEnemy.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 260)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 262)
     }
 
     func testIncreaseDamageCapLeaderUsesBitmask() {
@@ -322,7 +322,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let other = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "Other"] }
         XCTAssertEqual(conditional.count, 6)
         XCTAssertEqual(other.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 260)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 262)
     }
 
     func testOrbsDropLeaves() {
@@ -517,5 +517,17 @@ final class SpecialSearchTreeTests: XCTestCase {
 
         // nil searchFlags never matches any bit
         XCTAssertFalse(leaf("Leader Skills > Matching Style > Multiple Att.").matches(makeCard(), ctx))
+    }
+
+    func testFixedDamageInflictsAndAddsComboLeaves() {
+        let skills: SkillLookup = [
+            1953: Skill(id: 1953, name: "S", description: "", type: 201, maxLevel: 1, initialCooldown: 0, params: [16, 16, 0, 0, 2, 5000000]),
+            2378: Skill(id: 2378, name: "S", description: "", type: 194, maxLevel: 1, initialCooldown: 0, params: [24, 2, 800, 3]),
+        ]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Leader Skills > Extra Effects > Fixed damage inflicts").matches(makeCardWithLeaderSkill(1953), ctx))
+        XCTAssertFalse(leaf("Leader Skills > Extra Effects > Adds combo").matches(makeCardWithLeaderSkill(1953), ctx))
+        XCTAssertTrue(leaf("Leader Skills > Extra Effects > Adds combo").matches(makeCardWithLeaderSkill(2378), ctx))
+        XCTAssertFalse(leaf("Leader Skills > Extra Effects > Fixed damage inflicts").matches(makeCardWithLeaderSkill(2378), ctx))
     }
 }

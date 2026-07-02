@@ -57,4 +57,34 @@ final class LeaderSkillScaleTests: XCTestCase {
         XCTAssertEqual(LeaderSkillScale.reduceScaleUnconditional(allAttrs, skills: [:]), 0.8, accuracy: 0.0001)
         XCTAssertEqual(LeaderSkillScale.reduceScaleUnconditional(notAllAttrs, skills: [:]), 0, accuracy: 0.0001)
     }
+
+    private func makeCardWithLeaderSkill(_ leaderSkillId: Int) -> Card {
+        Card(id: 1, name: "Card", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: 0, leaderSkillId: leaderSkillId, evoRootId: 1, awakenings: [], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: false, evoBaseId: 0, syncAwakening: nil, is8Latent: nil, searchFlags: nil)
+    }
+
+    func testSkillFixedDamageType201ReadsParamIndex5() {
+        // real example: skill id 1953, type 201, params [16, 16, 0, 0, 2, 5000000]
+        let skills: SkillLookup = [1953: skill(1953, type: 201, params: [16, 16, 0, 0, 2, 5000000])]
+        let card = makeCardWithLeaderSkill(1953)
+        XCTAssertEqual(LeaderSkillScale.skillFixedDamage(card, skills: skills), 5000000)
+    }
+
+    func testSkillFixedDamageZeroWhenNoMatchingType() {
+        let skills: SkillLookup = [1: skill(1, type: 0, params: [0, 1000])]
+        let card = makeCardWithLeaderSkill(1)
+        XCTAssertEqual(LeaderSkillScale.skillFixedDamage(card, skills: skills), 0)
+    }
+
+    func testSkillAddComboType194ReadsParamIndex3() {
+        // real example: skill id 2378, type 194, params [24, 2, 800, 3]
+        let skills: SkillLookup = [2378: skill(2378, type: 194, params: [24, 2, 800, 3])]
+        let card = makeCardWithLeaderSkill(2378)
+        XCTAssertEqual(LeaderSkillScale.skillAddCombo(card, skills: skills), 3)
+    }
+
+    func testSkillAddComboZeroWhenNoMatchingType() {
+        let skills: SkillLookup = [1: skill(1, type: 0, params: [0, 1000])]
+        let card = makeCardWithLeaderSkill(1)
+        XCTAssertEqual(LeaderSkillScale.skillAddCombo(card, skills: skills), 0)
+    }
 }

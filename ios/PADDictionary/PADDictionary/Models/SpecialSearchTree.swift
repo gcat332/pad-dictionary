@@ -289,6 +289,12 @@ private let leaderExtraEffectsLeaves: [SpecialSearchLeaf] = [
     SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Prediction of falling (LS)", label: "Prediction of falling (LS)", groupPath: ["Leader Skills", "Extra Effects", "Other"]) { card, ctx in
         SkillChainMatcher.matches(skillId: card.leaderSkillId, types: [254], skills: ctx.skillsJA)
     },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Fixed damage inflicts", label: "Fixed damage inflicts", groupPath: ["Leader Skills", "Extra Effects", "Other"]) { card, ctx in
+        LeaderSkillScale.skillFixedDamage(card, skills: ctx.skillsJA) > 0
+    },
+    SpecialSearchLeaf(id: "Leader Skills > Extra Effects > Adds combo", label: "Adds combo", groupPath: ["Leader Skills", "Extra Effects", "Other"]) { card, ctx in
+        LeaderSkillScale.skillAddCombo(card, skills: ctx.skillsJA) > 0
+    },
 ]
 
 private let leaderHPScaleLeaves: [SpecialSearchLeaf] = [
