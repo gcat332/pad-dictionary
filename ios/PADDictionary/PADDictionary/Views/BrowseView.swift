@@ -17,9 +17,10 @@ final class BrowseViewModel: ObservableObject {
     }
 
     var cards: [Card] {
+        let base = dataStore.cards.filter { !$0.isEmpty && $0.enabled }
         let searched = searchText.isEmpty
-            ? dataStore.cards
-            : dataStore.cards.filter { String($0.id).contains(searchText) }
+            ? base
+            : base.filter { String($0.id).contains(searchText) }
         let filtered = searched.filter { filterState.matches($0) }
         let context = SpecialSearchContext(cardsById: dataStore.cardsById, skillsJA: dataStore.skillLookup)
         let specialFiltered = SpecialSearchEngine.filter(filtered, selectedKeys: selectedSpecialSearchKeys, mode: specialSearchMode, context: context)
