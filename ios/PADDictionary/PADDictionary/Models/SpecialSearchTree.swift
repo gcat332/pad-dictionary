@@ -374,6 +374,60 @@ private let activePlayerHPChangeLeaves: [SpecialSearchLeaf] = [
     },
 ]
 
+private let activeBuffLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > Buff > RCV rate change", label: "RCV rate change", groupPath: ["Active Skill", "Buff"]) { card, ctx in
+        ActiveSkillEffects.rcvBuffSkillType(card, skills: ctx.skillsJA) > 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Buff > Team ATK rate change", label: "Team ATK rate change", groupPath: ["Active Skill", "Buff"]) { card, ctx in
+        ActiveSkillEffects.atkBuffSkillType(card, skills: ctx.skillsJA) > 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Buff > Move time change", label: "Move time change", groupPath: ["Active Skill", "Buff"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [132], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Buff > Adds combo", label: "Adds combo", groupPath: ["Active Skill", "Buff"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [160], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Buff > Reduce Damage for all Attr", label: "Reduce Damage for all Attr", groupPath: ["Active Skill", "Buff"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [3, 156], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        if skill.type == 156 { return (skill.params.indices.contains(4) ? skill.params[4] : 0) == 3 }
+        return true
+    },
+    SpecialSearchLeaf(id: "Active Skill > Buff > Reduce 100% Damage", label: "Reduce 100% Damage", groupPath: ["Active Skill", "Buff"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [3], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        return (skill.params.indices.contains(1) ? skill.params[1] : 0) >= 100
+    },
+    SpecialSearchLeaf(id: "Active Skill > Buff > Reduce all Damage for designated Attr", label: "Reduce all Damage for designated Attr", groupPath: ["Active Skill", "Buff"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [21], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Buff > Mass Attacks", label: "Mass Attacks", groupPath: ["Active Skill", "Buff"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [51], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Buff > Rate by state count(Jewel Princess)", label: "Rate by state count(Jewel Princess)", groupPath: ["Active Skill", "Buff"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [156, 168, 228, 231], skills: ctx.skillsJA, searchRandom: true)
+    },
+]
+
+private let activeForEnemyLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > For Enemy > Menace", label: "Menace", groupPath: ["Active Skill", "For Enemy"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [18], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > For Enemy > Reduces enemies' DEF", label: "Reduces enemies' DEF", groupPath: ["Active Skill", "For Enemy"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [19, 282], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > For Enemy > Poisons enemies", label: "Poisons enemies", groupPath: ["Active Skill", "For Enemy"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [4], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > For Enemy > Change enemies's Attr", label: "Change enemies's Attr", groupPath: ["Active Skill", "For Enemy"]) { card, ctx in
+        ActiveSkillEffects.changeEnemiesAttrAttr(card, skills: ctx.skillsJA).attr != nil
+    },
+    SpecialSearchLeaf(id: "Active Skill > For Enemy > Counterattack buff", label: "Counterattack buff", groupPath: ["Active Skill", "For Enemy"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [60], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > For Enemy > Voids Super Gravity", label: "Voids Super Gravity", groupPath: ["Active Skill", "For Enemy"]) { card, ctx in
+        ActiveSkillEffects.voidsAbsorptionTurns(card, skills: ctx.skillsJA).superGravity > 0
+    },
+]
+
 enum SpecialSearchTree {
-    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves
+    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves
 }

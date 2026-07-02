@@ -102,7 +102,7 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testOthersSearchLeafCount() {
         let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
         XCTAssertEqual(othersLeaves.count, 23)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 104)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 119)
     }
 
     private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
@@ -179,7 +179,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let reduceShield = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Reduce Shield"] }
         XCTAssertEqual(hpScale.count, 6)
         XCTAssertEqual(reduceShield.count, 9)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 104)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 119)
     }
 
     private func makeCardWithActiveSkill(_ activeSkillId: Int) -> Card {
@@ -220,5 +220,25 @@ final class SpecialSearchTreeTests: XCTestCase {
 
     private func makeCardWithLeaderSkill(_ leaderSkillId: Int) -> Card {
         Card(id: 1, name: "Card", otLangName: nil, attrs: [0], types: [1], rarity: 1, cost: 1, maxLevel: 1, isEmpty: false, enabled: true, hp: StatRange(min: 1, max: 1, scale: 1), atk: StatRange(min: 1, max: 1, scale: 1), rcv: StatRange(min: 1, max: 1, scale: 1), activeSkillId: 0, leaderSkillId: leaderSkillId, evoRootId: 1, awakenings: [], superAwakenings: [], canAssist: false, henshinTo: nil, henshinFrom: nil, orbSkinOrBgmId: 0, badgeId: 0, feedExp: 0, sellPrice: 0, limitBreakIncr: 0, sellMP: 0, latentAwakeningId: 0, stackable: false, skillBanner: false, evoMaterials: [0, 0, 0, 0, 0], isUltEvo: false, evoBaseId: 0, syncAwakening: nil)
+    }
+
+    func testReduce100PercentDamage() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 3, maxLevel: 1, initialCooldown: 0, params: [0, 100])]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Active Skill > Buff > Reduce 100% Damage").matches(makeCardWithActiveSkill(10), ctx))
+    }
+
+    func testChangeEnemiesAttrLeaf() {
+        let skills: SkillLookup = [10: Skill(id: 10, name: "S", description: "", type: 153, maxLevel: 1, initialCooldown: 0, params: [2])]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Active Skill > For Enemy > Change enemies's Attr").matches(makeCardWithActiveSkill(10), ctx))
+    }
+
+    func testFinalPhase3aLeafCounts() {
+        let buff = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "Buff"] }
+        let forEnemy = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "For Enemy"] }
+        XCTAssertEqual(buff.count, 9)
+        XCTAssertEqual(forEnemy.count, 6)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 119)
     }
 }
