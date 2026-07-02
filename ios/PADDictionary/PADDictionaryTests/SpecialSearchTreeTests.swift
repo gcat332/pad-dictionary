@@ -102,7 +102,7 @@ final class SpecialSearchTreeTests: XCTestCase {
     func testOthersSearchLeafCount() {
         let othersLeaves = SpecialSearchTree.leaves.filter { $0.groupPath.first == "Others Search" }
         XCTAssertEqual(othersLeaves.count, 23)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 219)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 231)
     }
 
     private func withOrbSkinOrBgmId(_ card: Card, _ value: Int) -> Card {
@@ -179,7 +179,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let reduceShield = SpecialSearchTree.leaves.filter { $0.groupPath == ["Leader Skills", "Reduce Shield"] }
         XCTAssertEqual(hpScale.count, 6)
         XCTAssertEqual(reduceShield.count, 9)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 219)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 231)
     }
 
     private func makeCardWithActiveSkill(_ activeSkillId: Int) -> Card {
@@ -239,7 +239,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let forEnemy = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "For Enemy"] }
         XCTAssertEqual(buff.count, 9)
         XCTAssertEqual(forEnemy.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 219)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 231)
     }
 
     func testIncreaseDamageCapLeaderUsesBitmask() {
@@ -322,7 +322,7 @@ final class SpecialSearchTreeTests: XCTestCase {
         let other = SpecialSearchTree.leaves.filter { $0.groupPath == ["Active Skill", "Other"] }
         XCTAssertEqual(conditional.count, 6)
         XCTAssertEqual(other.count, 6)
-        XCTAssertEqual(SpecialSearchTree.leaves.count, 219)
+        XCTAssertEqual(SpecialSearchTree.leaves.count, 231)
     }
 
     func testOrbsDropLeaves() {
@@ -399,5 +399,31 @@ final class SpecialSearchTreeTests: XCTestCase {
         XCTAssertTrue(leaf("Active Skill > Random Create Orbs > Create 30 Orbs").matches(makeCardWithActiveSkill(2), ctx))
         XCTAssertTrue(leaf("Active Skill > Random Create Orbs > Orb Color > Fire Orbs").matches(makeCardWithActiveSkill(3), ctx))
         XCTAssertFalse(leaf("Active Skill > Random Create Orbs > Orb Color > Water Orbs").matches(makeCardWithActiveSkill(3), ctx))
+    }
+
+    func testCreateFixedPositionOrbsLeaves() {
+        let skills: SkillLookup = [
+            // Outer edges: row0 full 6-bit line, rows1-3 have only the two end bits (0b100001), row4 full line
+            1: Skill(id: 1, name: "S", description: "", type: 176, maxLevel: 1, initialCooldown: 0, params: [0b111111, 0b100001, 0b100001, 0b100001, 0b111111, 0]),
+            // 3x3 block at rows 0-2, columns 0-2 (0b111), rows 3-4 empty
+            2: Skill(id: 2, name: "S", description: "", type: 176, maxLevel: 1, initialCooldown: 0, params: [0b111, 0b111, 0b111, 0, 0, 0]),
+            // Cross centered at rows 1-3
+            3: Skill(id: 3, name: "S", description: "", type: 176, maxLevel: 1, initialCooldown: 0, params: [0, 0b010, 0b111, 0b010, 0, 0]),
+            // Vertical column with heart bit (bit 5) at odd index 1
+            4: Skill(id: 4, name: "S", description: "", type: 127, maxLevel: 1, initialCooldown: 0, params: [0, 0b10_0000]),
+            // Two horizontals via a 3-param skill (params.count == 3, triggers >=2 horizontals via length check)
+            5: Skill(id: 5, name: "S", description: "", type: 128, maxLevel: 1, initialCooldown: 0, params: [0b1, 0, 0]),
+        ]
+        let ctx = SpecialSearchContext(cardsById: [:], skillsJA: skills)
+        XCTAssertTrue(leaf("Active Skill > Create Fixed Position Orbs > Create designated shape").matches(makeCardWithActiveSkill(1), ctx))
+        XCTAssertTrue(leaf("Active Skill > Create Fixed Position Orbs > Create outer edges").matches(makeCardWithActiveSkill(1), ctx))
+        XCTAssertFalse(leaf("Active Skill > Create Fixed Position Orbs > Create outer edges").matches(makeCardWithActiveSkill(2), ctx))
+        XCTAssertTrue(leaf("Active Skill > Create Fixed Position Orbs > Create 3×3 block").matches(makeCardWithActiveSkill(2), ctx))
+        XCTAssertTrue(leaf("Active Skill > Create Fixed Position Orbs > Create cross").matches(makeCardWithActiveSkill(3), ctx))
+        XCTAssertFalse(leaf("Active Skill > Create Fixed Position Orbs > Create cross").matches(makeCardWithActiveSkill(2), ctx))
+        XCTAssertTrue(leaf("Active Skill > Create Fixed Position Orbs > Create verticals").matches(makeCardWithActiveSkill(4), ctx))
+        XCTAssertTrue(leaf("Active Skill > Create Fixed Position Orbs > Create vertical Heart").matches(makeCardWithActiveSkill(4), ctx))
+        XCTAssertTrue(leaf("Active Skill > Create Fixed Position Orbs > Create horizontals").matches(makeCardWithActiveSkill(5), ctx))
+        XCTAssertTrue(leaf("Active Skill > Create Fixed Position Orbs > Create ≥2 horizontals").matches(makeCardWithActiveSkill(5), ctx))
     }
 }

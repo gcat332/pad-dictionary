@@ -830,6 +830,97 @@ private let activeRandomCreateOrbsLeaves: [SpecialSearchLeaf] = [
     },
 ]
 
+private let activeCreateFixedPositionOrbsLeaves: [SpecialSearchLeaf] = [
+    SpecialSearchLeaf(id: "Active Skill > Create Fixed Position Orbs > Create designated shape", label: "Create designated shape", groupPath: ["Active Skill", "Create Fixed Position Orbs"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [176], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Create Fixed Position Orbs > Create outer edges", label: "Create outer edges", groupPath: ["Active Skill", "Create Fixed Position Orbs"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [176], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let sk = skill.params
+        func at(_ i: Int) -> Int { sk.indices.contains(i) ? sk[i] : 0 }
+        let baseLineNum1 = 0b111111
+        let baseLineNum2 = 0b100001
+        return ActiveSkillEffects.shapeThisRowOk(at(0), baseLineNum1)
+            && ActiveSkillEffects.shapeThisRowOk(at(1), baseLineNum2)
+            && ActiveSkillEffects.shapeThisRowOk(at(2), baseLineNum2)
+            && ActiveSkillEffects.shapeThisRowOk(at(3), baseLineNum2)
+            && ActiveSkillEffects.shapeThisRowOk(at(4), baseLineNum1)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Create Fixed Position Orbs > Create 3×3 block", label: "Create 3×3 block", groupPath: ["Active Skill", "Create Fixed Position Orbs"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [176], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let sk = Array(skill.params.prefix(5))
+        func at(_ i: Int) -> Int { (0..<sk.count).contains(i) ? sk[i] : 0 }
+        var lineNumArr: [Int] = []
+        var lineNum = 0b111
+        while lineNum < 0b1000000 { lineNumArr.append(lineNum); lineNum <<= 1 }
+        for ri in 0..<3 {
+            let candidates = lineNumArr.filter { ActiveSkillEffects.shapeThisRowOk(at(ri), $0) }
+            if candidates.isEmpty { continue }
+            let filtered = candidates.filter { ln in
+                ActiveSkillEffects.shapeUpsideDownRowOk(at(ri - 1), ln)
+                    && ActiveSkillEffects.shapeUpsideDownRowOk(at(ri + 3), ln)
+                    && ActiveSkillEffects.shapeThisRowOk(at(ri + 1), ln)
+                    && ActiveSkillEffects.shapeThisRowOk(at(ri + 2), ln)
+            }
+            if !filtered.isEmpty { return true }
+        }
+        return false
+    },
+    SpecialSearchLeaf(id: "Active Skill > Create Fixed Position Orbs > Create cross", label: "Create cross", groupPath: ["Active Skill", "Create Fixed Position Orbs"]) { card, ctx in
+        SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [176], skills: ctx.skillsJA, searchRandom: false)
+            .contains { ActiveSkillEffects.shapeIsCross(Array($0.params.prefix(5))) }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Create Fixed Position Orbs > Create L shape", label: "Create L shape", groupPath: ["Active Skill", "Create Fixed Position Orbs"]) { card, ctx in
+        SkillChainMatcher.resolveAll(skillId: card.activeSkillId, types: [176], skills: ctx.skillsJA, searchRandom: false)
+            .contains { ActiveSkillEffects.shapeIsLShape(Array($0.params.prefix(5))) }
+    },
+    SpecialSearchLeaf(id: "Active Skill > Create Fixed Position Orbs > Create verticals", label: "Create verticals", groupPath: ["Active Skill", "Create Fixed Position Orbs"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [127], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Create Fixed Position Orbs > Create vertical Heart", label: "Create vertical Heart", groupPath: ["Active Skill", "Create Fixed Position Orbs"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [127], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let sk = skill.params
+        var i = 1
+        while i < sk.count {
+            if sk[i] & 32 != 0 { return true }
+            i += 2
+        }
+        return false
+    },
+    SpecialSearchLeaf(id: "Active Skill > Create Fixed Position Orbs > Create horizontals", label: "Create horizontals", groupPath: ["Active Skill", "Create Fixed Position Orbs"]) { card, ctx in
+        SkillChainMatcher.matches(skillId: card.activeSkillId, types: [128], skills: ctx.skillsJA, searchRandom: true)
+    },
+    SpecialSearchLeaf(id: "Active Skill > Create Fixed Position Orbs > Create ≥2 horizontals", label: "Create ≥2 horizontals", groupPath: ["Active Skill", "Create Fixed Position Orbs"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [128], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let sk = skill.params
+        let p0 = sk.indices.contains(0) ? sk[0] : 0
+        return sk.count >= 3 || Bin.unflags(p0).count >= 2
+    },
+    SpecialSearchLeaf(id: "Active Skill > Create Fixed Position Orbs > Create 2 color horizontals", label: "Create 2 color horizontals", groupPath: ["Active Skill", "Create Fixed Position Orbs"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [128], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let sk = skill.params
+        guard sk.indices.contains(3) else { return false }
+        let p1 = sk.indices.contains(1) ? sk[1] : 0
+        return sk[3] >= 0 && (p1 & sk[3]) != p1
+    },
+    SpecialSearchLeaf(id: "Active Skill > Create Fixed Position Orbs > Create horizontal not Top or Bottom", label: "Create horizontal not Top or Bottom", groupPath: ["Active Skill", "Create Fixed Position Orbs"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [128], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        let sk = skill.params
+        let p0 = sk.indices.contains(0) ? sk[0] : 0
+        let p2 = sk.indices.contains(2) ? sk[2] : 0
+        return (p0 | p2) & 0b1110 != 0
+    },
+    SpecialSearchLeaf(id: "Active Skill > Create Fixed Position Orbs > Extensive horizontal(Farm and outer edges)", label: "Extensive horizontal(Farm and outer edges)", groupPath: ["Active Skill", "Create Fixed Position Orbs"]) { card, ctx in
+        guard let skill = SkillChainMatcher.resolve(skillId: card.activeSkillId, types: [128, 71, 176], skills: ctx.skillsJA, searchRandom: true) else { return false }
+        switch skill.type {
+        case 128: return true
+        case 71: return ActiveSkillEffects.boardChangeColorTypes(skill).count == 1
+        case 176: return skill.params.contains { ($0 & 0b11_1111) == 0b11_1111 }
+        default: return false
+        }
+    },
+]
+
 enum SpecialSearchTree {
-    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves + activeOrbsStatesLeaves + activeBoardStatesLeaves + activeSkillConditionalLeaves + activeOtherLeaves + activeOrbsDropLeaves + activeChangeBoardLeaves + activeOrbsColorChangeLeaves + activeRandomCreateOrbsLeaves
+    static let leaves: [SpecialSearchLeaf] = evoTypeLeaves + awakeningLeaves + othersSearchLeaves + leaderMatchingStyleLeaves + leaderRestrictionLeaves + leaderExtraEffectsLeaves + leaderHPScaleLeaves + leaderReduceShieldLeaves + activeVoidsAbsorptionLeaves + activeRecoversBindLeaves + activePlayerHPChangeLeaves + activeBuffLeaves + activeForEnemyLeaves + activePlayerTeamLeaves + activeOrbsStatesLeaves + activeBoardStatesLeaves + activeSkillConditionalLeaves + activeOtherLeaves + activeOrbsDropLeaves + activeChangeBoardLeaves + activeOrbsColorChangeLeaves + activeRandomCreateOrbsLeaves + activeCreateFixedPositionOrbsLeaves
 }
