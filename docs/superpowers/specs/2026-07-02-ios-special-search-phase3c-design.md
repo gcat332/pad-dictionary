@@ -3,9 +3,11 @@
 ## Context
 
 Phases 1–3b ported 165 of 264 web leaves. All that remains is the rest of the "Active
-Skill" group: **Orbs Drop (15) + Change all Orbs on Board (14) + Orbs Color Change (14) +
+Skill" group: **Orbs Drop (16) + Change all Orbs on Board (14) + Orbs Color Change (14) +
 Random Create Orbs (10) + Create Fixed Position Orbs (12) + Damage Enemy — Gravity (5) +
-Damage Enemy — Fixed damage (3) + Damage Enemy — Numerical damage (10) = 83 leaves.**
+Damage Enemy — Fixed damage (3) + Damage Enemy — Numerical damage (10) = 84 leaves.**
+Counts verified via the same `node -e "require('./engine.js')..."` introspection used to
+scope every prior phase.
 
 User decision: do all 83 in a single phase (Phase 3c) rather than splitting further, despite
 "Create Fixed Position Orbs" introducing genuinely new complexity (bitmask row/shape
@@ -43,7 +45,7 @@ No new broken web leaves found in this slice.
 
 ## Architecture
 
-- 83 new `SpecialSearchLeaf` entries appended to `SpecialSearchTree.leaves` (165 → 248),
+- 84 new `SpecialSearchLeaf` entries appended to `SpecialSearchTree.leaves` (165 → 249),
   grouped under `["Active Skill", "Orbs Drop", ...]` etc., matching the web's nesting
   (including the "Drop rate increases", "Colors Count", "Include Color", "To Color",
   "From Color", "Orb Color", and "Target"/"Attribute"/"Damage" subgroups).
@@ -63,13 +65,13 @@ which cards match).
 
 Same as every prior phase: pure-function unit tests for every new `ActiveSkillEffects`
 helper (`Bin.unflags`, `notNeighbour`, the orb/shape parsers) and every new leaf; verified
-via a real Simulator screenshot confirming the app still launches cleanly with 248 leaves
+via a real Simulator screenshot confirming the app still launches cleanly with 249 leaves
 loaded.
 
 ## Out of scope for this phase
 
 `Seamless Buff (Round ≥CD)` (deferred since Phase 3b, needs the full generic skill DSL
 parser). Saved presets, compare mode (sub-project 5). This phase completes the "Active
-Skill" group and effectively completes the special-search port: 248 of 264 web leaves
-ported; the remaining 16 are the 13 broken web leaves found in Phases 1–2 (documented,
-not fixed) plus this 1 deferred leaf (exact accounting in the Phase 1/2 specs).
+Skill" group and effectively completes the special-search port: 249 of 264 web leaves
+ported; the remaining 15 are the previously-documented broken web leaves from Phases 1–2
+plus this 1 deferred leaf (not fixed/ported by design — see the Phase 1/2 specs).
