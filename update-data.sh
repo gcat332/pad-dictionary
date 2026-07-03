@@ -21,7 +21,7 @@ DATA_ONLY=false
 #   skill_ja = authoritative skill table (type/params for the engine + JP source for translation)
 #   skill_en = English skill text where available
 patterns=(/monsters-info/mon_ja.json /monsters-info/skill_en.json /monsters-info/skill_ja.json)
-$DATA_ONLY || patterns+=(/images/cards_ja /images/awoken.png /images/icon-type.svg /images/CARDFRAME2.png /images/CARDFRAMEW.png)
+$DATA_ONLY || patterns+=(/images/cards_ja /images/awoken.png /images/icon-orbs.png /images/icon-type.svg /images/CARDFRAME2.png /images/CARDFRAMEW.png)
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
@@ -45,6 +45,7 @@ if ! $DATA_ONLY; then
     cwebp -q 90 -quiet "$f" -o "images/cards_ja/$(basename "${f%.PNG}").webp"
   done
   cp "$TMP/images/awoken.png"     images/awoken.png      # awakening icons (32px cells, ids 0–143)
+  cp "$TMP/images/icon-orbs.png"  images/icon-orbs.png   # orb + gimmick-orb icons (36px cells, 2x10; col0 rows0-9 = attr 0-9)
   cp "$TMP/images/icon-type.svg"  images/icon-type.svg   # type icons
   cp "$TMP/images/CARDFRAME2.png" images/CARDFRAME2.png  # attribute frame sprite
   cp "$TMP/images/CARDFRAMEW.png" images/CARDFRAMEW.png  # no-attribute frame
