@@ -197,7 +197,7 @@ struct FilterView: View {
 
     private func attrSection(slot: Int, title: String) -> some View {
         Section(title) {
-            HStack(spacing: 12) {
+            HStack(spacing: 0) {
                 ForEach(0..<5, id: \.self) { value in
                     Button {
                         if viewModel.filterState.attr[slot].contains(value) {
@@ -206,7 +206,7 @@ struct FilterView: View {
                             viewModel.filterState.attr[slot].insert(value)
                         }
                     } label: {
-                        OrbIconSprite(attr: value, size: 28)
+                        OrbIconSprite(attr: value, size: 34)
                             .overlay {
                                 if viewModel.filterState.attr[slot].contains(value) {
                                     Circle().stroke(Color.padAccentBorder, lineWidth: 3)
@@ -214,9 +214,9 @@ struct FilterView: View {
                             }
                     }
                     .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity)   // 5 slots split the row width evenly
                     .accessibilityLabel(attrLabels[value])
                 }
-                Spacer()
             }
         }
         .listRowBackground(Color.padPanel)
@@ -337,6 +337,7 @@ struct FilterView: View {
                             .frame(maxWidth: .infinity)
                         }
                     }
+                    .listRowSeparator(.hidden)
                 }
             }
         } header: {

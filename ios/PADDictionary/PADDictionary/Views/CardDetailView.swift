@@ -28,7 +28,9 @@ struct CardDetailView: View {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 4) {
                     ForEach(Array(card.attrs.enumerated()), id: \.offset) { _, attr in
-                        AttributeDotView(attr: attr)
+                        if (0...4).contains(attr) {
+                            OrbIconSprite(attr: attr, size: 18)
+                        }
                     }
                     Text(card.displayName).font(.title2.bold())
                 }
