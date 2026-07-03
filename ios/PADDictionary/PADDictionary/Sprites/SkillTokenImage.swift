@@ -16,17 +16,15 @@ enum SkillTokenImage {
 
     private static func rawImage(for kind: SkillTokenKind) -> UIImage? {
         switch kind {
-        case .orb(let col, let row):
+        case .orb(let x, let y, let w, let h):
             guard let sheet = SpriteSheetCache.shared.image(relativePath: "images/icon-orbs.png") else { return nil }
-            return SpriteCrop.cell(from: sheet, x: col * 36, y: row * 36, size: 36)
+            return SpriteCrop.rect(from: sheet, x: x, y: y, w: w, h: h)
         case .awoken(let id):
             guard let y = AwakeningSprite.yOffset(forAwakeningId: id),
                   let sheet = SpriteSheetCache.shared.image(relativePath: "images/awoken.png") else { return nil }
             return SpriteCrop.cell(from: sheet, x: 0, y: Int(-y), size: 32)  // yOffset is negative (-32*id)
         case .type(let id):
             return TypeIconCache.shared.icon(forType: id)
-        case .symbol:
-            return nil  // rendered as an SF Symbol by SkillTextView, not a bitmap
         }
     }
 }

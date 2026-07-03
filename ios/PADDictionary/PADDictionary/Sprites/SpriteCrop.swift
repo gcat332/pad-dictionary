@@ -2,13 +2,16 @@ import UIKit
 
 /// Crops one square cell out of a sprite sheet. `x`/`y`/`size` are in points (image scale applied).
 enum SpriteCrop {
-    static func cell(from image: UIImage, x: Int, y: Int, size: Int) -> UIImage? {
+    static func rect(from image: UIImage, x: Int, y: Int, w: Int, h: Int) -> UIImage? {
         guard let cg = image.cgImage else { return nil }
         let s = image.scale
-        let rect = CGRect(x: CGFloat(x) * s, y: CGFloat(y) * s,
-                          width: CGFloat(size) * s, height: CGFloat(size) * s)
-        guard let cropped = cg.cropping(to: rect) else { return nil }
+        let r = CGRect(x: CGFloat(x) * s, y: CGFloat(y) * s, width: CGFloat(w) * s, height: CGFloat(h) * s)
+        guard let cropped = cg.cropping(to: r) else { return nil }
         return UIImage(cgImage: cropped, scale: s, orientation: .up)
+    }
+
+    static func cell(from image: UIImage, x: Int, y: Int, size: Int) -> UIImage? {
+        rect(from: image, x: x, y: y, w: size, h: size)
     }
 }
 

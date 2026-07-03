@@ -24,20 +24,23 @@ final class SkillTextTokenizerTests: XCTestCase {
     }
 
     func testResolveOrb() {
-        XCTAssertEqual(SkillToken.resolve("Fire"), .orb(col: 0, row: 0))
-        XCTAssertEqual(SkillToken.resolve("Bombs"), .orb(col: 0, row: 9))
-        XCTAssertEqual(SkillToken.resolve("Lethal Poison"), .orb(col: 0, row: 8))
-        XCTAssertEqual(SkillToken.resolve("Recovery"), .orb(col: 0, row: 5))  // translated name for Heal
+        XCTAssertEqual(SkillToken.resolve("Fire"), .orb(x: 0, y: 0, w: 36, h: 36))
+        XCTAssertEqual(SkillToken.resolve("Bombs"), .orb(x: 0, y: 324, w: 36, h: 36))       // row 9
+        XCTAssertEqual(SkillToken.resolve("Lethal Poison"), .orb(x: 0, y: 288, w: 36, h: 36)) // row 8
+        XCTAssertEqual(SkillToken.resolve("Recovery"), .orb(x: 0, y: 180, w: 36, h: 36))     // alias -> Heal, row 5
     }
 
-    func testResolveLockSymbol() {
-        XCTAssertEqual(SkillToken.resolve("locks"), .symbol("lock.fill"))
-        XCTAssertEqual(SkillToken.resolve("Lock"), .symbol("lock.fill"))
+    func testResolveLock() {
+        // Lock renders from its tight 14x17 glyph, not the full 36px cell.
+        XCTAssertEqual(SkillToken.resolve("locks"), .orb(x: 36, y: 36, w: 14, h: 17))
+        XCTAssertEqual(SkillToken.resolve("Lock"), .orb(x: 36, y: 36, w: 14, h: 17))  // translated alias
     }
 
     func testResolveType() {
         XCTAssertEqual(SkillToken.resolve("Devil"), .type(7))
         XCTAssertEqual(SkillToken.resolve("Enhance Material"), .type(14))
+        XCTAssertEqual(SkillToken.resolve("Attack type"), .type(6))   // translated alias -> Attacker
+        XCTAssertEqual(SkillToken.resolve("Demon type"), .type(7))    // translated alias -> Devil
     }
 
     func testResolveAwoken() {
@@ -46,6 +49,8 @@ final class SkillTextTokenizerTests: XCTestCase {
             return XCTFail("expected a known awakening id")
         }
         XCTAssertEqual(SkillToken.resolve("Two-Pronged Attack"), .awoken(id))
+        // translated variants resolve via the alias meta table
+        XCTAssertEqual(SkillToken.resolve("2-target attack"), .awoken(id))
     }
 
     func testResolveUnknownReturnsNil() {

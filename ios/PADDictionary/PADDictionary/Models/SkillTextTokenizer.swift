@@ -35,34 +35,47 @@ enum SkillTextTokenizer {
     }
 }
 
-/// What kind of icon a token maps to. `orb` col/row index into `icon-orbs.png` (36px cells);
-/// `symbol` is an SF Symbol name (used for glyphs the sprite sheet renders too small/off-center).
+/// What kind of icon a token maps to. `orb` is a pixel rect into `icon-orbs.png`.
 enum SkillTokenKind: Equatable {
-    case orb(col: Int, row: Int)
+    case orb(x: Int, y: Int, w: Int, h: Int)
     case type(Int)
     case awoken(Int)
-    case symbol(String)
 }
 
 enum SkillToken {
-    // col 0 rows 0-9 = attr 0-9. Aliases cover Google-translated variants (Recovery=Heal, Darkness=Dark).
-    private static let orbs: [String: (col: Int, row: Int)] = [
-        "Fire": (0, 0), "Water": (0, 1), "Wood": (0, 2), "Light": (0, 3), "Dark": (0, 4),
-        "Darkness": (0, 4), "Heal": (0, 5), "Recovery": (0, 5), "Jammers": (0, 6),
-        "Poison": (0, 7), "Lethal Poison": (0, 8), "Bombs": (0, 9),
+    // col 0 rows 0-9 = attr 0-9 (36px cells).
+    private static let orbRow: [String: Int] = [
+        "Fire": 0, "Water": 1, "Wood": 2, "Light": 3, "Dark": 4,
+        "Heal": 5, "Jammers": 6, "Poison": 7, "Lethal Poison": 8, "Bombs": 9,
     ]
     private static let types: [String: Int] = [
         "Balanced": 1, "Physical": 2, "Healer": 3, "Dragon": 4, "God": 5,
-        "Attacker": 6, "Devil": 7, "Demon type": 7, "Machine": 8, "Enhance Material": 14,
+        "Attacker": 6, "Devil": 7, "Machine": 8, "Enhance Material": 14,
     ]
-    // The lock cell in icon-orbs.png is a tiny corner overlay — an SF Symbol reads better inline.
-    private static let symbols: [String: String] = [
-        "locks": "lock.fill", "Lock": "lock.fill",
+    // "meta" table: Google-translated variant names → the canonical token name they mean.
+    // Extend this as new translated phrasings show up.
+    private static let aliases: [String: String] = [
+        // orbs / attributes / states
+        "Recovery": "Heal", "Darkness": "Dark", "Lock": "locks",
+        // types
+        "Attack type": "Attacker", "Attack Type": "Attacker",
+        "Balance type": "Balanced", "Demon type": "Devil",
+        // awoken skills
+        "2-target attack": "Two-Pronged Attack", "Two-target attack": "Two-Pronged Attack",
+        "Cross-erasing attack": "Cross Attack",
+        "L-shaped erase attack": "[L] Increased Attack",
+        "T-shaped erasing attack": "[T] Increased Attack",
+        "Dark row reinforcement": "Enhanced Dark Rows",
+        "Bind Resistance +": "Resistance-Bind+",
+        "Simultaneous fire and water attack": "Fire & Water Attack",
     ]
 
-    static func resolve(_ name: String) -> SkillTokenKind? {
-        if let o = orbs[name] { return .orb(col: o.col, row: o.row) }
-        if let s = symbols[name] { return .symbol(s) }
+    static func resolve(_ raw: String) -> SkillTokenKind? {
+        let name = aliases[raw] ?? raw
+        if name == "locks" {                       // lock overlay: tight 14x17 glyph at (36,36)
+            return .orb(x: 36, y: 36, w: 14, h: 17)
+        }
+        if let row = orbRow[name] { return .orb(x: 0, y: row * 36, w: 36, h: 36) }
         if let t = types[name] { return .type(t) }
         if let a = AwakeningNames.id(forName: name) { return .awoken(a) }
         return nil

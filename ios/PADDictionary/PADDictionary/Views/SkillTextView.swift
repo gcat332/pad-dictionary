@@ -9,9 +9,10 @@ struct SkillTextView: View {
     let text: String
     var fontSize: CGFloat = 13
 
-    // GungHo's highlight color (^ff3600^).
+    // GungHo control codes: ^ff3600^ = red emphasis, ^qs^ = conditional clause, ^p = reset.
     private static let highlight = Color(red: 0xff / 255, green: 0x36 / 255, blue: 0x00 / 255)
-    private static let markers = try! NSRegularExpression(pattern: #"\^ff3600\^|\^p"#)
+    private static let condition = Color(red: 0x5c / 255, green: 0xc8 / 255, blue: 0xff / 255)  // cyan
+    private static let markers = try! NSRegularExpression(pattern: #"\^ff3600\^|\^qs\^|\^p"#)
 
     init(_ text: String, fontSize: CGFloat = 13) {
         self.text = text
@@ -41,7 +42,11 @@ struct SkillTextView: View {
             if m.range.location > cursor {
                 segments.append((ns.substring(with: NSRange(location: cursor, length: m.range.location - cursor)), color))
             }
-            color = ns.substring(with: m.range) == "^ff3600^" ? Self.highlight : nil
+            switch ns.substring(with: m.range) {
+            case "^ff3600^": color = Self.highlight
+            case "^qs^": color = Self.condition
+            default: color = nil   // ^p resets
+            }
             cursor = m.range.location + m.range.length
         }
         if cursor < ns.length { segments.append((ns.substring(from: cursor), color)) }
@@ -54,9 +59,6 @@ struct SkillTextView: View {
             case .text(let t):
                 return acc + colored(Text(t), color)
             case .token(let name, let square):
-                if case .symbol(let sym) = SkillToken.resolve(name) {
-                    return acc + colored(Text(Image(systemName: sym)), color)
-                }
                 if let icon = SkillTokenImage.image(for: name, height: iconHeight) {
                     // ponytail: -2 baseline nudge tuned by eye; adjust if icons ride high/low
                     return acc + Text(Image(uiImage: icon)).baselineOffset(-2)

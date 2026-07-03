@@ -58,9 +58,8 @@ enum SkillResolver {
 
     private static func clean(_ raw: String?) -> String? {
         guard var s = trimmedNonEmpty(raw) else { return nil }
-        // Keep ^ff3600^…^p color spans (SkillTextView renders them red); strip the ^qs^
-        // conditional-clause marker (the only other caret code in the data).
-        s = s.replacingOccurrences(of: "^qs^", with: "")
+        // Keep GungHo caret codes (^ff3600^, ^qs^, ^p) — SkillTextView renders them as
+        // red emphasis / cyan condition / reset. Only whitespace is normalized here.
         s = s.replacingOccurrences(of: "[ \\t]{2,}", with: " ", options: .regularExpression)
         return trimmedNonEmpty(s)
     }
