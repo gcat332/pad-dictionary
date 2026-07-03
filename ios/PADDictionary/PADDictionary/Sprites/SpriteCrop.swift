@@ -13,6 +13,14 @@ enum SpriteCrop {
     static func cell(from image: UIImage, x: Int, y: Int, size: Int) -> UIImage? {
         rect(from: image, x: x, y: y, w: size, h: size)
     }
+
+    /// Draws `over` on top of `base` (both assumed same size). Used for orb + state overlays.
+    static func composite(base: UIImage, over: UIImage) -> UIImage {
+        UIGraphicsImageRenderer(size: base.size).image { _ in
+            base.draw(in: CGRect(origin: .zero, size: base.size))
+            over.draw(in: CGRect(origin: .zero, size: base.size))
+        }
+    }
 }
 
 extension UIImage {

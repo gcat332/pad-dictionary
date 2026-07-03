@@ -35,9 +35,12 @@ enum SkillTextTokenizer {
     }
 }
 
-/// What kind of icon a token maps to. `orb` is a pixel rect into `icon-orbs.png`.
+/// What kind of icon a token maps to. `orb` is a pixel rect into `icon-orbs.png`;
+/// `surge` is an orb (by attr row) drawn inside a rounded frame, matching the game's
+/// "orbs more likely to appear" indicator.
 enum SkillTokenKind: Equatable {
     case orb(x: Int, y: Int, w: Int, h: Int)
+    case surge(orbRow: Int)
     case type(Int)
     case awoken(Int)
 }
@@ -105,9 +108,10 @@ enum SkillToken {
         if lower == "combo" {                        // combo-drop "roller" glyph (icon-orbs c1 r5, top-right)
             return .orb(x: 53, y: 180, w: 19, h: 16)
         }
-        // "{Fire Surge}" etc = "orbs more likely to appear" — use the matching orb.
+        // "{Fire Surge}" etc = "orbs more likely to appear" — the matching orb with the
+        // drop-rate overlay on top (matches the game indicator).
         if lower.hasSuffix(" surge"), let row = surgeOrbRow[String(lower.dropLast(6))] {
-            return .orb(x: 0, y: row * 36, w: 36, h: 36)
+            return .surge(orbRow: row)
         }
         if let row = orbRowLower[lower] { return .orb(x: 0, y: row * 36, w: 36, h: 36) }
         if let t = typesLower[lower] { return .type(t) }

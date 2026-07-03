@@ -19,6 +19,11 @@ enum SkillTokenImage {
         case .orb(let x, let y, let w, let h):
             guard let sheet = SpriteSheetCache.shared.image(relativePath: "images/icon-orbs.png") else { return nil }
             return SpriteCrop.rect(from: sheet, x: x, y: y, w: w, h: h)
+        case .surge(let row):  // orb + drop-rate overlay (icon-orbs c1 r2)
+            guard let sheet = SpriteSheetCache.shared.image(relativePath: "images/icon-orbs.png"),
+                  let orb = SpriteCrop.rect(from: sheet, x: 0, y: row * 36, w: 36, h: 36),
+                  let overlay = SpriteCrop.rect(from: sheet, x: 36, y: 72, w: 36, h: 36) else { return nil }
+            return SpriteCrop.composite(base: orb, over: overlay)
         case .awoken(let id):
             guard let y = AwakeningSprite.yOffset(forAwakeningId: id),
                   let sheet = SpriteSheetCache.shared.image(relativePath: "images/awoken.png") else { return nil }
