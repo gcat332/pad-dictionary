@@ -35,6 +35,13 @@ final class CardSpritePositionTests: XCTestCase {
         XCTAssertEqual(AttributeFramePosition.subOffset(forAttr: 2)!.y, -1.04, accuracy: 0.0001)
     }
 
+    func testAttributeFrameThirdOffset() {
+        XCTAssertEqual(AttributeFramePosition.thirdOffset(forAttr: 2)!.x, -2.04, accuracy: 0.0001)
+        XCTAssertEqual(AttributeFramePosition.thirdOffset(forAttr: 2)!.y, -2.07, accuracy: 0.0001)
+        XCTAssertNil(AttributeFramePosition.thirdOffset(forAttr: 6))
+        XCTAssertNil(AttributeFramePosition.thirdOffset(forAttr: -1))
+    }
+
     func testAwakeningSpriteOffset() {
         XCTAssertEqual(AwakeningSprite.yOffset(forAwakeningId: 0), 0)
         XCTAssertEqual(AwakeningSprite.yOffset(forAwakeningId: 143), -4576)

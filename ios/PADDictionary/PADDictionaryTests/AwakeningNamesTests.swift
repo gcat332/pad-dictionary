@@ -7,6 +7,6 @@ final class AwakeningNamesTests: XCTestCase {
     }
 
     func testUnknownAwakeningFallsBackToNumberedLabel() {
-        XCTAssertEqual(AwakeningNames.name(for: 99999), "Awakening 99999")
+        XCTAssertEqual(AwakeningNames.name(for: 99999), "Awoken 99999")
     }
 }

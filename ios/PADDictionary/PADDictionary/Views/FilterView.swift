@@ -43,7 +43,7 @@ struct AwakeningFilterChip: View {
                 .background(count > 0 ? Color.padAccent.opacity(0.25) : Color.clear, in: RoundedRectangle(cornerRadius: 6))
         }
         .onTapGesture(perform: onTap)
-        .onLongPressGesture(perform: onRemove)
+        .simultaneousGesture(LongPressGesture(minimumDuration: 0.4).onEnded { _ in onRemove() })
     }
 }
 
@@ -249,8 +249,45 @@ struct FilterView: View {
         .listRowBackground(Color.padPanel)
     }
 
+    private var selectedAwakenings: [(id: Int, count: Int)] {
+        var counts: [Int: Int] = [:]
+        var order: [Int] = []
+        for id in viewModel.filterState.awakenings {
+            if counts[id] == nil { order.append(id) }
+            counts[id, default: 0] += 1
+        }
+        return order.map { (id: $0, count: counts[$0] ?? 0) }
+    }
+
     private var awakeningSection: some View {
         Section {
+            if !selectedAwakenings.isEmpty {
+                FlowLayout(spacing: 6) {
+                    ForEach(selectedAwakenings, id: \.id) { entry in
+                        Button {
+                            viewModel.filterState.awakenings.removeAll { $0 == entry.id }
+                        } label: {
+                            HStack(spacing: 4) {
+                                AwakeningIconView(awakeningId: entry.id)
+                                    .frame(width: 20, height: 20)
+                                Text(AwakeningNames.name(for: entry.id))
+                                    .font(.caption2)
+                                if entry.count > 1 {
+                                    Text("×\(entry.count)").font(.caption2.bold())
+                                }
+                                Image(systemName: "xmark.circle.fill").font(.caption2)
+                            }
+                            .foregroundStyle(Color.padText)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.padAccent.opacity(0.25), in: Capsule())
+                            .overlay(Capsule().stroke(Color.padAccentBorder))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.bottom, 6)
+            }
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 8), spacing: 8) {
                 ForEach(awakeningOrder, id: \.self) { id in
                     let count = viewModel.filterState.awakenings.filter { $0 == id }.count
@@ -268,7 +305,7 @@ struct FilterView: View {
             }
         } header: {
             HStack {
-                Text("Awakenings")
+                Text("Awoken")
                 Spacer()
                 Toggle("incl. Super", isOn: $viewModel.filterState.includeSuper)
                     .font(.caption)

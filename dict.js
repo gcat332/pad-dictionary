@@ -65,14 +65,14 @@ const ATTR_ACCENT = ["#e8513b","#3b9be8","#4caf50","#f0c400","#a05bd6"];
 const accentOf = c => ATTR_ACCENT[c.attrs?.[0]] ?? "#6b7280";
 const typeSvg = t => `<svg class="ty" viewBox="0 0 32 32"><use href="images/icon-type.svg#type-${t}"/></svg>`;
 const attrDot = a => a>=0 && a<5 ? `<span class="attr ${ATTR[a][1]}" title="${ATTR[a][0]}"></span>` : "";
-function frameLayer(attr, sub){ // scales with --cell (see .frame in dict.css)
+function frameLayer(attr, variant){ // scales with --cell (see .frame in dict.css); variant: "" (main) | "sub" | "third"
   if (attr === 6) return `<div class="frame w"></div>`;
   if (attr == null || attr < 0 || attr > 4) return "";
-  return `<div class="frame${sub?" sub":""}" style="--fa:${attr}"></div>`;
+  return `<div class="frame${variant?` ${variant}`:""}" style="--fa:${attr}"></div>`;
 }
 const avatarHTML = (c, extra="") => `<div class="ava" style="${extra}">
   <div class="icon" style="background-image:url(${spriteFile(c.id)});background-position:${spritePos(c.id)}"></div>
-  ${frameLayer(c.attrs[0])}${frameLayer(c.attrs[1], true)}</div>`;
+  ${frameLayer(c.attrs[0])}${frameLayer(c.attrs[1], "sub")}${c.attrs.length > 2 ? frameLayer(c.attrs[2], "third") : ""}</div>`;
 
 /* ---------- matching ---------- */
 function matches(c){

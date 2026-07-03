@@ -7,9 +7,12 @@ struct CardArtworkView: View {
     var body: some View {
         ZStack {
             artLayer
-            frameLayer(attr: card.attrs.first, sub: false)
+            frameLayer(attr: card.attrs.first, variant: .main)
             if card.attrs.count > 1 {
-                frameLayer(attr: card.attrs[1], sub: true)
+                frameLayer(attr: card.attrs[1], variant: .sub)
+            }
+            if card.attrs.count > 2 {
+                frameLayer(attr: card.attrs[2], variant: .third)
             }
         }
         .frame(width: cellSize, height: cellSize)
@@ -30,14 +33,26 @@ struct CardArtworkView: View {
         }
     }
 
+    private enum FrameVariant {
+        case main, sub, third
+
+        func offset(forAttr attr: Int) -> (x: Double, y: Double)? {
+            switch self {
+            case .main: return AttributeFramePosition.mainOffset(forAttr: attr)
+            case .sub: return AttributeFramePosition.subOffset(forAttr: attr)
+            case .third: return AttributeFramePosition.thirdOffset(forAttr: attr)
+            }
+        }
+    }
+
     @ViewBuilder
-    private func frameLayer(attr: Int?, sub: Bool) -> some View {
+    private func frameLayer(attr: Int?, variant: FrameVariant) -> some View {
         if let attr, attr == 6, let whiteFrame = SpriteSheetCache.shared.image(relativePath: "images/CARDFRAMEW.png") {
             Image(uiImage: whiteFrame)
                 .resizable()
                 .frame(width: cellSize, height: cellSize)
         } else if let attr,
-                  let offset = sub ? AttributeFramePosition.subOffset(forAttr: attr) : AttributeFramePosition.mainOffset(forAttr: attr),
+                  let offset = variant.offset(forAttr: attr),
                   let frameSheet = SpriteSheetCache.shared.image(relativePath: "images/CARDFRAME2.png") {
             Image(uiImage: frameSheet)
                 .resizable()

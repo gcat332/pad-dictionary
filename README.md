@@ -11,7 +11,8 @@ step, no backend — it deploys straight to GitHub Pages.
 
 - **13,878** JP-server cards — English names (`otLangName.en`), JP name kept as fallback for brand-new cards
 - **Filters**
-  - Attribute by position — Attr 1 (main) / Attr 2 (sub) / Attr 3 (3rd)
+  - Attribute by position — Attr 1 (main) / Attr 2 (sub) / Attr 3 (3rd, latent-unlocked) —
+    all three render their own frame corner on the card art (main/sub/third)
   - Type, Rarity, **Awoken** with counts (left-click +1, right-click −1, `incl. Super`), Can-be-assist
   - **Special Search** — the full hierarchical skill taxonomy ported from PADDashFormation
     (Active-skill & Leader-skill trees: Voids Absorption, Recovers Bind, Gravity, Reduce Shield, …),

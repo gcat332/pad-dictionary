@@ -28,6 +28,11 @@ enum AttributeFramePosition {
         guard attr >= 0, attr <= 4 else { return nil }
         return (x: -1.02 * Double(attr), y: -1.04)
     }
+
+    static func thirdOffset(forAttr attr: Int) -> (x: Double, y: Double)? {
+        guard attr >= 0, attr <= 4 else { return nil }
+        return (x: -1.02 * Double(attr), y: -2.07)
+    }
 }
 
 enum AwakeningSprite {

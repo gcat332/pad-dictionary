@@ -10,7 +10,7 @@ struct CompareView: View {
         cardIds.compactMap { dataStore.cardsById[$0] }
     }
 
-    private let rowLabels = ["", "Type", "Rarity", "Cost", "HP", "ATK", "RCV", "Awakenings", "Active skill", "Leader skill"]
+    private let rowLabels = ["", "Type", "Rarity", "Cost", "HP", "ATK", "RCV", "Awoken", "Active skill", "Leader skill"]
     private let rowHeights: [CGFloat] = [100, 28, 28, 28, 28, 28, 28, 44, 100, 100]
     private let columnWidth: CGFloat = 150
 

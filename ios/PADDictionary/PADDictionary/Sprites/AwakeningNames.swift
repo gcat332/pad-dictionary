@@ -11,6 +11,10 @@ enum AwakeningNames {
     }()
 
     static func name(for id: Int) -> String {
-        names[String(id)] ?? "Awakening \(id)"
+        names[String(id)] ?? "Awoken \(id)"
+    }
+
+    static var allIds: [Int] {
+        names.keys.compactMap(Int.init).sorted()
     }
 }

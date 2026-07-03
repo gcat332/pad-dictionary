@@ -115,7 +115,7 @@ struct CardDetailView: View {
 
     private var awakeningsSection: some View {
         VStack(alignment: .leading, spacing: 7) {
-            eyebrow("Awakenings")
+            eyebrow("Awoken")
             if card.awakenings.isEmpty {
                 Text("None").font(.caption).foregroundStyle(Color.padDim)
             } else {

@@ -8,6 +8,11 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
+            NavigationStack {
+                InfoView(dataStore: dataStore)
+            }
+            .tabItem { Label("Info", systemImage: "info.circle") }
+
             BrowseView(dataStore: dataStore, compareStore: compareStore)
                 .tabItem { Label("Browse", systemImage: "square.grid.2x2") }
 

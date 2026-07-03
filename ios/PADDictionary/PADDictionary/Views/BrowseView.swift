@@ -35,6 +35,7 @@ struct BrowseView: View {
     @ObservedObject var compareStore: CompareStore
     @StateObject private var viewModel: BrowseViewModel
     @State private var showingFilters = false
+    @State private var selectedCard: Card?
 
     init(dataStore: DataStore, compareStore: CompareStore) {
         self.dataStore = dataStore
@@ -58,24 +59,22 @@ struct BrowseView: View {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 12) {
                             ForEach(viewModel.cards) { card in
-                                NavigationLink {
-                                    CardDetailView(card: card, dataStore: dataStore, compareStore: compareStore)
-                                } label: {
-                                    CardArtworkView(card: card, cellSize: 64)
-                                        .overlay(alignment: .topTrailing) {
-                                            if compareStore.contains(card.id) {
-                                                Image(systemName: "checkmark.circle.fill")
-                                                    .foregroundStyle(.blue)
-                                                    .background(Circle().fill(.white))
-                                                    .padding(2)
-                                            }
+                                CardArtworkView(card: card, cellSize: 64)
+                                    .overlay(alignment: .topTrailing) {
+                                        if compareStore.contains(card.id) {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .foregroundStyle(.blue)
+                                                .background(Circle().fill(.white))
+                                                .padding(2)
                                         }
-                                }
-                                .simultaneousGesture(
-                                    LongPressGesture(minimumDuration: 0.4).onEnded { _ in
-                                        compareStore.toggle(card.id)
                                     }
-                                )
+                                    .contentShape(Rectangle())
+                                    .onTapGesture { selectedCard = card }
+                                    .simultaneousGesture(
+                                        LongPressGesture(minimumDuration: 0.4).onEnded { _ in
+                                            compareStore.toggle(card.id)
+                                        }
+                                    )
                             }
                         }
                         .padding()
