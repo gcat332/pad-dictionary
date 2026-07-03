@@ -3,7 +3,6 @@ import SwiftUI
 struct CardDetailView: View {
     let card: Card
     let dataStore: DataStore
-    @ObservedObject var compareStore: CompareStore
 
     private var accent: Color { AttributeColor.accent(for: card.attrs) }
 
@@ -42,15 +41,6 @@ struct CardDetailView: View {
                         chip("★\(card.rarity)")
                         chip("Cost \(card.cost)")
                     }
-                }
-                Button {
-                    compareStore.toggle(card.id)
-                } label: {
-                    Label(
-                        compareStore.contains(card.id) ? "Remove from Compare" : "Add to Compare",
-                        systemImage: compareStore.contains(card.id) ? "xmark.circle" : "arrow.left.arrow.right.circle"
-                    )
-                    .font(.caption)
                 }
             }
         }
@@ -170,10 +160,8 @@ struct CardDetailView: View {
                 .foregroundStyle(hasName ? Color.padText : Color.padDim)
             if let resolved, !resolved.description.isEmpty {
                 HStack(alignment: .top, spacing: 6) {
-                    Text(resolved.description)
-                        .font(.system(size: 13))
+                    SkillTextView(resolved.description)
                         .lineSpacing(3)
-                        .foregroundStyle(Color.padDesc)
                     if resolved.source == .translated {
                         Text("translated")
                             .font(.system(size: 10))
@@ -217,7 +205,7 @@ struct CardDetailView: View {
                         HStack(spacing: 12) {
                             ForEach(family) { member in
                                 NavigationLink {
-                                    CardDetailView(card: member, dataStore: dataStore, compareStore: compareStore)
+                                    CardDetailView(card: member, dataStore: dataStore)
                                 } label: {
                                     VStack(spacing: 2) {
                                         CardArtworkView(card: member, cellSize: 56)
