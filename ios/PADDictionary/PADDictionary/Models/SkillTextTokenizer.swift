@@ -35,9 +35,11 @@ enum SkillTextTokenizer {
     }
 }
 
-/// What kind of icon a token maps to. `orb` is a pixel rect into `icon-orbs.png`.
+/// What kind of icon a token maps to. `orb` is a pixel rect into `icon-orbs.png`;
+/// `combo` is the multi-orb cluster in `attrs.png`.
 enum SkillTokenKind: Equatable {
     case orb(x: Int, y: Int, w: Int, h: Int)
+    case combo
     case type(Int)
     case awoken(Int)
 }
@@ -77,6 +79,8 @@ enum SkillToken {
         "Light Drop Enhancement +": "Enhanced Light Orbs+",
         "Wood Drop Enhancement +": "Enhanced Wood Orbs+",
         "Dark Drop Enhancement +": "Enhanced Dark Orbs+",
+        // gimmick orbs
+        "Nail Drops": "Nail",
     ]
 
     // Google translations vary in case ("attack type" vs "Attack Type"), so alias/orb/type
@@ -93,6 +97,10 @@ enum SkillToken {
         if lower == "locks" {                       // lock overlay: tight 14x17 glyph at (36,36)
             return .orb(x: 36, y: 36, w: 14, h: 17)
         }
+        if lower == "nail" {                         // thumbtack overlay: tight 17x17 glyph
+            return .orb(x: 36, y: 235, w: 17, h: 17)
+        }
+        if lower == "combo" { return .combo }
         if let row = orbRowLower[lower] { return .orb(x: 0, y: row * 36, w: 36, h: 36) }
         if let t = typesLower[lower] { return .type(t) }
         if let a = AwakeningNames.id(forName: name) { return .awoken(a) }

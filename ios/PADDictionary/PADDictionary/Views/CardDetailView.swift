@@ -19,7 +19,9 @@ struct CardDetailView: View {
             .padding()
         }
         .background(Color.padBackground)
-        .navigationTitle("#\(card.id)")
+        // No large "#id" title — the id is already shown under the card name (see header).
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     private var header: some View {

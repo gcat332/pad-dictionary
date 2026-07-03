@@ -30,6 +30,12 @@ final class SkillTextTokenizerTests: XCTestCase {
         XCTAssertEqual(SkillToken.resolve("Recovery"), .orb(x: 0, y: 180, w: 36, h: 36))     // alias -> Heal, row 5
     }
 
+    func testResolveComboAndNail() {
+        XCTAssertEqual(SkillToken.resolve("Combo"), .combo)
+        XCTAssertEqual(SkillToken.resolve("Nail"), .orb(x: 36, y: 235, w: 17, h: 17))
+        XCTAssertEqual(SkillToken.resolve("Nail Drops"), .orb(x: 36, y: 235, w: 17, h: 17))  // translated alias
+    }
+
     func testResolveLock() {
         // Lock renders from its tight 14x17 glyph, not the full 36px cell.
         XCTAssertEqual(SkillToken.resolve("locks"), .orb(x: 36, y: 36, w: 14, h: 17))
@@ -72,6 +78,6 @@ final class SkillTextTokenizerTests: XCTestCase {
 
     func testResolveUnknownReturnsNil() {
         XCTAssertNil(SkillToken.resolve("Change Sub Attribute: Light"))
-        XCTAssertNil(SkillToken.resolve("Combo"))
+        XCTAssertNil(SkillToken.resolve("7x6 board"))
     }
 }
