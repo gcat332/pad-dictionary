@@ -31,9 +31,16 @@ final class SkillTextTokenizerTests: XCTestCase {
     }
 
     func testResolveComboAndNail() {
-        XCTAssertEqual(SkillToken.resolve("Combo"), .combo)
+        XCTAssertEqual(SkillToken.resolve("Combo"), .orb(x: 53, y: 180, w: 19, h: 16))  // combo-drop roller glyph
         XCTAssertEqual(SkillToken.resolve("Nail"), .orb(x: 36, y: 235, w: 17, h: 17))
         XCTAssertEqual(SkillToken.resolve("Nail Drops"), .orb(x: 36, y: 235, w: 17, h: 17))  // translated alias
+    }
+
+    func testResolveSurge() {
+        XCTAssertEqual(SkillToken.resolve("Fire Surge"), .attrsSheet(x: 0, y: 0, w: 36, h: 36))
+        XCTAssertEqual(SkillToken.resolve("Dark Surge"), .attrsSheet(x: 0, y: 144, w: 36, h: 36))  // row 4
+        XCTAssertEqual(SkillToken.resolve("Heal Surge"), .attrsSheet(x: 0, y: 180, w: 36, h: 36))  // row 5
+        XCTAssertNil(SkillToken.resolve("Enhanced Surge"))  // no crest -> plain text
     }
 
     func testResolveLock() {

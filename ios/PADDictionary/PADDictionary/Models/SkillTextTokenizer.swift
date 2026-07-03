@@ -36,10 +36,10 @@ enum SkillTextTokenizer {
 }
 
 /// What kind of icon a token maps to. `orb` is a pixel rect into `icon-orbs.png`;
-/// `combo` is the multi-orb cluster in `attrs.png`.
+/// `attrsSheet` is a pixel rect into `attrs.png` (attribute crests, used for "Surge").
 enum SkillTokenKind: Equatable {
     case orb(x: Int, y: Int, w: Int, h: Int)
-    case combo
+    case attrsSheet(x: Int, y: Int, w: Int, h: Int)
     case type(Int)
     case awoken(Int)
 }
@@ -53,6 +53,10 @@ enum SkillToken {
     private static let types: [String: Int] = [
         "Balanced": 1, "Physical": 2, "Healer": 3, "Dragon": 4, "God": 5,
         "Attacker": 6, "Devil": 7, "Machine": 8, "Enhance Material": 14,
+    ]
+    // "Surge" (orbs more likely to appear) → attribute crest row in attrs.png col 0.
+    private static let surgeCrestRow: [String: Int] = [
+        "fire": 0, "water": 1, "wood": 2, "light": 3, "dark": 4, "heal": 5, "recovery": 5,
     ]
     // "meta" table: Google-translated variant names → the canonical token name they mean.
     // Extend this as new translated phrasings show up.
@@ -100,7 +104,13 @@ enum SkillToken {
         if lower == "nail" {                         // thumbtack overlay: tight 17x17 glyph
             return .orb(x: 36, y: 235, w: 17, h: 17)
         }
-        if lower == "combo" { return .combo }
+        if lower == "combo" {                        // combo-drop "roller" glyph (icon-orbs c1 r5, top-right)
+            return .orb(x: 53, y: 180, w: 19, h: 16)
+        }
+        // "{Fire Surge}" etc = "orbs more likely to appear" — use the attribute crest (attrs.png col 0).
+        if lower.hasSuffix(" surge"), let row = surgeCrestRow[String(lower.dropLast(6))] {
+            return .attrsSheet(x: 0, y: row * 36, w: 36, h: 36)
+        }
         if let row = orbRowLower[lower] { return .orb(x: 0, y: row * 36, w: 36, h: 36) }
         if let t = typesLower[lower] { return .type(t) }
         if let a = AwakeningNames.id(forName: name) { return .awoken(a) }
