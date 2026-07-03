@@ -44,8 +44,8 @@ function resolvedSkill(sid){
   const ja = SKILLS[sid] || null;
   const en = SKILL_EN[sid] || null;
   if (!ja && !en) return null;
-  // strip PAD inline formatting codes (^ff3600^ colour, ^p reset) that leak through translation
-  const clean = s => s ? s.replace(/\^[0-9a-fA-F]{6}\^/g,"").replace(/\^p/g,"").replace(/[ \t]{2,}/g," ").trim() : s;
+  // keep PAD inline codes (^ff3600^ colour, ^qs^ condition, ^p reset) — renderSkillDesc renders them
+  const clean = s => s ? s.replace(/[ \t]{2,}/g," ").trim() : s;
   const enDesc = clean(en?.description?.trim());
   const trDesc = clean(SKILL_TR[String(sid)]?.trim());
   return {
@@ -65,6 +65,84 @@ const ATTR_ACCENT = ["#e8513b","#3b9be8","#4caf50","#f0c400","#a05bd6"];
 const accentOf = c => ATTR_ACCENT[c.attrs?.[0]] ?? "#6b7280";
 const typeSvg = t => `<svg class="ty" viewBox="0 0 32 32"><use href="images/icon-type.svg#type-${t}"/></svg>`;
 const attrDot = a => a>=0 && a<5 ? `<span class="attr ${ATTR[a][1]}" title="${ATTR[a][0]}"></span>` : "";
+
+// ── Skill-text {token}/[token] → inline icon (mirrors iOS SkillTextTokenizer) ──────
+const ORB_SHEET_W = 72, ORB_SHEET_H = 360, ICON_H = 16;   // icon-orbs.png is 72×360, 36px cells
+const ORB_ROW = {fire:0,water:1,wood:2,light:3,dark:4,heal:5,jammers:6,poison:7,"lethal poison":8,bombs:9};
+const SURGE_ROW = {fire:0,water:1,wood:2,light:3,dark:4,heal:5,recovery:5};
+const TYPE_BY_NAME = {balanced:1,physical:2,healer:3,dragon:4,god:5,attacker:6,devil:7,machine:8,"enhance material":14};
+// Google-translated (or EN variant) name → canonical token name; keys lowercased.
+const TOKEN_ALIASES = {
+  "recovery":"Heal","darkness":"Dark","lock":"locks",
+  "attack type":"Attacker","balance type":"Balanced","demon type":"Devil","dragon type":"Dragon",
+  "2-target attack":"Two-Pronged Attack","two-target attack":"Two-Pronged Attack",
+  "cross-erasing attack":"Cross Attack","l-shaped erase attack":"[L] Increased Attack",
+  "l-shaped erase attack +":"[L] Increased Attack+","t-shaped erasing attack":"[T] Increased Attack",
+  "dark row reinforcement":"Enhanced Dark Rows","bind resistance +":"Resistance-Bind+",
+  "simultaneous fire and water attack":"Fire & Water Attack",
+  "4-color attack enhancement":"4 Att. Enhanced Attack","3 color attack reinforcement":"3 Att. Enhanced Attack",
+  "operation time extension +":"Extend Time+","extended move time+":"Extend Time+",
+  "light attribute enhancement":"Enhanced Light Orbs","light drop enhancement +":"Enhanced Light Orbs+",
+  "wood drop enhancement +":"Enhanced Wood Orbs+","dark drop enhancement +":"Enhanced Dark Orbs+",
+  "nail drops":"Nail",
+};
+let AWK_BY_NAME = {};   // canonical awakening name → id, built once AWOKEN_NAMES loads
+const escHTML = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+// crop rect (x,y,w,h in sheet px) → inline span scaled to ICON_H, preserving aspect
+function orbIcon(x,y,w,h,title){
+  const k = ICON_H/h, W = (w*k).toFixed(1);
+  const bs = `${(ORB_SHEET_W*k).toFixed(1)}px ${(ORB_SHEET_H*k).toFixed(1)}px`;
+  const bp = `-${(x*k).toFixed(1)}px -${(y*k).toFixed(1)}px`;
+  return `<span class="orbic" title="${escHTML(title||"")}" style="width:${W}px;height:${ICON_H}px;background-size:${bs};background-position:${bp}"></span>`;
+}
+// orb (by attr row) + drop-rate overlay (c1 r2) — the "orbs more likely to appear" indicator
+function surgeIcon(row,title){
+  const k = ICON_H/36, bs = `${(ORB_SHEET_W*k).toFixed(1)}px ${(ORB_SHEET_H*k).toFixed(1)}px`;
+  const ov = `-${(36*k).toFixed(1)}px -${(72*k).toFixed(1)}px`, orb = `0 -${(row*36*k).toFixed(1)}px`;
+  return `<span class="orbic" title="${escHTML(title||"")}" style="width:${ICON_H}px;height:${ICON_H}px;`
+    + `background-image:url(images/icon-orbs.png),url(images/icon-orbs.png);`
+    + `background-size:${bs},${bs};background-position:${ov},${orb}"></span>`;
+}
+const awkInline = n => `<span class="awk" style="--awk-s:16px;--awk-y:${n}" title="${escHTML(awkName(n))}"></span>`;
+const typeInline = t => `<svg class="ty" style="width:16px;height:16px;vertical-align:-.2em"><use href="images/icon-type.svg#type-${t}"/></svg>`;
+function tokenIcon(raw){
+  const name = TOKEN_ALIASES[raw.toLowerCase()] || raw;
+  const low = name.toLowerCase();
+  if (low === "locks") return orbIcon(36,36,14,17,"Locked orb");
+  if (low === "nail")  return orbIcon(36,235,17,17,"Nail");
+  if (low === "combo") return orbIcon(53,180,19,16,"Combo");
+  if (low.endsWith(" surge")) { const r = SURGE_ROW[low.slice(0,-6)]; if (r != null) return surgeIcon(r, name); }
+  if (ORB_ROW[low] != null) return orbIcon(0, ORB_ROW[low]*36, 36, 36, name);
+  if (TYPE_BY_NAME[low] != null) return typeInline(TYPE_BY_NAME[low]);
+  if (AWK_BY_NAME[name] != null) return awkInline(AWK_BY_NAME[name]);
+  return null;
+}
+// {..} unresolved → drop braces (EN); [..] unresolved → keep brackets (literal keyword)
+function inlineTokens(s){
+  const re = /\{([^}]+)\}|\[([^\]]+)\]/g;
+  let out = "", last = 0, m;
+  while ((m = re.exec(s))){
+    out += escHTML(s.slice(last, m.index));
+    const square = m[1] === undefined, name = square ? m[2] : m[1];
+    const icon = tokenIcon(name);
+    out += icon != null ? icon : escHTML(square ? `[${name}]` : name);
+    last = re.lastIndex;
+  }
+  return out + escHTML(s.slice(last));
+}
+// ^ff3600^ = red emphasis, ^qs^ = cyan condition clause, ^p = reset
+function renderSkillDesc(text){
+  let color = null, out = "";
+  for (const part of String(text).split(/(\^ff3600\^|\^qs\^|\^p)/g)){
+    if (part === "^ff3600^"){ color = "#ff3600"; continue; }
+    if (part === "^qs^"){ color = "#5cc8ff"; continue; }
+    if (part === "^p"){ color = null; continue; }
+    if (!part) continue;
+    const html = inlineTokens(part);
+    out += color ? `<span style="color:${color}">${html}</span>` : html;
+  }
+  return out;
+}
 function frameLayer(attr, variant){ // scales with --cell (see .frame in dict.css); variant: "" (main) | "sub" | "third"
   if (attr === 6) return `<div class="frame w"></div>`;
   if (attr == null || attr < 0 || attr > 4) return "";
@@ -164,7 +242,7 @@ function skillStageHTML(sid){
   const s = resolvedSkill(sid);
   const name = s?.name ? `<span class="sk-name">${s.name}</span>` : `<span class="sk-name dim">—</span>`;
   const body = s?.description
-    ? `${s.description}${s.source==="tr" ? ` <span class="tr-tag">translated</span>` : ""}`
+    ? `${renderSkillDesc(s.description)}${s.source==="tr" ? ` <span class="tr-tag">translated</span>` : ""}`
     : `<span class="dim">— no English text</span>`;
   return { name, body };
 }
@@ -440,6 +518,7 @@ Promise.all([
   SKILL_EN=skillEn;
   SKILL_TR=skillTr || {};
   AWOKEN_NAMES=awokenNames || {};
+  AWK_BY_NAME = {}; for (const k in AWOKEN_NAMES) AWK_BY_NAME[AWOKEN_NAMES[k]] = +k;   // name → id (skill-text tokens)
   CARDS=cards.filter(c=>!c.isEmpty&&c.enabled);
   if (!window.PADEngine?.createSpecialSearchEngine) throw new Error("engine.js did not load");
   SPECIAL_ENGINE=window.PADEngine.createSpecialSearchEngine({cards, skills: skillJa});

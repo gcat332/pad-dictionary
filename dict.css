@@ -76,6 +76,8 @@ header label{color:var(--dim);font-size:12px}
 .awk{--awk-s:24px;display:inline-block;vertical-align:middle;width:var(--awk-s);height:var(--awk-s);
   background:url(images/awoken.png) no-repeat;background-size:calc(var(--awk-s)*3) auto;
   background-position:0 calc(var(--awk-s)*var(--awk-y,0)*-1)}
+/* skill-text orb/gimmick icon = crop from images/icon-orbs.png (72×360); size/pos set inline in dict.js */
+.orbic{display:inline-block;vertical-align:-.25em;background-image:url(images/icon-orbs.png);background-repeat:no-repeat}
 
 /* ---- monster detail: panel wears the card's element ---- */
 dialog#detail{--accent:#6b7280;background:var(--panel);color:var(--txt);border:1px solid #333a46;
