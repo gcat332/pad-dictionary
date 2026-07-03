@@ -24,26 +24,26 @@ struct AwakeningFilterChip: View {
     let awakeningId: Int
     let count: Int
     let onTap: () -> Void
-    let onRemove: () -> Void
 
     var body: some View {
-        VStack(spacing: 0) {
-            AwakeningIconView(awakeningId: awakeningId)
-                .overlay(alignment: .topTrailing) {
-                    if count > 1 {
-                        Text("\(count)")
-                            .font(.system(size: 9, weight: .bold))
-                            .padding(2)
-                            .background(Color.padAccent, in: Circle())
-                            .foregroundStyle(.white)
-                            .offset(x: 4, y: -4)
+        Button(action: onTap) {
+            VStack(spacing: 0) {
+                AwakeningIconView(awakeningId: awakeningId)
+                    .overlay(alignment: .topTrailing) {
+                        if count > 1 {
+                            Text("\(count)")
+                                .font(.system(size: 9, weight: .bold))
+                                .padding(2)
+                                .background(Color.padAccent, in: Circle())
+                                .foregroundStyle(.white)
+                                .offset(x: 4, y: -4)
+                        }
                     }
-                }
-                .padding(4)
-                .background(count > 0 ? Color.padAccent.opacity(0.25) : Color.clear, in: RoundedRectangle(cornerRadius: 6))
+                    .padding(4)
+                    .background(count > 0 ? Color.padAccent.opacity(0.25) : Color.clear, in: RoundedRectangle(cornerRadius: 6))
+            }
         }
-        .onTapGesture(perform: onTap)
-        .simultaneousGesture(LongPressGesture(minimumDuration: 0.4).onEnded { _ in onRemove() })
+        .buttonStyle(.plain)
     }
 }
 
@@ -206,7 +206,7 @@ struct FilterView: View {
                             viewModel.filterState.attr[slot].insert(value)
                         }
                     } label: {
-                        AttributeDotView(attr: value, size: 28)
+                        OrbIconSprite(attr: value, size: 28)
                             .overlay {
                                 if viewModel.filterState.attr[slot].contains(value) {
                                     Circle().stroke(Color.padAccentBorder, lineWidth: 3)
@@ -259,19 +259,24 @@ struct FilterView: View {
         return order.map { (id: $0, count: counts[$0] ?? 0) }
     }
 
-    private var awakeningSection: some View {
-        Section {
-            if !selectedAwakenings.isEmpty {
-                FlowLayout(spacing: 6) {
+    // Fixed-height horizontal strip — always the same height whether 0 or N are
+    // selected, and always visible above the (very tall) grid without scrolling past
+    // it. A height that CHANGES based on selection would shift the grid underneath
+    // the user's finger mid-tap, causing the wrong icon to register.
+    private var selectedAwakeningsStrip: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                if selectedAwakenings.isEmpty {
+                    Text("No Awoken selected")
+                        .font(.caption)
+                        .foregroundStyle(Color.padDim)
+                } else {
                     ForEach(selectedAwakenings, id: \.id) { entry in
                         Button {
                             viewModel.filterState.awakenings.removeAll { $0 == entry.id }
                         } label: {
                             HStack(spacing: 4) {
-                                AwakeningIconView(awakeningId: entry.id)
-                                    .frame(width: 20, height: 20)
-                                Text(AwakeningNames.name(for: entry.id))
-                                    .font(.caption2)
+                                AwakeningIconView(awakeningId: entry.id, size: 20)
                                 if entry.count > 1 {
                                     Text("×\(entry.count)").font(.caption2.bold())
                                 }
@@ -284,23 +289,54 @@ struct FilterView: View {
                             .overlay(Capsule().stroke(Color.padAccentBorder))
                         }
                         .buttonStyle(.plain)
+                        .accessibilityLabel(AwakeningNames.name(for: entry.id))
                     }
                 }
-                .padding(.bottom, 6)
             }
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 8), spacing: 8) {
-                ForEach(awakeningOrder, id: \.self) { id in
-                    let count = viewModel.filterState.awakenings.filter { $0 == id }.count
-                    AwakeningFilterChip(
-                        awakeningId: id,
-                        count: count,
-                        onTap: { viewModel.filterState.awakenings.append(id) },
-                        onRemove: {
-                            if let index = viewModel.filterState.awakenings.firstIndex(of: id) {
-                                viewModel.filterState.awakenings.remove(at: index)
-                            }
+            .frame(height: 28)
+        }
+        .frame(height: 28)
+    }
+
+    // Filtering a dense, unlabeled 143-icon grid by hand invites mis-taps (the wrong
+    // icon several rows away from the intended one) — reuse the sheet's search bar so
+    // typing a name narrows the grid down to just the matching icons.
+    private var filteredAwakeningOrder: [Int] {
+        guard !searchText.isEmpty else { return awakeningOrder }
+        return awakeningOrder.filter { AwakeningNames.name(for: $0).localizedCaseInsensitiveContains(searchText) }
+    }
+
+    // Chunked into fixed rows instead of a LazyVGrid: a LazyVGrid this tall (18 rows)
+    // embedded directly in a List Section breaks UITableView's row self-sizing — most
+    // of the grid renders but falls outside the row's real hit-testable bounds, so taps
+    // on all but one row silently do nothing. Plain per-row HStacks give List a real,
+    // correctly-sized cell per row.
+    private var awakeningRows: [[Int]] {
+        stride(from: 0, to: filteredAwakeningOrder.count, by: 8).map {
+            Array(filteredAwakeningOrder[$0..<Swift.min($0 + 8, filteredAwakeningOrder.count)])
+        }
+    }
+
+    private var awakeningSection: some View {
+        Section {
+            selectedAwakeningsStrip
+            if filteredAwakeningOrder.isEmpty {
+                Text("No Awoken matches \u{201C}\(searchText)\u{201D}")
+                    .font(.caption)
+                    .foregroundStyle(Color.padDim)
+            } else {
+                ForEach(awakeningRows, id: \.self) { row in
+                    HStack(spacing: 4) {
+                        ForEach(row, id: \.self) { id in
+                            let count = viewModel.filterState.awakenings.filter { $0 == id }.count
+                            AwakeningFilterChip(
+                                awakeningId: id,
+                                count: count,
+                                onTap: { viewModel.filterState.awakenings.append(id) }
+                            )
+                            .frame(maxWidth: .infinity)
                         }
-                    )
+                    }
                 }
             }
         } header: {
