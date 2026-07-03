@@ -66,7 +66,7 @@ struct CardDetailView: View {
     }
 
     private var statsRow: some View {
-        HStack {
+        HStack(spacing: 10) {
             statBox("HP", card.hp.max)
             statBox("ATK", card.atk.max)
             statBox("RCV", card.rcv.max)
@@ -74,11 +74,19 @@ struct CardDetailView: View {
     }
 
     private func statBox(_ label: String, _ value: Int) -> some View {
-        VStack {
-            Text(label).font(.caption).foregroundStyle(.secondary)
-            Text("\(value)").font(.headline)
+        VStack(spacing: 6) {
+            Text(label)
+                .font(.system(size: 11, weight: .semibold))
+                .tracking(1.2)
+                .foregroundStyle(Color.padDim)
+            Text("\(value)")
+                .font(.system(size: 22, weight: .bold))
+                .foregroundStyle(Color.padText)
         }
         .frame(maxWidth: .infinity)
+        .padding(.vertical, 14)
+        .background(Color.padPanel, in: RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.padBorder))
     }
 
     private func eyebrow(_ text: String, trailing: String? = nil, color: Color? = nil, size: CGFloat = 11) -> some View {
