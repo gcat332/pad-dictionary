@@ -57,7 +57,7 @@ final class GitHubSyncService: GitHubSyncing {
         "monsters-info/skill_en.json", "monsters-info/skill_tr.json"
     ]
     private static let fixedImageFiles = [
-        "images/awoken.png", "images/icon-orbs.png", "images/attrs.png", "images/icon-type.svg",
+        "images/awoken.png", "images/icon-orbs.png", "images/icon-type.svg",
         "images/CARDFRAME2.png", "images/CARDFRAMEW.png"
     ]
 

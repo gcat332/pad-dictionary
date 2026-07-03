@@ -37,10 +37,11 @@ final class SkillTextTokenizerTests: XCTestCase {
     }
 
     func testResolveSurge() {
-        XCTAssertEqual(SkillToken.resolve("Fire Surge"), .attrsSheet(x: 0, y: 0, w: 36, h: 36))
-        XCTAssertEqual(SkillToken.resolve("Dark Surge"), .attrsSheet(x: 0, y: 144, w: 36, h: 36))  // row 4
-        XCTAssertEqual(SkillToken.resolve("Heal Surge"), .attrsSheet(x: 0, y: 180, w: 36, h: 36))  // row 5
-        XCTAssertNil(SkillToken.resolve("Enhanced Surge"))  // no crest -> plain text
+        // "X Surge" -> the matching orb (icon-orbs col 0).
+        XCTAssertEqual(SkillToken.resolve("Fire Surge"), .orb(x: 0, y: 0, w: 36, h: 36))
+        XCTAssertEqual(SkillToken.resolve("Dark Surge"), .orb(x: 0, y: 144, w: 36, h: 36))  // row 4
+        XCTAssertEqual(SkillToken.resolve("Heal Surge"), .orb(x: 0, y: 180, w: 36, h: 36))  // row 5
+        XCTAssertNil(SkillToken.resolve("Enhanced Surge"))  // no orb -> plain text
     }
 
     func testResolveLock() {

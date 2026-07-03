@@ -19,9 +19,6 @@ enum SkillTokenImage {
         case .orb(let x, let y, let w, let h):
             guard let sheet = SpriteSheetCache.shared.image(relativePath: "images/icon-orbs.png") else { return nil }
             return SpriteCrop.rect(from: sheet, x: x, y: y, w: w, h: h)
-        case .attrsSheet(let x, let y, let w, let h):  // attribute crests (Surge)
-            guard let sheet = SpriteSheetCache.shared.image(relativePath: "images/attrs.png") else { return nil }
-            return SpriteCrop.rect(from: sheet, x: x, y: y, w: w, h: h)
         case .awoken(let id):
             guard let y = AwakeningSprite.yOffset(forAwakeningId: id),
                   let sheet = SpriteSheetCache.shared.image(relativePath: "images/awoken.png") else { return nil }
