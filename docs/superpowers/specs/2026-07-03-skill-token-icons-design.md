@@ -36,11 +36,11 @@ column (col 0), rows 0–9** are every orb we need; the right column holds state
 `{locks}` → the lock state overlay (col 1, row 1). All 11 orb tokens come from this **one** sheet, so
 `attrs.png` is not needed. The filter attribute buttons also use col 0 rows 0–4.
 
-**Decision on the 18 unmatched:** several are awoken variants whose skill-text label differs from the
-awoken table (`Enhanced Light Rows`, `Heal Enhanced`, `Extended Move Time+`, …) — resolve via a small
-alias map into `awoken.png`. The rest (`Combo`, `* Surge`, `Change Sub Attribute: *`) are compound
-effects with no single icon → plain text (braces stripped). GameWith is **not** needed; upstream sprites
-are cleaner and already vendored via the same sync path.
+**Decision on the 18 unmatched:** all render as plain text (braces stripped). They are rare, and several
+are ambiguous variants (`Enhanced Light Rows`, `Heal Enhanced`, `* Surge`, `Change Sub Attribute: *`)
+where guessing an icon risks showing the *wrong* one — worse than text. If a specific token proves
+common enough to warrant an icon, add it to the orb/type/awoken map directly (no new mechanism needed).
+GameWith is **not** needed; upstream sprites are cleaner and already vendored via the same sync path.
 
 ## Existing infrastructure (reused, not rebuilt)
 
@@ -69,8 +69,7 @@ and the filter attribute buttons (col 0, rows 0–4).
 `SkillToken.icon(for name: String) -> Resolved?` tries, in order:
 1. orb name → `.orb(col, row)`  (hardcoded dict, 11 entries per the orb index map)
 2. type name → `.type(id)`  (name→id from existing type table)
-3. awoken name → `.awoken(id)`  (reverse map added to `AwakeningNames`, plus a small alias
-   map for the ~8 awoken variants whose skill-text label differs from the table)
+3. awoken name → `.awoken(id)`  (reverse map added to `AwakeningNames`)
 4. else → `nil` (caller renders plain text)
 
 Add `AwakeningNames.id(forName:)` — reverse of the existing `names` dict, built once.
