@@ -58,7 +58,8 @@ enum SkillResolver {
 
     private static func clean(_ raw: String?) -> String? {
         guard var s = trimmedNonEmpty(raw) else { return nil }
-        s = s.replacingOccurrences(of: "\\^[0-9a-fA-F]{6}\\^", with: "", options: .regularExpression)
+        // Strip paired caret control codes: colors (^ff3600^) and formatting markers (^qs^).
+        s = s.replacingOccurrences(of: "\\^[0-9a-zA-Z]{1,8}\\^", with: "", options: .regularExpression)
         s = s.replacingOccurrences(of: "\\^p", with: "", options: .regularExpression)
         s = s.replacingOccurrences(of: "[ \\t]{2,}", with: " ", options: .regularExpression)
         return trimmedNonEmpty(s)

@@ -26,11 +26,14 @@ struct SkillTextView: View {
             case .text(let s):
                 return acc + Text(s)
             case .token(let name):
+                if case .symbol(let sym) = SkillToken.resolve(name) {
+                    return acc + Text(Image(systemName: sym))   // SF Symbol: auto-centered, font-scaled
+                }
                 if let icon = SkillTokenImage.image(for: name, height: iconHeight) {
                     // ponytail: -2 baseline nudge tuned by eye; adjust if icons ride high/low
                     return acc + Text(Image(uiImage: icon)).baselineOffset(-2)
                 }
-                return acc + Text(name)   // no icon -> plain text, braces already stripped
+                return acc + Text(name)   // no icon -> plain text, delimiters already stripped
             }
         }
     }

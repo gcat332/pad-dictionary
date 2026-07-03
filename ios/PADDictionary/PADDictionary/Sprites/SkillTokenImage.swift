@@ -25,6 +25,8 @@ enum SkillTokenImage {
             return SpriteCrop.cell(from: sheet, x: 0, y: Int(-y), size: 32)  // yOffset is negative (-32*id)
         case .type(let id):
             return TypeIconCache.shared.icon(forType: id)
+        case .symbol:
+            return nil  // rendered as an SF Symbol by SkillTextView, not a bitmap
         }
     }
 }

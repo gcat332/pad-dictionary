@@ -14,11 +14,25 @@ final class SkillTextTokenizerTests: XCTestCase {
         XCTAssertEqual(SkillTextTokenizer.parse("no tokens here"), [.text("no tokens here")])
     }
 
+    func testParseSquareBrackets() {
+        // Google-translated JP skills use [Fire] instead of {Fire}.
+        let runs = SkillTextTokenizer.parse("changes to [Fire], [Recovery] | 5 attributes")
+        XCTAssertEqual(runs, [
+            .text("changes to "), .token("Fire"), .text(", "),
+            .token("Recovery"), .text(" | 5 attributes"),
+        ])
+    }
+
     func testResolveOrb() {
         XCTAssertEqual(SkillToken.resolve("Fire"), .orb(col: 0, row: 0))
         XCTAssertEqual(SkillToken.resolve("Bombs"), .orb(col: 0, row: 9))
         XCTAssertEqual(SkillToken.resolve("Lethal Poison"), .orb(col: 0, row: 8))
-        XCTAssertEqual(SkillToken.resolve("locks"), .orb(col: 1, row: 1))
+        XCTAssertEqual(SkillToken.resolve("Recovery"), .orb(col: 0, row: 5))  // translated name for Heal
+    }
+
+    func testResolveLockSymbol() {
+        XCTAssertEqual(SkillToken.resolve("locks"), .symbol("lock.fill"))
+        XCTAssertEqual(SkillToken.resolve("Lock"), .symbol("lock.fill"))
     }
 
     func testResolveType() {
