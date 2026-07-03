@@ -5,8 +5,8 @@ final class SkillTextTokenizerTests: XCTestCase {
     func testParseSplitsTextAndTokens() {
         let runs = SkillTextTokenizer.parse("Deal {Fire} damage {Two-Pronged Attack}!")
         XCTAssertEqual(runs, [
-            .text("Deal "), .token("Fire"), .text(" damage "),
-            .token("Two-Pronged Attack"), .text("!"),
+            .text("Deal "), .token(name: "Fire", square: false), .text(" damage "),
+            .token(name: "Two-Pronged Attack", square: false), .text("!"),
         ])
     }
 
@@ -18,8 +18,8 @@ final class SkillTextTokenizerTests: XCTestCase {
         // Google-translated JP skills use [Fire] instead of {Fire}.
         let runs = SkillTextTokenizer.parse("changes to [Fire], [Recovery] | 5 attributes")
         XCTAssertEqual(runs, [
-            .text("changes to "), .token("Fire"), .text(", "),
-            .token("Recovery"), .text(" | 5 attributes"),
+            .text("changes to "), .token(name: "Fire", square: true), .text(", "),
+            .token(name: "Recovery", square: true), .text(" | 5 attributes"),
         ])
     }
 

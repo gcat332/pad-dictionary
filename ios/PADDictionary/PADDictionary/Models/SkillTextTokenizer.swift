@@ -1,13 +1,15 @@
 import Foundation
 
 /// One segment of a skill description: literal text, or a token name (delimiters stripped).
+/// `square` marks `[..]` tokens (translated text) vs `{..}` (official EN) — they fall back
+/// differently when unresolved (see SkillTextView).
 enum SkillTextRun: Equatable {
     case text(String)
-    case token(String)
+    case token(name: String, square: Bool)
 }
 
 enum SkillTextTokenizer {
-    // Official EN text uses `{Fire}`; Google-translated JP text uses `[Fire]` (from 【】). Match both.
+    // Official EN uses `{Fire}`; Google-translated JP uses `[Fire]` (from 【】/[光]). Match both.
     private static let regex = try! NSRegularExpression(pattern: #"\{([^}]+)\}|\[([^\]]+)\]"#)
 
     static func parse(_ s: String) -> [SkillTextRun] {
@@ -18,9 +20,12 @@ enum SkillTextTokenizer {
             if m.range.location > cursor {
                 runs.append(.text(ns.substring(with: NSRange(location: cursor, length: m.range.location - cursor))))
             }
-            // Group 1 = `{...}` content, group 2 = `[...]` content; exactly one matched.
-            let g = m.range(at: 1).location != NSNotFound ? m.range(at: 1) : m.range(at: 2)
-            runs.append(.token(ns.substring(with: g)))
+            let curly = m.range(at: 1)
+            if curly.location != NSNotFound {
+                runs.append(.token(name: ns.substring(with: curly), square: false))
+            } else {
+                runs.append(.token(name: ns.substring(with: m.range(at: 2)), square: true))
+            }
             cursor = m.range.location + m.range.length
         }
         if cursor < ns.length {
@@ -40,15 +45,15 @@ enum SkillTokenKind: Equatable {
 }
 
 enum SkillToken {
-    // col 0 rows 0-9 = attr 0-9. "Recovery" is the translated name for the Heal orb.
+    // col 0 rows 0-9 = attr 0-9. Aliases cover Google-translated variants (Recovery=Heal, Darkness=Dark).
     private static let orbs: [String: (col: Int, row: Int)] = [
         "Fire": (0, 0), "Water": (0, 1), "Wood": (0, 2), "Light": (0, 3), "Dark": (0, 4),
-        "Heal": (0, 5), "Recovery": (0, 5), "Jammers": (0, 6), "Poison": (0, 7),
-        "Lethal Poison": (0, 8), "Bombs": (0, 9),
+        "Darkness": (0, 4), "Heal": (0, 5), "Recovery": (0, 5), "Jammers": (0, 6),
+        "Poison": (0, 7), "Lethal Poison": (0, 8), "Bombs": (0, 9),
     ]
     private static let types: [String: Int] = [
         "Balanced": 1, "Physical": 2, "Healer": 3, "Dragon": 4, "God": 5,
-        "Attacker": 6, "Devil": 7, "Machine": 8, "Enhance Material": 14,
+        "Attacker": 6, "Devil": 7, "Demon type": 7, "Machine": 8, "Enhance Material": 14,
     ]
     // The lock cell in icon-orbs.png is a tiny corner overlay — an SF Symbol reads better inline.
     private static let symbols: [String: String] = [

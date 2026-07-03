@@ -58,9 +58,9 @@ enum SkillResolver {
 
     private static func clean(_ raw: String?) -> String? {
         guard var s = trimmedNonEmpty(raw) else { return nil }
-        // Strip paired caret control codes: colors (^ff3600^) and formatting markers (^qs^).
-        s = s.replacingOccurrences(of: "\\^[0-9a-zA-Z]{1,8}\\^", with: "", options: .regularExpression)
-        s = s.replacingOccurrences(of: "\\^p", with: "", options: .regularExpression)
+        // Keep ^ff3600^…^p color spans (SkillTextView renders them red); strip the ^qs^
+        // conditional-clause marker (the only other caret code in the data).
+        s = s.replacingOccurrences(of: "^qs^", with: "")
         s = s.replacingOccurrences(of: "[ \\t]{2,}", with: " ", options: .regularExpression)
         return trimmedNonEmpty(s)
     }
