@@ -79,7 +79,11 @@ const TOKEN_ALIASES = {
   "cross-erasing attack":"Cross Attack","l-shaped erase attack":"[L] Increased Attack",
   "l-shaped erase attack +":"[L] Increased Attack+","t-shaped erasing attack":"[T] Increased Attack",
   "dark row reinforcement":"Enhanced Dark Rows","bind resistance +":"Resistance-Bind+",
-  "simultaneous fire and water attack":"Fire & Water Attack",
+  // Google mistranslates 水木 (Water-Wood) as the name "Mizuki", and 木 (Wood) alone as
+  // "Thursday" (from 木曜日) — these are attribute-pair "同時攻撃" awakenings.
+  "fire and water simultaneous attack":"Fire & Water Attack",
+  "mizuki simultaneous attack":"Water & Wood Attack","mizuki-thursday attack":"Water & Wood Attack",
+  "thursday and fire simultaneous attack":"Wood & Fire Attack",
   "4-color attack enhancement":"4 Att. Enhanced Attack","3 color attack reinforcement":"3 Att. Enhanced Attack",
   "operation time extension +":"Extend Time+","extended move time+":"Extend Time+",
   "light attribute enhancement":"Enhanced Light Orbs","light drop enhancement +":"Enhanced Light Orbs+",

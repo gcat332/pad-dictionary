@@ -69,6 +69,17 @@ final class SkillTextTokenizerTests: XCTestCase {
         XCTAssertEqual(SkillToken.resolve("2-target attack"), .awoken(id))
     }
 
+    func testResolveMistranslatedAttributePairAttacks() {
+        // Google mangles 水木同時攻撃/木火同時攻撃/火水同時攻撃 into odd English phrases.
+        let waterWood = try! XCTUnwrap(AwakeningNames.id(forName: "Water & Wood Attack"))
+        let woodFire = try! XCTUnwrap(AwakeningNames.id(forName: "Wood & Fire Attack"))
+        let fireWater = try! XCTUnwrap(AwakeningNames.id(forName: "Fire & Water Attack"))
+        XCTAssertEqual(SkillToken.resolve("Mizuki simultaneous attack"), .awoken(waterWood))
+        XCTAssertEqual(SkillToken.resolve("Mizuki-Thursday attack"), .awoken(waterWood))
+        XCTAssertEqual(SkillToken.resolve("Thursday and fire simultaneous attack"), .awoken(woodFire))
+        XCTAssertEqual(SkillToken.resolve("Fire and water simultaneous attack"), .awoken(fireWater))
+    }
+
     func testResolveAliasedAwoken() {
         // "4-color attack enhancement" (translated) -> "4 Att. Enhanced Attack"
         let atkId = try! XCTUnwrap(AwakeningNames.id(forName: "4 Att. Enhanced Attack"))

@@ -75,7 +75,12 @@ enum SkillToken {
         "T-shaped erasing attack": "[T] Increased Attack",
         "Dark row reinforcement": "Enhanced Dark Rows",
         "Bind Resistance +": "Resistance-Bind+",
-        "Simultaneous fire and water attack": "Fire & Water Attack",
+        // Google mistranslates 水木 (Water-Wood) as the name "Mizuki", and 木 (Wood) alone
+        // as "Thursday" (from 木曜日) — these are attribute-pair "同時攻撃" awakenings.
+        "Fire and water simultaneous attack": "Fire & Water Attack",
+        "Mizuki simultaneous attack": "Water & Wood Attack",
+        "Mizuki-Thursday attack": "Water & Wood Attack",
+        "Thursday and fire simultaneous attack": "Wood & Fire Attack",
         "4-color attack enhancement": "4 Att. Enhanced Attack",
         "3 color attack reinforcement": "3 Att. Enhanced Attack",
         "Operation Time Extension +": "Extend Time+",
