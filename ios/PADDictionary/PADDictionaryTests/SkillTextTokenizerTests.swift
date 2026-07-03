@@ -55,6 +55,21 @@ final class SkillTextTokenizerTests: XCTestCase {
         XCTAssertEqual(SkillToken.resolve("2-target attack"), .awoken(id))
     }
 
+    func testResolveAliasedAwoken() {
+        // "4-color attack enhancement" (translated) -> "4 Att. Enhanced Attack"
+        let atkId = try! XCTUnwrap(AwakeningNames.id(forName: "4 Att. Enhanced Attack"))
+        XCTAssertEqual(SkillToken.resolve("4-color attack enhancement"), .awoken(atkId))
+        // "Extended Move Time+" (EN token variant) -> "Extend Time+"
+        let timeId = try! XCTUnwrap(AwakeningNames.id(forName: "Extend Time+"))
+        XCTAssertEqual(SkillToken.resolve("Extended Move Time+"), .awoken(timeId))
+    }
+
+    func testEnhancedLightRowsFixedInData() {
+        // awoken_names.json used to mislabel id 25 as "Enhanced Water Rows" (a duplicate of 15).
+        XCTAssertEqual(AwakeningNames.name(for: 25), "Enhanced Light Rows")
+        XCTAssertNotNil(SkillToken.resolve("Enhanced Light Rows"))
+    }
+
     func testResolveUnknownReturnsNil() {
         XCTAssertNil(SkillToken.resolve("Change Sub Attribute: Light"))
         XCTAssertNil(SkillToken.resolve("Combo"))

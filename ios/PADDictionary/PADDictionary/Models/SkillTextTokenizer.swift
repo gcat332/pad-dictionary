@@ -58,16 +58,25 @@ enum SkillToken {
         // orbs / attributes / states
         "Recovery": "Heal", "Darkness": "Dark", "Lock": "locks",
         // types
-        "Attack type": "Attacker", "Attack Type": "Attacker",
-        "Balance type": "Balanced", "Demon type": "Devil",
+        "Attack type": "Attacker", "Balance type": "Balanced",
+        "Demon type": "Devil", "Dragon type": "Dragon",
         // awoken skills
         "2-target attack": "Two-Pronged Attack", "Two-target attack": "Two-Pronged Attack",
         "Cross-erasing attack": "Cross Attack",
         "L-shaped erase attack": "[L] Increased Attack",
+        "L-shaped erase attack +": "[L] Increased Attack+",
         "T-shaped erasing attack": "[T] Increased Attack",
         "Dark row reinforcement": "Enhanced Dark Rows",
         "Bind Resistance +": "Resistance-Bind+",
         "Simultaneous fire and water attack": "Fire & Water Attack",
+        "4-color attack enhancement": "4 Att. Enhanced Attack",
+        "3 color attack reinforcement": "3 Att. Enhanced Attack",
+        "Operation Time Extension +": "Extend Time+",
+        "Extended Move Time+": "Extend Time+",   // official EN token variant
+        "Light Attribute Enhancement": "Enhanced Light Orbs",
+        "Light Drop Enhancement +": "Enhanced Light Orbs+",
+        "Wood Drop Enhancement +": "Enhanced Wood Orbs+",
+        "Dark Drop Enhancement +": "Enhanced Dark Orbs+",
     ]
 
     // Google translations vary in case ("attack type" vs "Attack Type"), so alias/orb/type
