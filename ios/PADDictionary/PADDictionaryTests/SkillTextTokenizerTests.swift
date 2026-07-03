@@ -40,7 +40,9 @@ final class SkillTextTokenizerTests: XCTestCase {
         XCTAssertEqual(SkillToken.resolve("Devil"), .type(7))
         XCTAssertEqual(SkillToken.resolve("Enhance Material"), .type(14))
         XCTAssertEqual(SkillToken.resolve("Attack type"), .type(6))   // translated alias -> Attacker
+        XCTAssertEqual(SkillToken.resolve("attack type"), .type(6))   // case-insensitive (Google varies case)
         XCTAssertEqual(SkillToken.resolve("Demon type"), .type(7))    // translated alias -> Devil
+        XCTAssertEqual(SkillToken.resolve("fire"), .orb(x: 0, y: 0, w: 36, h: 36))  // lowercase orb
     }
 
     func testResolveAwoken() {

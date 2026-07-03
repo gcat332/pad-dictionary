@@ -55,17 +55,12 @@ struct CardDetailView: View {
     }
 
     private func typeChip(_ type: Int) -> some View {
-        HStack(spacing: 4) {
-            TypeIconView(type: type, size: 14)
-            Text(CardTypeNames.name(for: type)).lineLimit(1)
-        }
-        .fixedSize()
-        .font(.caption)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(Color.padPanel)
-        .overlay(Capsule().stroke(Color.padBorder))
-        .clipShape(Capsule())
+        TypeIconView(type: type, size: 20)
+            .padding(6)
+            .background(Color.padPanel)
+            .overlay(Capsule().stroke(Color.padBorder))
+            .clipShape(Capsule())
+            .accessibilityLabel(CardTypeNames.name(for: type))
     }
 
     private var statsRow: some View {

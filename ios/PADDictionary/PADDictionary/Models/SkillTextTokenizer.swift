@@ -70,13 +70,22 @@ enum SkillToken {
         "Simultaneous fire and water attack": "Fire & Water Attack",
     ]
 
+    // Google translations vary in case ("attack type" vs "Attack Type"), so alias/orb/type
+    // lookups are case-insensitive. Awoken names stay exact (aliases map to canonical casing).
+    // uniquingKeysWith avoids a crash when two source keys collide on lowercasing
+    // (e.g. "Attack type" and "Attack Type") — they map to the same value anyway.
+    private static let aliasesLower = Dictionary(aliases.map { ($0.key.lowercased(), $0.value) }, uniquingKeysWith: { a, _ in a })
+    private static let orbRowLower = Dictionary(orbRow.map { ($0.key.lowercased(), $0.value) }, uniquingKeysWith: { a, _ in a })
+    private static let typesLower = Dictionary(types.map { ($0.key.lowercased(), $0.value) }, uniquingKeysWith: { a, _ in a })
+
     static func resolve(_ raw: String) -> SkillTokenKind? {
-        let name = aliases[raw] ?? raw
-        if name == "locks" {                       // lock overlay: tight 14x17 glyph at (36,36)
+        let name = aliasesLower[raw.lowercased()] ?? raw
+        let lower = name.lowercased()
+        if lower == "locks" {                       // lock overlay: tight 14x17 glyph at (36,36)
             return .orb(x: 36, y: 36, w: 14, h: 17)
         }
-        if let row = orbRow[name] { return .orb(x: 0, y: row * 36, w: 36, h: 36) }
-        if let t = types[name] { return .type(t) }
+        if let row = orbRowLower[lower] { return .orb(x: 0, y: row * 36, w: 36, h: 36) }
+        if let t = typesLower[lower] { return .type(t) }
         if let a = AwakeningNames.id(forName: name) { return .awoken(a) }
         return nil
     }
