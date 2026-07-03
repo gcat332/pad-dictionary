@@ -7,6 +7,22 @@ step, no backend — it deploys straight to GitHub Pages.
 
 🔗 **Live:** https://gcat332.github.io/pad-dictionary/ *(enable in repo Settings → Pages → `main` / root)*
 
+## Screenshots
+
+**Web**
+
+<p>
+  <img src="docs/screenshots/web-browse.png" width="420" alt="Web: browse/filter grid">
+  <img src="docs/screenshots/web-detail.png" width="420" alt="Web: card detail">
+</p>
+
+**iOS**
+
+<p>
+  <img src="docs/screenshots/ios-browse.png" width="220" alt="iOS: Browse tab">
+  <img src="docs/screenshots/ios-info.png" width="220" alt="iOS: Info tab">
+</p>
+
 ## Features
 
 - **13,878** JP-server cards — English names (`otLangName.en`), JP name kept as fallback for brand-new cards
@@ -37,6 +53,22 @@ step, no backend — it deploys straight to GitHub Pages.
 `engine.js` is a single UMD closure authored as ordered partials in `engine/src/`
 and concatenated by `./build-engine.sh` — edit the partials, not `engine.js`.
 See `engine/README.md` for the file map.
+
+## iOS app
+
+`ios/PADDictionary/` is a native SwiftUI companion app ("PADD") with the same
+JP-server card data, for offline/on-device browsing:
+
+- **Info** — reference lists for Awoken, Latent Awoken, and Badge, each with name,
+  effect text, and icon, sourced from GameWith/AppMedia guides
+- **Browse** — the same card grid/search/filter set as the web version (Attr 1–3,
+  Type, Rarity, Awoken with counts, Special Search), tap a card for full detail
+  (stats, skill text, evolution/skill-evolution chain)
+- **Sync** — pulls `mon_ja.json`/`skill_*.json` and sprites from this repo's GitHub
+  Pages build into the app's local storage
+- **Settings** — app info
+
+No backend of its own; it just reads the same data this repo publishes.
 
 ## Scripts
 
