@@ -85,7 +85,13 @@ struct CardDetailView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)
-        .background(Color.padPanel, in: RoundedRectangle(cornerRadius: 14))
+        .background(
+            LinearGradient(
+                colors: [accent.opacity(0.22), Color.padPanel],
+                startPoint: .topLeading, endPoint: .bottomTrailing
+            ),
+            in: RoundedRectangle(cornerRadius: 14)
+        )
         .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.padBorder))
     }
 
