@@ -18,13 +18,29 @@ Skill descriptions (`skill_en.json` / `skill_tr.json`) contain **123 distinct `{
 |----------|-------|---------|-------------|
 | Awoken skill name | 85 | `{Two-Pronged Attack}` | `awoken.png` (existing) |
 | Monster type | 9 | `{Devil}`, `{Dragon}` | `icon-type.svg` (existing) |
-| Orb / gimmick orb | 11 | `{Fire}`, `{Jammers}`, `{locks}` | `attrs.png` + `icon-orbs.png` (NEW) |
-| Unmatched | 18 | `{Combo}`, `{Nail}`, `{Fire Surge}` | plain text fallback |
+| Orb / gimmick orb | 11 | `{Fire}`, `{Jammers}`, `{locks}` | `icon-orbs.png` (NEW) |
+| Unmatched | 18 | `{Combo}`, `{Fire Surge}` | awoken alias, else plain text |
 
-The 11 orbs: `Fire Water Wood Light Dark Heal` (attrs.png) + `Jammers Poison "Lethal Poison" Bombs locks` (icon-orbs.png).
+**Orb index map** (canonical PAD order, confirmed against upstream `style.css` `.orb-icon[data-orb-icon]`
+and by inspecting the sheet). `icon-orbs.png` is 72×360, **36px cells, 2 cols × 10 rows**. The **left
+column (col 0), rows 0–9** are every orb we need; the right column holds state overlays:
 
-**Decision:** the 18 unmatched tokens render as plain text with braces stripped. They are rare and
-several are awoken variants; hand-mapping is deferred until usage shows which matter (add later, cheap).
+| idx | token | idx | token |
+|-----|-------|-----|-------|
+| 0 | Fire | 5 | Heal |
+| 1 | Water | 6 | Jammers |
+| 2 | Wood | 7 | Poison |
+| 3 | Light | 8 | Lethal Poison |
+| 4 | Dark | 9 | Bombs |
+
+`{locks}` → the lock state overlay (col 1, row 1). All 11 orb tokens come from this **one** sheet, so
+`attrs.png` is not needed. The filter attribute buttons also use col 0 rows 0–4.
+
+**Decision on the 18 unmatched:** several are awoken variants whose skill-text label differs from the
+awoken table (`Enhanced Light Rows`, `Heal Enhanced`, `Extended Move Time+`, …) — resolve via a small
+alias map into `awoken.png`. The rest (`Combo`, `* Surge`, `Change Sub Attribute: *`) are compound
+effects with no single icon → plain text (braces stripped). GameWith is **not** needed; upstream sprites
+are cleaner and already vendored via the same sync path.
 
 ## Existing infrastructure (reused, not rebuilt)
 
@@ -35,26 +51,26 @@ several are awoken variants; hand-mapping is deferred until usage shows which ma
 
 ## Design
 
-### 1. Assets (2 new files from existing upstream `Mapaler/PADDashFormation`)
+### 1. Assets (1 new file from existing upstream `Mapaler/PADDashFormation`)
 
-- Add `/images/attrs.png` and `/images/icon-orbs.png` to `update-data.sh`
-  (sparse-checkout `patterns` + copy step).
-- Add both to `GitHubSyncService.fixedImageFiles` so the app downloads them on sync.
+- Add `/images/icon-orbs.png` to `update-data.sh` (sparse-checkout `patterns` + copy step).
+- Add it to `GitHubSyncService.fixedImageFiles` so the app downloads it on sync.
 
-Exact cell geometry (`attrs.png` 72×252, `icon-orbs.png` 72×360) is pinned during implementation by
-inspecting the sheets — likely 36px cells, but verify against the real image before committing offsets.
+Geometry is fixed: 72×360, 36px cells, 2 cols × 10 rows (see orb index map above).
 
 ### 2. `OrbIconSprite` (new SwiftUI view)
 
-Crops one cell from `attrs.png` / `icon-orbs.png` (same pattern as `AwakeningIconView`) → renders at a
-given size. Backs both the skill-text orb tokens and the filter attribute buttons.
+Crops one 36px cell from `icon-orbs.png` at (col,row) (same crop pattern as `AwakeningIconView`) →
+renders at a given size. Backs both the skill-text orb tokens (col 0, rows 0–9; `locks` → col 1 row 1)
+and the filter attribute buttons (col 0, rows 0–4).
 
 ### 3. Token resolution — `SkillToken` (new)
 
 `SkillToken.icon(for name: String) -> Resolved?` tries, in order:
-1. orb name → `.orb(sheet, cell)`  (small hardcoded dict, ~11 entries)
+1. orb name → `.orb(col, row)`  (hardcoded dict, 11 entries per the orb index map)
 2. type name → `.type(id)`  (name→id from existing type table)
-3. awoken name → `.awoken(id)`  (reverse map added to `AwakeningNames`)
+3. awoken name → `.awoken(id)`  (reverse map added to `AwakeningNames`, plus a small alias
+   map for the ~8 awoken variants whose skill-text label differs from the table)
 4. else → `nil` (caller renders plain text)
 
 Add `AwakeningNames.id(forName:)` — reverse of the existing `names` dict, built once.
@@ -72,7 +88,7 @@ Add `AwakeningNames.id(forName:)` — reverse of the existing `names` dict, buil
 ### 5. Filter attribute buttons — `FilterView`
 
 Replace the color-dot swatch in the attribute selector with `OrbIconSprite` for attributes 0–4
-(Fire…Dark) from `attrs.png`. No logic change; presentation only.
+(Fire…Dark) from `icon-orbs.png` col 0. No logic change; presentation only.
 
 ## Testing
 
@@ -84,5 +100,6 @@ One `SkillTextTests` (assert-based):
 ## Out of scope
 
 - Web viewer (`dict.js`) token rendering.
-- Hand-mapping the 18 unmatched tokens.
-- The many other upstream icons (bind/poison/dungeon gimmick `icon-*.png`) not referenced by `{tokens}`.
+- The compound-effect tokens with no single icon (`Combo`, `* Surge`, `Change Sub Attribute: *`) — text.
+- Dungeon-board gimmick icons (`icon-cloud-1.png`, `icon-immobility.png`, `icon-deep-dark.png`, bind,
+  etc.) — these are board-render gimmicks, never appear as `{tokens}` in skill text.
