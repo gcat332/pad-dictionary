@@ -263,10 +263,10 @@ function skillBlock(kind, accent, sid){
     const key = `${stage.name}|${stage.body}`;
     if (seenTexts.has(key)) continue;
     seenTexts.add(key);
-    distinctStages.push(stage);
+    distinctStages.push({...stage, cd: cdText(stageId)});
   }
   const chainHTML = distinctStages.map((stage, i) => `<div class="sk-evo">
-      <div class="eyebrow sk-evo-lbl">Evolves into (${i+1}/${distinctStages.length})</div>
+      <div class="eyebrow sk-evo-lbl">Evolves into (${i+1}/${distinctStages.length})${stage.cd?`<span class="cd">${stage.cd}</span>`:""}</div>
       <div class="sk-title">${stage.name}</div>
       <p class="sk-desc">${stage.body}</p>
     </div>`).join("");
