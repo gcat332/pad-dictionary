@@ -37,6 +37,12 @@ cp "$TMP/monsters-info/mon_ja.json"   monsters-info/mon_ja.json
 cp "$TMP/monsters-info/skill_en.json" monsters-info/skill_en.json
 cp "$TMP/monsters-info/skill_ja.json" monsters-info/skill_ja.json
 
+# Refresh English text for JP-only skills so new cards don't show "no English text".
+# Incremental (only fills missing ids), so this is cheap on a normal update.
+echo "Refreshing skill translations (skill_tr.json) …"
+command -v node >/dev/null || { echo "Error: node not found (needed for build-translations.mjs)."; exit 1; }
+node build-translations.mjs
+
 if ! $DATA_ONLY; then
   command -v cwebp >/dev/null || { echo "Error: cwebp not found. Install with 'brew install webp' (card sprites are stored as WebP for faster loading)."; exit 1; }
   echo "Syncing card sprites (PNG → WebP) + icons + frames …"
