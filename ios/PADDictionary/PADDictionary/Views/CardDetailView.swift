@@ -1,10 +1,11 @@
 import SwiftUI
+import SafariServices
 
 struct CardDetailView: View {
     let card: Card
     let dataStore: DataStore
     @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.openURL) private var openURL
+    @State private var showingSearch = false
 
     private var accent: Color { AttributeColor.accent(for: card.attrs) }
     // Bright attribute accents pop on dark but wash out on light — darken for text there.
@@ -30,10 +31,11 @@ struct CardDetailView: View {
     // Google-search this character. Uses the JP name + "パズドラ" (the game's JP short
     // name): new cards land in JP first and often have no English name/coverage yet,
     // so JP consistently finds the character where an English query would miss.
-    private var searchURL: URL? {
-        var c = URLComponents(string: "https://www.google.com/search")
-        c?.queryItems = [URLQueryItem(name: "q", value: "\(card.name) パズドラ")]
-        return c?.url
+    // Non-optional: the base URL is a known-good literal, so force-unwrap is safe.
+    private var searchURL: URL {
+        var c = URLComponents(string: "https://www.google.com/search")!
+        c.queryItems = [URLQueryItem(name: "q", value: "\(card.name) パズドラ")]
+        return c.url!
     }
 
     var body: some View {
@@ -52,6 +54,17 @@ struct CardDetailView: View {
         // No large "#id" title — the id is already shown under the card name (see header).
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { showingSearch = true } label: {
+                    Image(systemName: "magnifyingglass")
+                }
+                .accessibilityLabel("Search this card on Google")
+            }
+        }
+        .sheet(isPresented: $showingSearch) {
+            SafariView(url: searchURL).ignoresSafeArea()
+        }
     }
 
     // Attribute-tinted glow at the top, fading into the base — mirrors the web detail's
@@ -74,22 +87,13 @@ struct CardDetailView: View {
             VStack(alignment: .leading, spacing: 4) {
                 // Attribute is already conveyed by the card artwork + colored frame.
                 Text("#\(card.id)").font(.system(size: 15, weight: .bold)).foregroundStyle(idGradient)
-                HStack(spacing: 6) {
-                    Text(card.name)
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(Color.padText)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                    if let searchURL {
-                        Button { openURL(searchURL) } label: {
-                            Image(systemName: "magnifyingglass")
-                                .font(.system(size: 12, weight: .semibold))
-                        }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(accentText)
-                        .accessibilityLabel("Search this card on Google")
-                    }
-                }
+                // Google-search lives in the toolbar (top-right); taps in the header
+                // itself don't register reliably, so the name is just a label here.
+                Text(card.name)
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(Color.padText)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 6) {
                         ForEach(card.types.filter { $0 >= 0 }, id: \.self) { type in
@@ -299,4 +303,14 @@ struct CardDetailView: View {
             }
         }
     }
+}
+
+// In-app browser for the card's Google search — doesn't rely on the external
+// openURL path (which wasn't launching Safari from the detail view).
+private struct SafariView: UIViewControllerRepresentable {
+    let url: URL
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        SFSafariViewController(url: url)
+    }
+    func updateUIViewController(_ controller: SFSafariViewController, context: Context) {}
 }
