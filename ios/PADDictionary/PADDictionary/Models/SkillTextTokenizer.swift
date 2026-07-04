@@ -89,6 +89,57 @@ enum SkillToken {
         "Light Drop Enhancement +": "Enhanced Light Orbs+",
         "Wood Drop Enhancement +": "Enhanced Wood Orbs+",
         "Dark Drop Enhancement +": "Enhanced Dark Orbs+",
+        "Fire Drop Enhancement +": "Enhanced Fire Orbs+",
+        "recovery drop enhancement": "Enhanced Heal Orbs",
+        "Recovery drop enhancement +": "Enhanced Heal Orbs+",
+        // row enhance — translations vary ("X row reinforcement" / "X Row Enhancement" /
+        // "line reinforcement"); the existing table only had Dark, so fill the rest.
+        "Fire row reinforcement": "Enhanced Fire Rows",
+        "Fire Row Enhancement": "Enhanced Fire Rows",
+        "Water row reinforcement": "Enhanced Water Rows",
+        "Water Row Enhancement": "Enhanced Water Rows",
+        "Wood row reinforcement": "Enhanced Wood Rows",
+        "Wood Row Enhancement": "Enhanced Wood Rows",
+        "Strengthen tree row": "Enhanced Wood Rows",   // 木 mistranslated as "tree"
+        "Light row reinforcement": "Enhanced Light Rows",
+        "Light line reinforcement": "Enhanced Light Rows",
+        "Light Row Enhancement": "Enhanced Light Rows",
+        "Dark Row Enhancement": "Enhanced Dark Rows",
+        "Dark Row Enhancement x3": "Triple Enhanced Dark Rows",
+        // combos
+        "Combo Enhancement": "Enhanced Combos",
+        "Combo Enhancement +": "Enhanced Combos+",
+        "Super combo enhancement": "Super Enhanced Combos",
+        "Water Combo Enhancement +": "Enhanced Water Combos",
+        "Combo Drops": "Combo Orbs",
+        // attacks
+        "Cross erase attack": "Cross Attack",
+        "Cross erasing attack": "Cross Attack",
+        "Cross-erasing Attack +": "Cross Attack+",
+        "L-shaped eraser attack": "[L] Increased Attack",
+        "Simultaneous fire and water attack": "Fire & Water Attack",
+        "Simultaneous wood/fire attack": "Wood & Fire Attack",
+        "Simultaneous fire and wood attack": "Wood & Fire Attack",
+        // multi-attribute attack (5-color exists only as an attack awakening)
+        "3-color attack enhancement": "3 Att. Enhanced Attack",
+        "5-color attack enhancement": "5 Att. Enhanced Attack",
+        "Enhanced 5-color attack": "5 Att. Enhanced Attack",
+        "5-color drop enhancement": "5 Att. Enhanced Attack",
+        "5 color drop enhancement": "5 Att. Enhanced Attack",
+        // damage-void pierce
+        "Damage nullification piercing attack": "Damage Void Piercer",
+        "Damage Nullification Penetrating Attack": "Damage Void Piercer",
+        "Damage Nullified Penetrating Attack": "Damage Void Piercer",
+        // resistances
+        "Cloud Resistance": "Resistance-Clouds",
+        "Uncontrollable Resistance": "Resistance-Immobility",
+        "Seal Resistance": "Resistance-Skill Bind",
+        // types (translated "X type" → the type-icon token)
+        "God type": "God",
+        "Devil type": "Devil",
+        // Google renders attribute kanji as weekdays: 水曜日→Wednesday (Water), 木曜日→Thursday (Wood)
+        "Wednesday": "Water",
+        "Thursday": "Wood",
         // gimmick orbs
         "Nail Drops": "Nail",
     ]
