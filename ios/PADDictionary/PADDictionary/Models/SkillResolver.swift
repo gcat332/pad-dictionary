@@ -26,11 +26,13 @@ enum SkillResolver {
         return ResolvedSkill(name: name, description: description, source: source)
     }
 
-    static func cooldownText(skillId: Int, skillsJA: SkillLookup, skillsEN: SkillLookup) -> String {
+    /// Bare cooldown value shown in parens after the skill name, e.g. "3" or "35→15"
+    /// (max initial → min after skill-ups). Empty when the skill has no cooldown.
+    static func cooldownValue(skillId: Int, skillsJA: SkillLookup, skillsEN: SkillLookup) -> String {
         guard let skill = skillsJA[skillId] ?? skillsEN[skillId], skill.initialCooldown != 0 else { return "" }
         let effectiveMaxLevel = skill.maxLevel == 0 ? 1 : skill.maxLevel
         let minCooldown = skill.initialCooldown - (effectiveMaxLevel - 1)
-        return minCooldown == skill.initialCooldown ? "CD \(minCooldown)" : "CD \(skill.initialCooldown)→\(minCooldown)"
+        return minCooldown == skill.initialCooldown ? "\(minCooldown)" : "\(skill.initialCooldown)→\(minCooldown)"
     }
 
     /// Skill types 232 (one-way) and 233 (looping) upgrade into another skill after use.

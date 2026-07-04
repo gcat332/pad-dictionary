@@ -3,8 +3,38 @@ import SwiftUI
 struct CardDetailView: View {
     let card: Card
     let dataStore: DataStore
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.openURL) private var openURL
 
     private var accent: Color { AttributeColor.accent(for: card.attrs) }
+    // Bright attribute accents pop on dark but wash out on light — darken for text there.
+    private var accentText: Color { colorScheme == .light ? accent.darkened(0.42) : accent }
+    // Lighter darkening than body accents — the #id gradient reads more vividly.
+    private func attrColor(_ attr: Int, darken: Double = 0.22) -> Color {
+        let c = AttributeColor.accent(for: [attr])
+        return colorScheme == .light ? c.darkened(darken) : c
+    }
+    // #id fill: a gradient across the card's attribute colours (dual-attr = two tones,
+    // single-attr = one tone with a subtle fade).
+    private var idGradient: LinearGradient {
+        let attrs = card.attrs.filter { $0 >= 0 }
+        let colors: [Color]
+        switch attrs.count {
+        case 0:  colors = [accentText, accentText]
+        case 1:  colors = [attrColor(attrs[0]), attrColor(attrs[0]).opacity(0.6)]
+        default: colors = attrs.map { attrColor($0) }
+        }
+        return LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing)
+    }
+
+    // Google-search this character. Uses the JP name + "パズドラ" (the game's JP short
+    // name): new cards land in JP first and often have no English name/coverage yet,
+    // so JP consistently finds the character where an English query would miss.
+    private var searchURL: URL? {
+        var c = URLComponents(string: "https://www.google.com/search")
+        c?.queryItems = [URLQueryItem(name: "q", value: "\(card.name) パズドラ")]
+        return c?.url
+    }
 
     var body: some View {
         ScrollView {
@@ -18,10 +48,24 @@ struct CardDetailView: View {
             }
             .padding()
         }
-        .background(Color.padBackground)
+        .background(detailBackground)
         // No large "#id" title — the id is already shown under the card name (see header).
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // Attribute-tinted glow at the top, fading into the base — mirrors the web detail's
+    // radial-gradient(... at 18% 0% ...) so each card's attribute colors the page.
+    private var detailBackground: some View {
+        ZStack(alignment: .top) {
+            Color.padBackground
+            RadialGradient(
+                colors: [accent.opacity(colorScheme == .light ? 0.12 : 0.28), .clear],
+                center: UnitPoint(x: 0.15, y: -0.05),
+                startRadius: 0, endRadius: 460
+            )
+        }
+        .ignoresSafeArea()
     }
 
     private var header: some View {
@@ -29,8 +73,23 @@ struct CardDetailView: View {
             CardArtworkView(card: card, cellSize: 80)
             VStack(alignment: .leading, spacing: 4) {
                 // Attribute is already conveyed by the card artwork + colored frame.
-                Text(card.displayName).font(.title2.bold())
-                Text("#\(card.id) · \(card.name)").font(.caption).foregroundStyle(.secondary)
+                Text("#\(card.id)").font(.system(size: 15, weight: .bold)).foregroundStyle(idGradient)
+                HStack(spacing: 6) {
+                    Text(card.name)
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(Color.padText)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                    if let searchURL {
+                        Button { openURL(searchURL) } label: {
+                            Image(systemName: "magnifyingglass")
+                                .font(.system(size: 12, weight: .semibold))
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(accentText)
+                        .accessibilityLabel("Search this card on Google")
+                    }
+                }
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 6) {
                         ForEach(card.types.filter { $0 >= 0 }, id: \.self) { type in
@@ -87,7 +146,7 @@ struct CardDetailView: View {
         .padding(.vertical, 14)
         .background(
             LinearGradient(
-                colors: [accent.opacity(0.22), Color.padPanel],
+                colors: [accent.opacity(colorScheme == .light ? 0.14 : 0.22), Color.padPanel],
                 startPoint: .topLeading, endPoint: .bottomTrailing
             ),
             in: RoundedRectangle(cornerRadius: 14)
@@ -101,7 +160,7 @@ struct CardDetailView: View {
                 .font(.system(size: size, weight: .bold))
                 .tracking(size * 0.12)
                 .textCase(.uppercase)
-                .foregroundStyle(color ?? accent)
+                .foregroundStyle(color ?? accentText)
             if let trailing {
                 Text(trailing)
                     .font(.system(size: 11, weight: .semibold))
@@ -140,15 +199,16 @@ struct CardDetailView: View {
 
     private func skillSection(title: String, skillId: Int) -> some View {
         let resolved = SkillResolver.resolve(skillId: skillId, skillsJA: dataStore.skillLookup, skillsEN: dataStore.skillLookupEN, translations: dataStore.skillTranslations)
-        let cd = SkillResolver.cooldownText(skillId: skillId, skillsJA: dataStore.skillLookup, skillsEN: dataStore.skillLookupEN)
+        let cd = SkillResolver.cooldownValue(skillId: skillId, skillsJA: dataStore.skillLookup, skillsEN: dataStore.skillLookupEN)
         let stages = evolvedStages(for: skillId, base: resolved)
         return VStack(alignment: .leading, spacing: 2) {
-            eyebrow(title, trailing: cd.isEmpty ? nil : cd)
-            skillStageBody(resolved)
+            eyebrow(title)
+            skillStageBody(resolved, cd: cd)
             ForEach(Array(stages.enumerated()), id: \.offset) { index, stage in
                 VStack(alignment: .leading, spacing: 2) {
+                    let stageCd = SkillResolver.cooldownValue(skillId: stage.id, skillsJA: dataStore.skillLookup, skillsEN: dataStore.skillLookupEN)
                     eyebrow("Evolves into (\(index + 1)/\(stages.count))", color: Color.padDim, size: 10)
-                    skillStageBody(stage)
+                    skillStageBody(stage.resolved, cd: stageCd)
                 }
                 .padding(.leading, 10)
                 .padding(.top, 10)
@@ -159,12 +219,22 @@ struct CardDetailView: View {
         }
     }
 
-    private func skillStageBody(_ resolved: ResolvedSkill?) -> some View {
+    private func skillStageBody(_ resolved: ResolvedSkill?, cd: String) -> some View {
         let hasName = !(resolved?.name.isEmpty ?? true)
         return VStack(alignment: .leading, spacing: 2) {
-            Text(resolved.map { $0.name.isEmpty ? "—" : $0.name } ?? "—")
-                .font(.system(size: 14, weight: hasName ? .semibold : .regular))
-                .foregroundStyle(hasName ? Color.padText : Color.padDim)
+            HStack(spacing: 5) {
+                Text(resolved.map { $0.name.isEmpty ? "—" : $0.name } ?? "—")
+                    .font(.system(size: 14, weight: hasName ? .semibold : .regular))
+                    .foregroundStyle(hasName ? Color.padText : Color.padDim)
+                if !cd.isEmpty {
+                    Text("(CD \(cd))")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(accentText)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 1)
+                        .background(accentText.opacity(colorScheme == .light ? 0.12 : 0.15), in: Capsule())
+                }
+            }
             if let resolved, !resolved.description.isEmpty {
                 HStack(alignment: .top, spacing: 6) {
                     SkillTextView(resolved.description)
@@ -172,10 +242,10 @@ struct CardDetailView: View {
                     if resolved.source == .translated {
                         Text("translated")
                             .font(.system(size: 10))
-                            .foregroundStyle(accent)
+                            .foregroundStyle(accentText)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 1)
-                            .overlay(Capsule().stroke(accent.opacity(0.45)))
+                            .overlay(Capsule().stroke(accentText.opacity(0.45)))
                     }
                 }
             } else {
@@ -184,16 +254,16 @@ struct CardDetailView: View {
         }
     }
 
-    private func evolvedStages(for skillId: Int, base: ResolvedSkill?) -> [ResolvedSkill?] {
+    private func evolvedStages(for skillId: Int, base: ResolvedSkill?) -> [(id: Int, resolved: ResolvedSkill?)] {
         let chain = SkillResolver.evolvedChain(skillId: skillId, skillsJA: dataStore.skillLookup)
         var seenKeys: Set<String> = [stageKey(base)]
-        var stages: [ResolvedSkill?] = []
+        var stages: [(id: Int, resolved: ResolvedSkill?)] = []
         for stageId in chain {
             let resolved = SkillResolver.resolve(skillId: stageId, skillsJA: dataStore.skillLookup, skillsEN: dataStore.skillLookupEN, translations: dataStore.skillTranslations)
             let key = stageKey(resolved)
             guard !seenKeys.contains(key) else { continue }
             seenKeys.insert(key)
-            stages.append(resolved)
+            stages.append((id: stageId, resolved: resolved))
         }
         return stages
     }

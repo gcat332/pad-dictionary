@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @AppStorage("appTheme") private var appTheme: AppTheme = .system
     @StateObject private var dataStore = DataStore(
         documentsDirectory: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     )
@@ -26,6 +27,6 @@ struct ContentView: View {
             .tabItem { Label("Settings", systemImage: "gearshape") }
         }
         .tint(Color.padAccent)
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(appTheme.colorScheme)
     }
 }
