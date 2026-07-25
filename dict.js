@@ -71,26 +71,141 @@ const ORB_SHEET_W = 72, ORB_SHEET_H = 360, ICON_H = 16;   // icon-orbs.png is 72
 const ORB_ROW = {fire:0,water:1,wood:2,light:3,dark:4,heal:5,jammers:6,poison:7,"lethal poison":8,bombs:9};
 const SURGE_ROW = {fire:0,water:1,wood:2,light:3,dark:4,heal:5,recovery:5};
 const TYPE_BY_NAME = {balanced:1,physical:2,healer:3,dragon:4,god:5,attacker:6,devil:7,machine:8,"enhance material":14};
-// Google-translated (or EN variant) name → canonical token name; keys lowercased.
-const TOKEN_ALIASES = {
+// Regular per-attribute awakening families. Google renders the same JP awakening a dozen ways
+// (ドロップ強化 → "drop enhancement"/"drop reinforcement"/"attribute enhancement", 列強化 →
+// "row"/"line"/"column", ×3 → "x3"/"×3"), so generate the permutations instead of hand-listing
+// ~150 aliases. Mirrors SkillToken.attrAliases in iOS — keep the two in sync.
+function buildAttrAliases(){
+  // Google also renders the attribute kanji inconsistently: 木 → "wood"/"tree"/"Thursday"
+  // (木曜日), 水 → "Wednesday" (水曜日), 闇 → "darkness", 回復 → "recovery".
+  // rowCombo is false for Heal — there is no heal row/combo awakening.
+  const attrs = [
+    [["fire"], "Fire", true],
+    [["water","wednesday"], "Water", true],
+    [["wood","tree","thursday"], "Wood", true],
+    [["light"], "Light", true],
+    [["dark","darkness"], "Dark", true],
+    [["recovery","heal","healing"], "Heal", false],
+  ];
+  const out = {};
+  for (const [words, canon, rowCombo] of attrs) for (const w of words){
+    for (const noun of ["drop","attribute"]) for (const verb of ["enhancement","reinforcement"]){
+      out[`${w} ${noun} ${verb}`] = `Enhanced ${canon} Orbs`;
+      out[`${w} ${noun} ${verb} +`] = out[`${w} ${noun} ${verb}+`] = `Enhanced ${canon} Orbs+`;
+    }
+    if (!rowCombo) continue;
+    for (const noun of ["row","line","column"]) for (const verb of ["enhancement","reinforcement"]){
+      out[`${w} ${noun} ${verb}`] = `Enhanced ${canon} Rows`;
+      for (const x3 of ["x3","×3"])
+        out[`${w} ${noun} ${verb} ${x3}`] = out[`${w} ${noun} ${verb}${x3}`] = `Triple Enhanced ${canon} Rows`;
+    }
+    for (const verb of ["enhancement","reinforcement"]){
+      out[`${w} combo ${verb}`] = `Enhanced ${canon} Combos`;
+      out[`${w} combo ${verb} +`] = out[`${w} combo ${verb}+`] = `Enhanced ${canon} Combos+`;
+    }
+  }
+  return out;
+}
+// Multi-attribute attack awakenings (N色攻撃強化) — Google hyphenates the count or not
+// ("4-color attack enhancement" / "4 color attack enhancement") and swaps the verb.
+function buildMultiColorAliases(){
+  const out = {};
+  for (const n of [3,4,5]) for (const sep of ["-color"," color"]) for (const verb of ["attack enhancement","attack reinforcement"]){
+    out[`${n}${sep} ${verb}`] = `${n} Att. Enhanced Attack`;
+    out[`${n}${sep} ${verb} +`] = out[`${n}${sep} ${verb}+`] = `${n} Att. Enhanced Attack+`;
+  }
+  return out;
+}
+// Type tokens ("[Machine type]") and the type-add awakenings ("[Dragon type added]").
+// 体力タイプ comes back as "Physicality type"/"Physical type"; 回復タイプ as "Recovery type".
+function buildTypeAliases(){
+  const entries = [
+    [["dragon"], "Dragon", "Add Dragon Type"],
+    [["god"], "God", "Add God Type"],
+    [["devil","demon"], "Devil", "Add Devil Type"],
+    [["machine"], "Machine", "Add Machine Type"],
+    [["balance","balanced"], "Balanced", "Add Balanced Type"],
+    [["attack","attacker"], "Attacker", "Add Attacker Type"],
+    [["physical","physicality","body"], "Physical", "Add Physical Type"],
+    [["recovery","healer","healing"], "Healer", "Add Healer Type"],
+  ];
+  const out = {};
+  for (const [words, canon, added] of entries) for (const w of words){
+    out[`${w} type`] = canon;
+    for (const suffix of ["added","addition","add"]) out[`${w} type ${suffix}`] = added;
+  }
+  return out;
+}
+// Irregular phrasings only — the regular families above are generated. Keys lowercased.
+// Hand-written entries win over the generated ones (they're the exceptions).
+const TOKEN_ALIASES = Object.assign(buildAttrAliases(), buildMultiColorAliases(), buildTypeAliases(), {
   "recovery":"Heal","darkness":"Dark","lock":"locks",
-  "attack type":"Attacker","balance type":"Balanced","demon type":"Devil","dragon type":"Dragon",
   "2-target attack":"Two-Pronged Attack","two-target attack":"Two-Pronged Attack",
+  "2-target attack +":"Two-Pronged Attack+","2-target attack+":"Two-Pronged Attack+",
+  "two-target attack +":"Two-Pronged Attack+",
   "cross-erasing attack":"Cross Attack","l-shaped erase attack":"[L] Increased Attack",
   "l-shaped erase attack +":"[L] Increased Attack+","t-shaped erasing attack":"[T] Increased Attack",
-  "dark row reinforcement":"Enhanced Dark Rows","bind resistance +":"Resistance-Bind+",
+  "t-shaped erase attack":"[T] Increased Attack",
+  "bind resistance +":"Resistance-Bind+",
+  "floating":"Levitation",                       // 浮遊
+  // 全パラメータ強化 — Google flips between a noun phrase and a sentence
+  "all parameter enhancement":"Enhanced Stats","enhances all parameters":"Enhanced Stats",
+  "all parameter enhancement +":"Enhanced Stats+",
   // Google mistranslates 水木 (Water-Wood) as the name "Mizuki", and 木 (Wood) alone as
   // "Thursday" (from 木曜日) — these are attribute-pair "同時攻撃" awakenings.
   "fire and water simultaneous attack":"Fire & Water Attack",
   "mizuki simultaneous attack":"Water & Wood Attack","mizuki-thursday attack":"Water & Wood Attack",
   "thursday and fire simultaneous attack":"Wood & Fire Attack",
-  "4-color attack enhancement":"4 Att. Enhanced Attack","3 color attack reinforcement":"3 Att. Enhanced Attack",
+  "simultaneous fire and water attack":"Fire & Water Attack",
+  "simultaneous wood/fire attack":"Wood & Fire Attack",
+  "simultaneous fire and wood attack":"Wood & Fire Attack",
+  // multi-attribute attack — irregular phrasings only ("N-color attack enhancement" and
+  // friends are generated above)
+  "enhanced 5-color attack":"5 Att. Enhanced Attack",
+  "5-color drop enhancement":"5 Att. Enhanced Attack","5 color drop enhancement":"5 Att. Enhanced Attack",
   "operation time extension +":"Extend Time+","extended move time+":"Extend Time+",
-  "light attribute enhancement":"Enhanced Light Orbs","light drop enhancement +":"Enhanced Light Orbs+",
-  "wood drop enhancement +":"Enhanced Wood Orbs+","dark drop enhancement +":"Enhanced Dark Orbs+",
+  "strengthen tree row":"Enhanced Wood Rows",    // 木 mistranslated as "tree"
+  // combos (attribute combos are generated; these are the attribute-less ones)
+  "combo enhancement":"Enhanced Combos","combo enhancement +":"Enhanced Combos+",
+  "super combo enhancement":"Super Enhanced Combos","combo drops":"Combo Orbs",
+  // attacks
+  "cross erase attack":"Cross Attack","cross erasing attack":"Cross Attack",
+  "cross-erasing attack +":"Cross Attack+","l-shaped eraser attack":"[L] Increased Attack",
+  // damage-void pierce
+  "damage nullification piercing attack":"Damage Void Piercer",
+  "damage nullification penetrating attack":"Damage Void Piercer",
+  "damage nullified penetrating attack":"Damage Void Piercer",
+  // resistances — 暗闇耐性 is blind resist ("Darkness" here is 暗闇, not the 闇 attribute)
+  "cloud resistance":"Resistance-Clouds","uncontrollable resistance":"Resistance-Immobility",
+  "seal resistance":"Resistance-Skill Bind",
+  "darkness resistance":"Resistance-Blind","darkness resistance +":"Resistance-Blind+",
+  // Google renders attribute kanji as weekdays: 水曜日→Wednesday (Water), 木曜日→Thursday (Wood)
+  "wednesday":"Water","thursday":"Wood",
+  // assist-awakening keywords that show up bracketed in skill text
+  "part destruction bonus":"Part Break Bonus",
+  "bind recovery":"Recover Bind","bind recovery +":"Recover Bind+",
+  // sub-attribute change awakening (副属性変更・X) — Google varies the separator (: or /)
+  // and renders 闇 as "Darkness".
+  "sub-attribute change: fire":"Change Sub Attribute: Fire",
+  "sub-attribute change/fire":"Change Sub Attribute: Fire",
+  "sub-attribute change: water":"Change Sub Attribute: Water",
+  "sub-attribute change/water":"Change Sub Attribute: Water",
+  "sub-attribute change: wood":"Change Sub Attribute: Wood",
+  "sub-attribute change/wood":"Change Sub Attribute: Wood",
+  "sub-attribute change: light":"Change Sub Attribute: Light",
+  "sub-attribute change/light":"Change Sub Attribute: Light",
+  "sub-attribute change: dark":"Change Sub Attribute: Dark",
+  "sub-attribute change: darkness":"Change Sub Attribute: Dark",
+  "sub-attribute change/darkness":"Change Sub Attribute: Dark",
+  // gimmick orbs
   "nail drops":"Nail",
-};
-let AWK_BY_NAME = {};   // canonical awakening name → id, built once AWOKEN_NAMES loads
+  "block":"Jammers",              // ブロック/お邪魔 generated by skills = the jammer (spiky) orb
+  "tree":"Wood",                  // 木 = a Wood orb (Google renders the kanji as "tree")
+  "recovery enhancement":"Heal",  // 回復力エンハンス shown as the heal (heart) orb
+});
+// lowercased awakening name → id, built once AWOKEN_NAMES loads. Lowercased because Google
+// varies the casing of an otherwise exact name ("Skill delay resistance" vs "Skill Delay Resistance").
+let AWK_BY_NAME = {};
 const escHTML = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 // crop rect (x,y,w,h in sheet px) → inline span scaled to ICON_H, preserving aspect
 function orbIcon(x,y,w,h,title){
@@ -118,7 +233,7 @@ function tokenIcon(raw){
   if (low.endsWith(" surge")) { const r = SURGE_ROW[low.slice(0,-6)]; if (r != null) return surgeIcon(r, name); }
   if (ORB_ROW[low] != null) return orbIcon(0, ORB_ROW[low]*36, 36, 36, name);
   if (TYPE_BY_NAME[low] != null) return typeInline(TYPE_BY_NAME[low]);
-  if (AWK_BY_NAME[name] != null) return awkInline(AWK_BY_NAME[name]);
+  if (AWK_BY_NAME[low] != null) return awkInline(AWK_BY_NAME[low]);
   return null;
 }
 // {..} unresolved → drop braces (EN); [..] unresolved → keep brackets (literal keyword)
@@ -522,7 +637,7 @@ Promise.all([
   SKILL_EN=skillEn;
   SKILL_TR=skillTr || {};
   AWOKEN_NAMES=awokenNames || {};
-  AWK_BY_NAME = {}; for (const k in AWOKEN_NAMES) AWK_BY_NAME[AWOKEN_NAMES[k]] = +k;   // name → id (skill-text tokens)
+  AWK_BY_NAME = {}; for (const k in AWOKEN_NAMES) AWK_BY_NAME[AWOKEN_NAMES[k].toLowerCase()] = +k;   // name → id (skill-text tokens)
   CARDS=cards.filter(c=>!c.isEmpty&&c.enabled);
   if (!window.PADEngine?.createSpecialSearchEngine) throw new Error("engine.js did not load");
   SPECIAL_ENGINE=window.PADEngine.createSpecialSearchEngine({cards, skills: skillJa});

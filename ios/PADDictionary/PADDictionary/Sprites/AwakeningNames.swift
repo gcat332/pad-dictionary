@@ -10,14 +10,16 @@ enum AwakeningNames {
         return decoded
     }()
 
+    // Lowercased: Google-translated skill text varies the casing of an otherwise exact
+    // awakening name ("Skill delay resistance" vs the canonical "Skill Delay Resistance").
     private static let idByName: [String: Int] = {
         var map: [String: Int] = [:]
-        for (idStr, name) in names { if let id = Int(idStr) { map[name] = id } }
+        for (idStr, name) in names { if let id = Int(idStr) { map[name.lowercased()] = id } }
         return map
     }()
 
-    /// Reverse of `name(for:)`: awakening name → id (exact match), or nil.
-    static func id(forName name: String) -> Int? { idByName[name] }
+    /// Reverse of `name(for:)`: awakening name → id (case-insensitive), or nil.
+    static func id(forName name: String) -> Int? { idByName[name.lowercased()] }
 
     // Effect text verified against GameWith's Awakening Skill guide
     // (https://xn--0ck4aw2h.gamewith.jp/article/show/15917, scraped live with full-page

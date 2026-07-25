@@ -95,8 +95,75 @@ final class SkillTextTokenizerTests: XCTestCase {
         XCTAssertNotNil(SkillToken.resolve("Enhanced Light Rows"))
     }
 
+    func testSubAttributeLightFixedInData() {
+        // awoken_names.json used to mislabel id 94 as "Change Sub Attribute: Water" (a
+        // duplicate of 92), which also made the name -> id map order-dependent.
+        XCTAssertEqual(AwakeningNames.name(for: 94), "Change Sub Attribute: Light")
+        XCTAssertEqual(SkillToken.resolve("Sub-attribute change/Light"), .awoken(94))
+        XCTAssertEqual(SkillToken.resolve("Sub-attribute change: Water"), .awoken(92))
+    }
+
+    func testResolveAwokenIsCaseInsensitive() {
+        // Google varies the casing of otherwise-exact awakening names.
+        let id = try! XCTUnwrap(AwakeningNames.id(forName: "Skill Delay Resistance"))
+        XCTAssertEqual(SkillToken.resolve("Skill delay resistance"), .awoken(id))
+        XCTAssertEqual(SkillToken.resolve("skill delay resistance"), .awoken(id))
+    }
+
+    func testGeneratedAttributeFamilies() {
+        // ドロップ強化 / 列強化 / コンボ強化 come back with the noun and verb swapped around;
+        // all permutations are generated, so any of them lands on the same awakening.
+        for token in ["Dark drop reinforcement +", "Dark Drop Enhancement +", "dark attribute enhancement +"] {
+            XCTAssertEqual(SkillToken.resolve(token), .awoken(103), token)   // Enhanced Dark Orbs+
+        }
+        for token in ["Light row reinforcement", "Light line reinforcement", "Light Row Enhancement"] {
+            XCTAssertEqual(SkillToken.resolve(token), .awoken(25), token)    // Enhanced Light Rows
+        }
+        for token in ["Dark column reinforcement x3", "Dark Row Enhancement x3", "dark row reinforcement ×3"] {
+            XCTAssertEqual(SkillToken.resolve(token), .awoken(120), token)   // Triple Enhanced Dark Rows
+        }
+        XCTAssertEqual(SkillToken.resolve("Dark Combo Enhancement"), .awoken(77))
+        XCTAssertEqual(SkillToken.resolve("Water Combo Enhancement +"), .awoken(122))  // the + variant, not 74
+        XCTAssertEqual(SkillToken.resolve("recovery drop enhancement"), .awoken(29))
+        XCTAssertNil(SkillToken.resolve("recovery row enhancement"))   // no heal row awakening exists
+    }
+
+    func testGeneratedTypeFamilies() {
+        XCTAssertEqual(SkillToken.resolve("Machine type"), .type(8))
+        XCTAssertEqual(SkillToken.resolve("Physicality type"), .type(2))   // 体力タイプ
+        XCTAssertEqual(SkillToken.resolve("Recovery type"), .type(3))
+        XCTAssertEqual(SkillToken.resolve("Dragon type added"), .awoken(83))
+        XCTAssertEqual(SkillToken.resolve("Balance type added"), .awoken(87))
+        XCTAssertEqual(SkillToken.resolve("Machine type added"), .awoken(86))
+    }
+
+    func testGeneratedMultiColorAttackFamily() {
+        // N色攻撃強化 — with or without the hyphen, either verb.
+        for token in ["4-color attack enhancement", "4 color attack enhancement", "4 color attack reinforcement"] {
+            XCTAssertEqual(SkillToken.resolve(token), .awoken(80), token)   // 4 Att. Enhanced Attack
+        }
+        XCTAssertEqual(SkillToken.resolve("3 color attack reinforcement"), .awoken(79))
+        XCTAssertEqual(SkillToken.resolve("5-color attack enhancement"), .awoken(81))
+        XCTAssertEqual(SkillToken.resolve("5 color attack enhancement +"), .awoken(114))
+    }
+
+    func testResolveIrregularPhrasings() {
+        // Irregular translations that can't be generated — each seen in skill_tr.json.
+        XCTAssertEqual(SkillToken.resolve("T-shaped erase attack"), .awoken(126))    // [T] Increased Attack
+        XCTAssertEqual(SkillToken.resolve("All parameter enhancement"), .awoken(127))  // Enhanced Stats
+        XCTAssertEqual(SkillToken.resolve("Enhances all parameters"), .awoken(127))
+        XCTAssertEqual(SkillToken.resolve("Floating"), .awoken(106))                 // 浮遊 -> Levitation
+        XCTAssertEqual(SkillToken.resolve("2-target attack +"), .awoken(96))         // Two-Pronged Attack+
+        // 暗闇耐性 — "Darkness" here is 暗闇 (blindness), not the 闇 attribute
+        XCTAssertEqual(SkillToken.resolve("Darkness resistance +"), .awoken(68))     // Resistance-Blind+
+        XCTAssertEqual(SkillToken.resolve("Darkness"), .orb(x: 0, y: 144, w: 36, h: 36))  // still the Dark orb
+    }
+
     func testResolveUnknownReturnsNil() {
-        XCTAssertNil(SkillToken.resolve("Change Sub Attribute: Light"))
+        // Condition labels stay literal text — they aren't awakenings.
+        XCTAssertNil(SkillToken.resolve("7x6 squares"))
+        XCTAssertNil(SkillToken.resolve("Operation time 12 seconds"))
+        XCTAssertNil(SkillToken.resolve("No falling con"))
         XCTAssertNil(SkillToken.resolve("7x6 board"))
     }
 }

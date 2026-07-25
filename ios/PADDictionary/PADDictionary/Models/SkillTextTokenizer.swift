@@ -59,58 +59,125 @@ enum SkillToken {
     private static let surgeOrbRow: [String: Int] = [
         "fire": 0, "water": 1, "wood": 2, "light": 3, "dark": 4, "heal": 5, "recovery": 5,
     ]
+    // Regular per-attribute awakening families. Google renders the same JP awakening a dozen
+    // ways (ドロップ強化 → "drop enhancement" / "drop reinforcement" / "attribute enhancement",
+    // 列強化 → "row" / "line" / "column", ×3 → "x3" / "×3"), so generate the permutations
+    // instead of hand-listing ~150 aliases. Keys are already lowercased.
+    private static let attrAliases: [String: String] = {
+        // Google also renders the attribute kanji itself inconsistently: 木 → "wood"/"tree"/
+        // "Thursday" (木曜日), 水 → "Wednesday" (水曜日), 闇 → "darkness", 回復 → "recovery".
+        // `rowCombo` is false for Heal — there is no heal row/combo awakening.
+        let attrs: [(words: [String], canon: String, rowCombo: Bool)] = [
+            (["fire"], "Fire", true),
+            (["water", "wednesday"], "Water", true),
+            (["wood", "tree", "thursday"], "Wood", true),
+            (["light"], "Light", true),
+            (["dark", "darkness"], "Dark", true),
+            (["recovery", "heal", "healing"], "Heal", false),
+        ]
+        var out: [String: String] = [:]
+        for (words, canon, rowCombo) in attrs {
+            for w in words {
+                for noun in ["drop", "attribute"] {
+                    for verb in ["enhancement", "reinforcement"] {
+                        out["\(w) \(noun) \(verb)"] = "Enhanced \(canon) Orbs"
+                        out["\(w) \(noun) \(verb) +"] = "Enhanced \(canon) Orbs+"
+                        out["\(w) \(noun) \(verb)+"] = "Enhanced \(canon) Orbs+"
+                    }
+                }
+                guard rowCombo else { continue }
+                for noun in ["row", "line", "column"] {
+                    for verb in ["enhancement", "reinforcement"] {
+                        out["\(w) \(noun) \(verb)"] = "Enhanced \(canon) Rows"
+                        for x3 in ["x3", "×3"] {
+                            out["\(w) \(noun) \(verb) \(x3)"] = "Triple Enhanced \(canon) Rows"
+                            out["\(w) \(noun) \(verb)\(x3)"] = "Triple Enhanced \(canon) Rows"
+                        }
+                    }
+                }
+                for verb in ["enhancement", "reinforcement"] {
+                    out["\(w) combo \(verb)"] = "Enhanced \(canon) Combos"
+                    out["\(w) combo \(verb) +"] = "Enhanced \(canon) Combos+"
+                    out["\(w) combo \(verb)+"] = "Enhanced \(canon) Combos+"
+                }
+            }
+        }
+        return out
+    }()
+
+    // Multi-attribute attack awakenings (N色攻撃強化) — Google hyphenates the count or not
+    // ("4-color attack enhancement" / "4 color attack enhancement") and swaps the verb.
+    private static let multiColorAliases: [String: String] = {
+        var out: [String: String] = [:]
+        for n in 3...5 {
+            for sep in ["-color", " color"] {
+                for verb in ["attack enhancement", "attack reinforcement"] {
+                    out["\(n)\(sep) \(verb)"] = "\(n) Att. Enhanced Attack"
+                    out["\(n)\(sep) \(verb) +"] = "\(n) Att. Enhanced Attack+"
+                    out["\(n)\(sep) \(verb)+"] = "\(n) Att. Enhanced Attack+"
+                }
+            }
+        }
+        return out
+    }()
+
+    // Type tokens ("[Machine type]") and the type-add awakenings ("[Dragon type added]").
+    // 体力タイプ comes back as "Physicality type" / "Physical type"; 回復タイプ as "Recovery type".
+    private static let typeAliases: [String: String] = {
+        let entries: [(words: [String], canon: String, added: String)] = [
+            (["dragon"], "Dragon", "Add Dragon Type"),
+            (["god"], "God", "Add God Type"),
+            (["devil", "demon"], "Devil", "Add Devil Type"),
+            (["machine"], "Machine", "Add Machine Type"),
+            (["balance", "balanced"], "Balanced", "Add Balanced Type"),
+            (["attack", "attacker"], "Attacker", "Add Attacker Type"),
+            (["physical", "physicality", "body"], "Physical", "Add Physical Type"),
+            (["recovery", "healer", "healing"], "Healer", "Add Healer Type"),
+        ]
+        var out: [String: String] = [:]
+        for (words, canon, added) in entries {
+            for w in words {
+                out["\(w) type"] = canon
+                for suffix in ["added", "addition", "add"] { out["\(w) type \(suffix)"] = added }
+            }
+        }
+        return out
+    }()
+
     // "meta" table: Google-translated variant names → the canonical token name they mean.
-    // Extend this as new translated phrasings show up.
+    // Only irregular phrasings live here — the regular attribute/type families above are
+    // generated. Extend this as new translated phrasings show up.
     private static let aliases: [String: String] = [
         // orbs / attributes / states
         "Recovery": "Heal", "Darkness": "Dark", "Lock": "locks",
-        // types
-        "Attack type": "Attacker", "Balance type": "Balanced",
-        "Demon type": "Devil", "Dragon type": "Dragon",
         // awoken skills
         "2-target attack": "Two-Pronged Attack", "Two-target attack": "Two-Pronged Attack",
+        "2-target attack +": "Two-Pronged Attack+", "2-target attack+": "Two-Pronged Attack+",
+        "Two-target attack +": "Two-Pronged Attack+",
         "Cross-erasing attack": "Cross Attack",
         "L-shaped erase attack": "[L] Increased Attack",
         "L-shaped erase attack +": "[L] Increased Attack+",
         "T-shaped erasing attack": "[T] Increased Attack",
-        "Dark row reinforcement": "Enhanced Dark Rows",
+        "T-shaped erase attack": "[T] Increased Attack",
         "Bind Resistance +": "Resistance-Bind+",
+        "Floating": "Levitation",                      // 浮遊
+        // 全パラメータ強化 — Google flips between a noun phrase and a sentence
+        "All parameter enhancement": "Enhanced Stats",
+        "Enhances all parameters": "Enhanced Stats",
+        "All parameter enhancement +": "Enhanced Stats+",
         // Google mistranslates 水木 (Water-Wood) as the name "Mizuki", and 木 (Wood) alone
         // as "Thursday" (from 木曜日) — these are attribute-pair "同時攻撃" awakenings.
         "Fire and water simultaneous attack": "Fire & Water Attack",
         "Mizuki simultaneous attack": "Water & Wood Attack",
         "Mizuki-Thursday attack": "Water & Wood Attack",
         "Thursday and fire simultaneous attack": "Wood & Fire Attack",
-        "4-color attack enhancement": "4 Att. Enhanced Attack",
-        "3 color attack reinforcement": "3 Att. Enhanced Attack",
         "Operation Time Extension +": "Extend Time+",
         "Extended Move Time+": "Extend Time+",   // official EN token variant
-        "Light Attribute Enhancement": "Enhanced Light Orbs",
-        "Light Drop Enhancement +": "Enhanced Light Orbs+",
-        "Wood Drop Enhancement +": "Enhanced Wood Orbs+",
-        "Dark Drop Enhancement +": "Enhanced Dark Orbs+",
-        "Fire Drop Enhancement +": "Enhanced Fire Orbs+",
-        "recovery drop enhancement": "Enhanced Heal Orbs",
-        "Recovery drop enhancement +": "Enhanced Heal Orbs+",
-        // row enhance — translations vary ("X row reinforcement" / "X Row Enhancement" /
-        // "line reinforcement"); the existing table only had Dark, so fill the rest.
-        "Fire row reinforcement": "Enhanced Fire Rows",
-        "Fire Row Enhancement": "Enhanced Fire Rows",
-        "Water row reinforcement": "Enhanced Water Rows",
-        "Water Row Enhancement": "Enhanced Water Rows",
-        "Wood row reinforcement": "Enhanced Wood Rows",
-        "Wood Row Enhancement": "Enhanced Wood Rows",
         "Strengthen tree row": "Enhanced Wood Rows",   // 木 mistranslated as "tree"
-        "Light row reinforcement": "Enhanced Light Rows",
-        "Light line reinforcement": "Enhanced Light Rows",
-        "Light Row Enhancement": "Enhanced Light Rows",
-        "Dark Row Enhancement": "Enhanced Dark Rows",
-        "Dark Row Enhancement x3": "Triple Enhanced Dark Rows",
-        // combos
+        // combos (attribute combos are generated; these are the attribute-less ones)
         "Combo Enhancement": "Enhanced Combos",
         "Combo Enhancement +": "Enhanced Combos+",
         "Super combo enhancement": "Super Enhanced Combos",
-        "Water Combo Enhancement +": "Enhanced Water Combos",
         "Combo Drops": "Combo Orbs",
         // attacks
         "Cross erase attack": "Cross Attack",
@@ -120,9 +187,8 @@ enum SkillToken {
         "Simultaneous fire and water attack": "Fire & Water Attack",
         "Simultaneous wood/fire attack": "Wood & Fire Attack",
         "Simultaneous fire and wood attack": "Wood & Fire Attack",
-        // multi-attribute attack (5-color exists only as an attack awakening)
-        "3-color attack enhancement": "3 Att. Enhanced Attack",
-        "5-color attack enhancement": "5 Att. Enhanced Attack",
+        // multi-attribute attack — irregular phrasings only ("N-color attack enhancement"
+        // and friends are generated above)
         "Enhanced 5-color attack": "5 Att. Enhanced Attack",
         "5-color drop enhancement": "5 Att. Enhanced Attack",
         "5 color drop enhancement": "5 Att. Enhanced Attack",
@@ -134,9 +200,9 @@ enum SkillToken {
         "Cloud Resistance": "Resistance-Clouds",
         "Uncontrollable Resistance": "Resistance-Immobility",
         "Seal Resistance": "Resistance-Skill Bind",
-        // types (translated "X type" → the type-icon token)
-        "God type": "God",
-        "Devil type": "Devil",
+        // 暗闇耐性 = blind resist; "Darkness" here is 暗闇 (blindness), not the 闇 attribute
+        "Darkness Resistance": "Resistance-Blind",
+        "Darkness Resistance +": "Resistance-Blind+",
         // Google renders attribute kanji as weekdays: 水曜日→Wednesday (Water), 木曜日→Thursday (Wood)
         "Wednesday": "Water",
         "Thursday": "Wood",
@@ -145,13 +211,16 @@ enum SkillToken {
         "Bind Recovery": "Recover Bind",
         "Bind Recovery +": "Recover Bind+",
         // sub-attribute change awakening (副属性変更・X) — Google varies the separator (: or /)
-        // and renders 闇 as "Darkness". 94 is mislabelled in the data, so Light is omitted.
+        // and renders 闇 as "Darkness". (Id 94 is Light; awoken_names.json used to label it
+        // Water — fixed there, so Light resolves like the rest now.)
         "Sub-attribute change: Fire": "Change Sub Attribute: Fire",
         "Sub-attribute change/Fire": "Change Sub Attribute: Fire",
         "Sub-attribute change: Water": "Change Sub Attribute: Water",
         "Sub-attribute change/Water": "Change Sub Attribute: Water",
         "Sub-attribute change: Wood": "Change Sub Attribute: Wood",
         "Sub-attribute change/Wood": "Change Sub Attribute: Wood",
+        "Sub-attribute change: Light": "Change Sub Attribute: Light",
+        "Sub-attribute change/Light": "Change Sub Attribute: Light",
         "Sub-attribute change: Dark": "Change Sub Attribute: Dark",
         "Sub-attribute change: Darkness": "Change Sub Attribute: Dark",
         "Sub-attribute change/Darkness": "Change Sub Attribute: Dark",
@@ -162,11 +231,15 @@ enum SkillToken {
         "Recovery Enhancement": "Heal",   // 回復力エンハンス shown as the heal (heart) orb
     ]
 
-    // Google translations vary in case ("attack type" vs "Attack Type"), so alias/orb/type
-    // lookups are case-insensitive. Awoken names stay exact (aliases map to canonical casing).
+    // Google translations vary in case ("attack type" vs "Attack Type"), so every lookup
+    // (alias / orb / type, and AwakeningNames itself) is case-insensitive.
     // uniquingKeysWith avoids a crash when two source keys collide on lowercasing
     // (e.g. "Attack type" and "Attack Type") — they map to the same value anyway.
-    private static let aliasesLower = Dictionary(aliases.map { ($0.key.lowercased(), $0.value) }, uniquingKeysWith: { a, _ in a })
+    // Hand-written aliases win over the generated families (they're the exceptions).
+    private static let aliasesLower = attrAliases
+        .merging(multiColorAliases, uniquingKeysWith: { a, _ in a })
+        .merging(typeAliases, uniquingKeysWith: { a, _ in a })
+        .merging(aliases.map { ($0.key.lowercased(), $0.value) }, uniquingKeysWith: { _, manual in manual })
     private static let orbRowLower = Dictionary(orbRow.map { ($0.key.lowercased(), $0.value) }, uniquingKeysWith: { a, _ in a })
     private static let typesLower = Dictionary(types.map { ($0.key.lowercased(), $0.value) }, uniquingKeysWith: { a, _ in a })
 

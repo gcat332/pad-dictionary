@@ -19,29 +19,34 @@ final class SkillResolverTests: XCTestCase {
         XCTAssertEqual(resolved?.source, .translated)
     }
 
-    func testStripsInlineFormattingCodesFromDescription() {
-        let en: SkillLookup = [1: Skill(id: 1, name: "Name", description: "^ff3600^Red text^p normal", type: 0, maxLevel: 1, initialCooldown: 5, params: [])]
+    func testKeepsInlineFormattingCodesForTheViewToRender() {
+        // Caret codes are no longer stripped here — SkillTextView renders ^ff3600^ as red
+        // emphasis, ^qs^ as a cyan condition clause and ^p as reset. clean() only collapses runs
+        // of horizontal whitespace.
+        let en: SkillLookup = [1: Skill(id: 1, name: "Name", description: "^ff3600^Red text^p  normal", type: 0, maxLevel: 1, initialCooldown: 5, params: [])]
         let resolved = SkillResolver.resolve(skillId: 1, skillsJA: [:], skillsEN: en, translations: [:])
-        XCTAssertEqual(resolved?.description, "Red text normal")
+        XCTAssertEqual(resolved?.description, "^ff3600^Red text^p normal")
     }
 
     func testReturnsNilWhenSkillUnknownInBothSources() {
         XCTAssertNil(SkillResolver.resolve(skillId: 999, skillsJA: [:], skillsEN: [:], translations: [:]))
     }
 
-    func testCooldownTextShowsRangeWhenLevelingReducesIt() {
+    // cooldownText was renamed to cooldownValue (and lost its "CD " prefix — the card detail
+    // header now shows the value in parens after the skill name) in the light-theme rework.
+    func testCooldownValueShowsRangeWhenLevelingReducesIt() {
         let ja: SkillLookup = [1: Skill(id: 1, name: "N", description: "", type: 0, maxLevel: 6, initialCooldown: 8, params: [])]
-        XCTAssertEqual(SkillResolver.cooldownText(skillId: 1, skillsJA: ja, skillsEN: [:]), "CD 8→3")
+        XCTAssertEqual(SkillResolver.cooldownValue(skillId: 1, skillsJA: ja, skillsEN: [:]), "8→3")
     }
 
-    func testCooldownTextShowsSingleValueWhenMaxLevelIsOne() {
+    func testCooldownValueShowsSingleValueWhenMaxLevelIsOne() {
         let ja: SkillLookup = [1: Skill(id: 1, name: "N", description: "", type: 0, maxLevel: 1, initialCooldown: 5, params: [])]
-        XCTAssertEqual(SkillResolver.cooldownText(skillId: 1, skillsJA: ja, skillsEN: [:]), "CD 5")
+        XCTAssertEqual(SkillResolver.cooldownValue(skillId: 1, skillsJA: ja, skillsEN: [:]), "5")
     }
 
-    func testCooldownTextIsEmptyWhenNoCooldown() {
+    func testCooldownValueIsEmptyWhenNoCooldown() {
         let ja: SkillLookup = [1: Skill(id: 1, name: "N", description: "", type: 0, maxLevel: 1, initialCooldown: 0, params: [])]
-        XCTAssertEqual(SkillResolver.cooldownText(skillId: 1, skillsJA: ja, skillsEN: [:]), "")
+        XCTAssertEqual(SkillResolver.cooldownValue(skillId: 1, skillsJA: ja, skillsEN: [:]), "")
     }
 
     func testEvolvedChainFollowsType232ParamsUntilNonEvolvingSkill() {
