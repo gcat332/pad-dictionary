@@ -52,7 +52,7 @@ struct SyncView: View {
                 .foregroundStyle(.tint)
 
             if let lastSynced = dataStore.lastSyncedAt {
-                Text("Last updated \(lastSynced.formatted(date: .abbreviated, time: .shortened))")
+                Text("Last downloaded \(lastSynced.formatted(date: .abbreviated, time: .shortened))")
                     .foregroundStyle(Color.padDim)
             } else {
                 Text("No data yet — tap Refresh to get started.")

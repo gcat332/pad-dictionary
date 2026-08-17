@@ -4,9 +4,18 @@ protocol GitHubSyncing {
     func downloadLatestData(to directory: URL) async throws
 }
 
-enum GitHubSyncError: Error, Equatable {
+enum GitHubSyncError: Error, Equatable, LocalizedError {
     case invalidResponse
     case unexpectedStatus(Int)
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidResponse:
+            return "Couldn't reach GitHub, or it returned an unexpected response. Try again in a few minutes."
+        case .unexpectedStatus(let code):
+            return "GitHub returned an unexpected status (\(code))."
+        }
+    }
 }
 
 private struct GitHubContentEntry: Codable {
@@ -35,7 +44,8 @@ final class GitHubSyncService: GitHubSyncing {
     private func listSpriteFiles() async throws -> [String] {
         let request = URLRequest(url: URL(string: "https://api.github.com/repos/\(owner)/\(repo)/contents/images/cards_ja")!)
         let (data, response) = try await session.data(for: request)
-        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { throw GitHubSyncError.invalidResponse }
+        guard let http = response as? HTTPURLResponse else { throw GitHubSyncError.invalidResponse }
+        guard http.statusCode == 200 else { throw GitHubSyncError.unexpectedStatus(http.statusCode) }
         let entries = try JSONDecoder().decode([GitHubContentEntry].self, from: data)
         return entries.map { "images/cards_ja/\($0.name)" }
     }
@@ -43,7 +53,8 @@ final class GitHubSyncService: GitHubSyncing {
     private func downloadFile(remotePath: String, into directory: URL) async throws {
         let url = URL(string: "https://raw.githubusercontent.com/\(owner)/\(repo)/main/\(remotePath)")!
         let (data, response) = try await session.data(from: url)
-        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { throw GitHubSyncError.invalidResponse }
+        guard let http = response as? HTTPURLResponse else { throw GitHubSyncError.invalidResponse }
+        guard http.statusCode == 200 else { throw GitHubSyncError.unexpectedStatus(http.statusCode) }
         let dest = directory.appendingPathComponent(remotePath)
         try FileManager.default.createDirectory(at: dest.deletingLastPathComponent(), withIntermediateDirectories: true)
         try data.write(to: dest)

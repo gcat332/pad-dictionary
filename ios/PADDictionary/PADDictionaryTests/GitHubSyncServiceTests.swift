@@ -45,8 +45,8 @@ final class GitHubSyncServiceTests: XCTestCase {
         let service = GitHubSyncService(session: MockURLProtocol.makeSession())
         do {
             try await service.downloadLatestData(to: FileManager.default.temporaryDirectory)
-            XCTFail("expected invalidResponse error")
-        } catch GitHubSyncError.invalidResponse {
+            XCTFail("expected unexpectedStatus error")
+        } catch GitHubSyncError.unexpectedStatus(404) {
             // expected
         } catch {
             XCTFail("unexpected error: \(error)")
