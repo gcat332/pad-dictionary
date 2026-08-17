@@ -142,6 +142,9 @@ final class SkillTextTokenizerTests: XCTestCase {
         XCTAssertEqual(SkillToken.resolve("Darkness Awakening"), .orb(x: 0, y: 144, w: 36, h: 36))  // Dark
         // Case-insensitive, like every other lookup in this file.
         XCTAssertEqual(SkillToken.resolve("fire awakening"), .orb(x: 0, y: 0, w: 36, h: 36))
+        // Heal has no row/combo awakening, so this only passes if the alias is generated
+        // before the `rowCombo` guard — the placement the design calls for.
+        XCTAssertEqual(SkillToken.resolve("Recovery Awakening"), .orb(x: 0, y: 180, w: 36, h: 36))
     }
 
     func testGeneratedTypeFamilies() {
