@@ -25,7 +25,7 @@ step, no backend — it deploys straight to GitHub Pages.
 
 ## Features
 
-- **13,878** JP-server cards — English names (`otLangName.en`), JP name kept as fallback for brand-new cards
+- **14,130** JP-server cards — English names (`otLangName.en`), JP name kept as fallback for brand-new cards
 - **Filters**
   - Attribute by position — Attr 1 (main) / Attr 2 (sub) / Attr 3 (3rd, latent-unlocked) —
     all three render their own frame corner on the card art (main/sub/third)
@@ -46,7 +46,7 @@ step, no backend — it deploys straight to GitHub Pages.
 | Card data | `monsters-info/mon_ja.json` (JP cards, incl. EN names) |
 | Skill effect engine | `monsters-info/skill_ja.json` — authoritative `type`/`params` (language-independent) drives the special-search classifier |
 | English skill text | `monsters-info/skill_en.json` where the EN server has it |
-| Translated skill text | `monsters-info/skill_tr.json` — 247 JP-only skill descriptions pre-translated offline |
+| Translated skill text | `monsters-info/skill_tr.json` — 519 JP-only skill descriptions pre-translated offline |
 | Skill parser + taxonomy | `engine.js` — the PADDashFormation skill parser & `specialSearchFunctions` tree, run on our data |
 | Sprites / icons | `images/cards_ja/` (WebP sprite sheets), attribute frames, awoken/type icons |
 
@@ -64,11 +64,15 @@ JP-server card data, for offline/on-device browsing:
 - **Browse** — the same card grid/search/filter set as the web version (Attr 1–3,
   Type, Rarity, Awoken with counts, Special Search), tap a card for full detail
   (stats, skill text, evolution/skill-evolution chain)
-- **Sync** — pulls `mon_ja.json`/`skill_*.json` and sprites from this repo's GitHub
-  Pages build into the app's local storage
-- **Settings** — app info
+- **Sync** — a `Refresh` tap downloads the latest `mon_ja.json`/`skill_*.json` and
+  sprites straight from this repo (public, unauthenticated — no login/token) into
+  the app's local storage. The data itself refreshes on its own via a GitHub
+  Actions `schedule` (~every 2 days) that runs `update-data.sh`; the app never
+  triggers that run, it just picks up whatever the schedule last produced
+- **Settings** — light/dark/system appearance
 
-No backend of its own; it just reads the same data this repo publishes.
+No backend of its own, and no credentials to manage; it just reads the same
+public data this repo publishes.
 
 ## Scripts
 
