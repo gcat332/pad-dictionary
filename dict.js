@@ -89,6 +89,9 @@ function buildAttrAliases(){
   ];
   const out = {};
   for (const [words, canon, rowCombo] of attrs) for (const w of words){
+    // <attr>目覚め ("while <attr> is active", used inside multi-part active skills) —
+    // Google renders 目覚め as "Awakening"; resolves straight to the plain attribute orb.
+    out[`${w} awakening`] = canon;
     for (const noun of ["drop","attribute"]) for (const verb of ["enhancement","reinforcement"]){
       out[`${w} ${noun} ${verb}`] = `Enhanced ${canon} Orbs`;
       out[`${w} ${noun} ${verb} +`] = out[`${w} ${noun} ${verb}+`] = `Enhanced ${canon} Orbs+`;
