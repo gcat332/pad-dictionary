@@ -78,6 +78,10 @@ enum SkillToken {
         var out: [String: String] = [:]
         for (words, canon, rowCombo) in attrs {
             for w in words {
+                // <attr>目覚め ("while <attr> is active", used inside multi-part active
+                // skills) — Google renders 目覚め as "Awakening"; resolves straight to
+                // the plain attribute orb, same as the bare attribute name would.
+                out["\(w) awakening"] = canon
                 for noun in ["drop", "attribute"] {
                     for verb in ["enhancement", "reinforcement"] {
                         out["\(w) \(noun) \(verb)"] = "Enhanced \(canon) Orbs"

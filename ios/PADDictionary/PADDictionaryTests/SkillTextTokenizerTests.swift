@@ -128,6 +128,22 @@ final class SkillTextTokenizerTests: XCTestCase {
         XCTAssertNil(SkillToken.resolve("recovery row enhancement"))   // no heal row awakening exists
     }
 
+    func testGeneratedAwakeningStateAliases() {
+        // <attr>目覚め ("while <attr> is active", inside multi-part active skills) —
+        // Google renders 目覚め as "Awakening". Card 14014 has [Fire Awakening];
+        // skill id 64449 has [Water Awakening]. Resolves straight to the plain orb.
+        XCTAssertEqual(SkillToken.resolve("Fire Awakening"), .orb(x: 0, y: 0, w: 36, h: 36))
+        XCTAssertEqual(SkillToken.resolve("Water Awakening"), .orb(x: 0, y: 36, w: 36, h: 36))
+        // Weekday-kanji mistranslation aliases (already tracked for Wood/Water elsewhere
+        // in this file) must resolve the same way, proving this is generated, not two
+        // one-off literal entries.
+        XCTAssertEqual(SkillToken.resolve("Thursday Awakening"), .orb(x: 0, y: 72, w: 36, h: 36))   // Wood
+        XCTAssertEqual(SkillToken.resolve("Wednesday Awakening"), .orb(x: 0, y: 36, w: 36, h: 36))  // Water
+        XCTAssertEqual(SkillToken.resolve("Darkness Awakening"), .orb(x: 0, y: 144, w: 36, h: 36))  // Dark
+        // Case-insensitive, like every other lookup in this file.
+        XCTAssertEqual(SkillToken.resolve("fire awakening"), .orb(x: 0, y: 0, w: 36, h: 36))
+    }
+
     func testGeneratedTypeFamilies() {
         XCTAssertEqual(SkillToken.resolve("Machine type"), .type(8))
         XCTAssertEqual(SkillToken.resolve("Physicality type"), .type(2))   // 体力タイプ
