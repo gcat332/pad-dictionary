@@ -3,8 +3,6 @@ import Combine
 
 enum SyncState: Equatable {
     case idle
-    case triggering
-    case running
     case downloading
     case done
     case error(String)
@@ -25,24 +23,12 @@ final class SyncViewModel: ObservableObject {
     }
 
     func startSync() async {
-        state = .triggering
+        state = .downloading
         do {
-            try await syncService.triggerUpdate()
-            state = .running
-            let conclusion = try await syncService.pollRunStatus()
-            guard conclusion == .success else {
-                state = .error("The update workflow finished with: \(conclusion.rawValue).")
-                return
-            }
-            state = .downloading
             try await syncService.downloadLatestData(to: documentsDirectory)
             dataStore.reload()
             dataStore.markSynced(at: Date())
             state = .done
-        } catch GitHubSyncError.missingToken {
-            state = .error("No GitHub token set. Add one in Settings.")
-        } catch GitHubSyncError.unauthorized {
-            state = .error("GitHub rejected the token. Check it in Settings.")
         } catch {
             state = .error(error.localizedDescription)
         }
@@ -96,7 +82,7 @@ struct SyncView: View {
 
     private var isBusy: Bool {
         switch viewModel.state {
-        case .triggering, .running, .downloading: return true
+        case .downloading: return true
         default: return false
         }
     }
@@ -106,10 +92,6 @@ struct SyncView: View {
         switch viewModel.state {
         case .idle, .done:
             EmptyView()
-        case .triggering:
-            ProgressView("Starting update on GitHub…")
-        case .running:
-            ProgressView("Update running on GitHub…")
         case .downloading:
             ProgressView("Downloading refreshed data…")
         case .error(let message):

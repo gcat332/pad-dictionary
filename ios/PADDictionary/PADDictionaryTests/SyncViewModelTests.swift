@@ -2,18 +2,8 @@ import XCTest
 @testable import PADDictionary
 
 private final class FakeGitHubSyncing: GitHubSyncing {
-    var triggerError: Error?
-    var pollResult: Result<WorkflowConclusion, Error> = .success(.success)
     var downloadError: Error?
     private(set) var downloadedTo: URL?
-
-    func triggerUpdate() async throws {
-        if let triggerError { throw triggerError }
-    }
-
-    func pollRunStatus() async throws -> WorkflowConclusion {
-        try pollResult.get()
-    }
 
     func downloadLatestData(to directory: URL) async throws {
         if let downloadError { throw downloadError }
@@ -49,21 +39,9 @@ final class SyncViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func testMissingTokenSurfacesReadableError() async {
+    func testDownloadErrorSurfacesReadableError() async {
         let fake = FakeGitHubSyncing()
-        fake.triggerError = GitHubSyncError.missingToken
-        let dataStore = DataStore(documentsDirectory: tempDir, userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
-        let viewModel = SyncViewModel(syncService: fake, dataStore: dataStore, documentsDirectory: tempDir)
-
-        await viewModel.startSync()
-
-        XCTAssertEqual(viewModel.state, .error("No GitHub token set. Add one in Settings."))
-    }
-
-    @MainActor
-    func testWorkflowFailureSurfacesError() async {
-        let fake = FakeGitHubSyncing()
-        fake.pollResult = .success(.failure)
+        fake.downloadError = GitHubSyncError.invalidResponse
         let dataStore = DataStore(documentsDirectory: tempDir, userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
         let viewModel = SyncViewModel(syncService: fake, dataStore: dataStore, documentsDirectory: tempDir)
 
