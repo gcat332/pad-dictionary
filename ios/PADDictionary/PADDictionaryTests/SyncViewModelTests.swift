@@ -39,18 +39,15 @@ final class SyncViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func testDownloadErrorSurfacesReadableError() async {
+    func testDownloadFailureSurfacesReadableError() async {
         let fake = FakeGitHubSyncing()
-        fake.downloadError = GitHubSyncError.invalidResponse
+        struct StubError: LocalizedError { var errorDescription: String? { "network unreachable" } }
+        fake.downloadError = StubError()
         let dataStore = DataStore(documentsDirectory: tempDir, userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
         let viewModel = SyncViewModel(syncService: fake, dataStore: dataStore, documentsDirectory: tempDir)
 
         await viewModel.startSync()
 
-        if case .error = viewModel.state {
-            // expected
-        } else {
-            XCTFail("expected .error state, got \(viewModel.state)")
-        }
+        XCTAssertEqual(viewModel.state, .error("network unreachable"))
     }
 }

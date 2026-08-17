@@ -55,7 +55,7 @@ struct SyncView: View {
                 Text("Last updated \(lastSynced.formatted(date: .abbreviated, time: .shortened))")
                     .foregroundStyle(Color.padDim)
             } else {
-                Text("No data yet — run an update to get started.")
+                Text("No data yet — tap Refresh to get started.")
                     .foregroundStyle(Color.padDim)
             }
 
@@ -68,7 +68,7 @@ struct SyncView: View {
             Button {
                 Task { await viewModel.startSync() }
             } label: {
-                Label("Update Data", systemImage: "square.and.arrow.down")
+                Label("Refresh", systemImage: "square.and.arrow.down")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
@@ -81,10 +81,7 @@ struct SyncView: View {
     }
 
     private var isBusy: Bool {
-        switch viewModel.state {
-        case .downloading: return true
-        default: return false
-        }
+        viewModel.state == .downloading
     }
 
     @ViewBuilder
@@ -93,7 +90,7 @@ struct SyncView: View {
         case .idle, .done:
             EmptyView()
         case .downloading:
-            ProgressView("Downloading refreshed data…")
+            ProgressView("Downloading latest data…")
         case .error(let message):
             Text(message)
                 .foregroundStyle(.red)
