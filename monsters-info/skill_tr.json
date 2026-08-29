@@ -466,6 +466,7 @@
   "64533": "^qs^This assist disappears when using the skill. ^p\n[Sub-attribute change/Fire] Adds [L-shaped erase attack +] [Fire drop enhancement +] [Water drop enhancement +] [Recovery drop enhancement +]. Collect skills other than your own for 2 turns.",
   "64536": "Fully recovers indelible drops and awakening immunity. For 2 turns,\nDisables damage absorption, attribute absorption, and combo absorption.",
   "64540": "Fully recovers indelible drops and awakening immunity. For 15 turns,\nRecovers 30% HP. Collect skills other than your own for 2 turns.",
+  "64767": "1.5x Part Break drop rate when\nentering a dungeon as a Leader",
   "65100": "^qs^ Can be used when there are 7 or more [Fire] on the board. ^pSkills other than yours take 4 turns\nAccumulate. For 35 turns, the person on the right changes to fire attribute. Transformed into the final stage.",
   "65105": "When you are the leader when infiltrating a dungeon,\nRank experience points are increased by 1.4 times, egg drop rate is increased by 1.2 times.",
   "65108": "For 8 turns, the leader's damage limit is 45 billion,\nRecovery power is tripled. Fully recovers indelible drops and awakening immunity.",
