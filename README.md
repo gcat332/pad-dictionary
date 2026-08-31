@@ -68,7 +68,9 @@ JP-server card data, for offline/on-device browsing:
   sprites straight from this repo (public, unauthenticated — no login/token) into
   the app's local storage. The data itself refreshes on its own via a GitHub
   Actions `schedule` (~every 2 days) that runs `update-data.sh`; the app never
-  triggers that run, it just picks up whatever the schedule last produced
+  triggers that run, it just picks up whatever the schedule last produced.
+  The same sync also maintains `monsters-info/card-updates.json`, a per-card
+  last-updated date used for the default sort
 - **Settings** — light/dark/system appearance
 
 No backend of its own, and no credentials to manage; it just reads the same

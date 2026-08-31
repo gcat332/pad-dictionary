@@ -33,6 +33,9 @@ git -C "$TMP" sparse-checkout set "${patterns[@]}" >/dev/null 2>&1
 git -C "$TMP" checkout >/dev/null 2>&1
 
 echo "Copying card + skill data …"
+echo "Stamping card update dates (card-updates.json) …"
+command -v node >/dev/null || { echo "Error: node not found (needed for build-card-updates.mjs)."; exit 1; }
+node build-card-updates.mjs "$TMP/monsters-info/mon_ja.json"
 cp "$TMP/monsters-info/mon_ja.json"   monsters-info/mon_ja.json
 cp "$TMP/monsters-info/skill_en.json" monsters-info/skill_en.json
 cp "$TMP/monsters-info/skill_ja.json" monsters-info/skill_ja.json
