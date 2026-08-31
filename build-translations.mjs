@@ -85,6 +85,7 @@ async function gtxClients5(text) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`clients5 ${res.status}`);
   const payload = await res.json();
+  if (!Array.isArray(payload)) throw new Error("clients5 bad payload");
   const t = typeof payload[0] === "string" ? payload[0] : payload[0]?.[0];
   if (typeof t !== "string" || !t) throw new Error("clients5 bad payload");
   return t;
