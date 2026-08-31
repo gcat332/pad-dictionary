@@ -66,19 +66,42 @@ function buildExactEnglishMap(skillJa, skillEn) {
 }
 
 // Raw Google gtx translation — send the JP description verbatim, join the segments.
-async function gtxTranslate(text, tries = 3) {
+// Two keyless endpoints, tried in order per attempt: translate_a/single (primary) and
+// clients5 dict-chrome-ex (fallback). Google 429-blocks them independently, so trying
+// both survives a block on either (observed 2026-08-31: translate_a/single returned
+// 429 from both GitHub Actions and a residential IP while clients5 kept working).
+async function gtxSingle(text) {
   const url = new URL("https://translate.googleapis.com/translate_a/single");
   url.search = new URLSearchParams({ client: "gtx", sl: "ja", tl: "en", dt: "t", q: text }).toString();
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`gtx ${res.status}`);
+  const payload = await res.json();
+  return payload[0].map((p) => p[0]).join("");
+}
+
+async function gtxClients5(text) {
+  const url = new URL("https://clients5.google.com/translate_a/t");
+  url.search = new URLSearchParams({ client: "dict-chrome-ex", sl: "ja", tl: "en", q: text }).toString();
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`clients5 ${res.status}`);
+  const payload = await res.json();
+  const t = typeof payload[0] === "string" ? payload[0] : payload[0]?.[0];
+  if (typeof t !== "string" || !t) throw new Error("clients5 bad payload");
+  return t;
+}
+
+async function gtxTranslate(text, tries = 3) {
   for (let attempt = 1; attempt <= tries; attempt += 1) {
-    try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`gtx ${res.status}`);
-      const payload = await res.json();
-      return payload[0].map((p) => p[0]).join("").replace(/\s+\n/g, "\n").trim();
-    } catch (e) {
-      if (attempt === tries) { console.warn(`  gtx failed for text (${e.message}) — skipping`); return null; }
-      await sleep(500 * attempt);
+    const errors = [];
+    for (const endpoint of [gtxSingle, gtxClients5]) {
+      try {
+        return (await endpoint(text)).replace(/\s+\n/g, "\n").trim();
+      } catch (e) {
+        errors.push(e.message);
+      }
     }
+    if (attempt === tries) { console.warn(`  gtx failed for text (${errors.join("; ")}) — skipping`); return null; }
+    await sleep(500 * attempt);
   }
 }
 
