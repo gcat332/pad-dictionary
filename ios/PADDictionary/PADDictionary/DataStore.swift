@@ -10,6 +10,7 @@ final class DataStore: ObservableObject {
     @Published private(set) var skillLookup: SkillLookup = [:]
     @Published private(set) var skillLookupEN: SkillLookup = [:]
     @Published private(set) var cardsById: [Int: Card] = [:]
+    @Published private(set) var cardUpdatedDates: [Int: String] = [:]
     @Published private(set) var lastSyncedAt: Date?
 
     private let documentsDirectory: URL
@@ -38,6 +39,10 @@ final class DataStore: ObservableObject {
         skillLookup = Dictionary(uniqueKeysWithValues: skillsJA.map { ($0.id, $0) })
         skillLookupEN = Dictionary(uniqueKeysWithValues: skillsEN.map { ($0.id, $0) })
         cardsById = Dictionary(uniqueKeysWithValues: cards.map { ($0.id, $0) })
+        let updatedRaw = load("monsters-info/card-updates.json", as: [String: String].self) ?? [:]
+        cardUpdatedDates = Dictionary(uniqueKeysWithValues: updatedRaw.compactMap { key, value in
+            Int(key).map { ($0, value) }
+        })
     }
 
     func markSynced(at date: Date) {

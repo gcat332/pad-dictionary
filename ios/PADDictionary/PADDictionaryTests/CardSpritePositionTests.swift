@@ -1,4 +1,5 @@
 import XCTest
+import UIKit
 @testable import PADDictionary
 
 final class CardSpritePositionTests: XCTestCase {
@@ -43,9 +44,23 @@ final class CardSpritePositionTests: XCTestCase {
     }
 
     func testAwakeningSpriteOffset() {
-        XCTAssertEqual(AwakeningSprite.yOffset(forAwakeningId: 0), 0)
-        XCTAssertEqual(AwakeningSprite.yOffset(forAwakeningId: 143), -4576)
-        XCTAssertNil(AwakeningSprite.yOffset(forAwakeningId: 144))
-        XCTAssertNil(AwakeningSprite.yOffset(forAwakeningId: -1))
+        XCTAssertEqual(AwakeningSprite.yOffset(forAwakeningId: 0, rowCount: 148), 0)
+        XCTAssertEqual(AwakeningSprite.yOffset(forAwakeningId: 143, rowCount: 148), -4576)
+        XCTAssertEqual(AwakeningSprite.yOffset(forAwakeningId: 147, rowCount: 148), -4704)
+        XCTAssertNil(AwakeningSprite.yOffset(forAwakeningId: 148, rowCount: 148))
+        XCTAssertNil(AwakeningSprite.yOffset(forAwakeningId: -1, rowCount: 148))
+    }
+
+    private func makeImage(width: CGFloat, height: CGFloat) -> UIImage {
+        UIGraphicsImageRenderer(size: CGSize(width: width, height: height)).image { _ in }
+    }
+
+    func testAwakeningSpriteRowCountDerivedFromSheetHeight() {
+        XCTAssertEqual(AwakeningSprite.rowCount(of: makeImage(width: 96, height: 4736)), 148)
+        XCTAssertEqual(AwakeningSprite.rowCount(of: makeImage(width: 96, height: 4576)), 143)
+    }
+
+    func testAwakeningSpriteRowCountNeverGoesBelowOne() {
+        XCTAssertEqual(AwakeningSprite.rowCount(of: makeImage(width: 96, height: 10)), 1)
     }
 }

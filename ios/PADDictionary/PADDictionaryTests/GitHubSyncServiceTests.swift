@@ -28,6 +28,7 @@ final class GitHubSyncServiceTests: XCTestCase {
         let expectedPaths = [
             "monsters-info/mon_ja.json", "monsters-info/skill_ja.json",
             "monsters-info/skill_en.json", "monsters-info/skill_tr.json",
+            "monsters-info/card-updates.json",
             "images/awoken.png", "images/icon-orbs.png", "images/icon-type.svg",
             "images/CARDFRAME2.png", "images/CARDFRAMEW.png",
             "images/cards_ja/1.webp"

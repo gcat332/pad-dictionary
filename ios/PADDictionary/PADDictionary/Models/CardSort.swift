@@ -2,12 +2,23 @@ import Foundation
 
 typealias SkillLookup = [Int: Skill]
 
+/// Extra data a comparator may need beyond the two cards being compared.
+struct SortContext {
+    let skills: SkillLookup
+    let updatedDates: [Int: String]
+}
+
 struct CardSort {
     let id: String
     let label: String
-    let compare: (Card, Card, SkillLookup) -> Bool
+    let compare: (Card, Card, SortContext) -> Bool
 
     static let all: [CardSort] = [
+        CardSort(id: "updated", label: "Updated") { a, b, ctx in
+            let ua = ctx.updatedDates[a.id] ?? ""
+            let ub = ctx.updatedDates[b.id] ?? ""
+            return ua == ub ? a.id < b.id : ua < ub
+        },
         CardSort(id: "id", label: "Card ID") { a, b, _ in a.id < b.id },
         CardSort(id: "rarity", label: "Rarity") { a, b, _ in a.rarity < b.rarity },
         CardSort(id: "cost", label: "Cost") { a, b, _ in a.cost < b.cost },
@@ -22,9 +33,9 @@ struct CardSort {
         CardSort(id: "hp", label: "HP") { a, b, _ in a.hp.max < b.hp.max },
         CardSort(id: "atk", label: "ATK") { a, b, _ in a.atk.max < b.atk.max },
         CardSort(id: "rcv", label: "RCV") { a, b, _ in a.rcv.max < b.rcv.max },
-        CardSort(id: "cd", label: "Skill CD") { a, b, skills in
-            let cdA = skills[a.activeSkillId]?.initialCooldown ?? 0
-            let cdB = skills[b.activeSkillId]?.initialCooldown ?? 0
+        CardSort(id: "cd", label: "Skill CD") { a, b, ctx in
+            let cdA = ctx.skills[a.activeSkillId]?.initialCooldown ?? 0
+            let cdB = ctx.skills[b.activeSkillId]?.initialCooldown ?? 0
             return cdA < cdB
         },
     ]

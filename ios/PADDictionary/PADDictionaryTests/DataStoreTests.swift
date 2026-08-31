@@ -25,6 +25,21 @@ final class DataStoreTests: XCTestCase {
     }
 
     @MainActor
+    func testReloadCardUpdatedDatesDefaultsToEmptyWhenFileIsMissing() {
+        let store = DataStore(documentsDirectory: tempDir, userDefaults: defaults)
+        XCTAssertTrue(store.cardUpdatedDates.isEmpty)
+    }
+
+    @MainActor
+    func testReloadDecodesCardUpdatedDatesWithIntKeys() throws {
+        try Data(#"{"1":"2024-01-01","21":"2024-06-15"}"#.utf8).write(to: tempDir.appendingPathComponent("monsters-info/card-updates.json"))
+
+        let store = DataStore(documentsDirectory: tempDir, userDefaults: defaults)
+        XCTAssertEqual(store.cardUpdatedDates[1], "2024-01-01")
+        XCTAssertEqual(store.cardUpdatedDates[21], "2024-06-15")
+    }
+
+    @MainActor
     func testReloadDecodesCachedFiles() throws {
         let cardJSON = #"[{"id":1,"name":"Tyrra","attrs":[0],"types":[4],"rarity":2,"cost":2,"maxLevel":5,"isEmpty":false,"enabled":true,"hp":{"min":52,"max":144,"scale":1},"atk":{"min":57,"max":71,"scale":1},"rcv":{"min":8,"max":13,"scale":1},"activeSkillId":1,"leaderSkillId":51,"evoRootId":1929,"awakenings":[21,21],"superAwakenings":[],"canAssist":false,"orbSkinOrBgmId":0,"badgeId":0,"feedExp":0,"sellPrice":0,"limitBreakIncr":0,"sellMP":0,"latentAwakeningId":0,"stackable":false,"skillBanner":false,"evoMaterials":[0,0,0,0,0],"isUltEvo":false,"evoBaseId":0}]"#
         try Data(cardJSON.utf8).write(to: tempDir.appendingPathComponent("monsters-info/mon_ja.json"))

@@ -25,7 +25,8 @@ final class BrowseViewModel: ObservableObject {
         let context = SpecialSearchContext(cardsById: dataStore.cardsById, skillsJA: dataStore.skillLookup)
         let specialFiltered = SpecialSearchEngine.filter(filtered, selectedKeys: selectedSpecialSearchKeys, mode: specialSearchMode, context: context)
         let sort = CardSort.all[sortIndex]
-        let ascending = specialFiltered.sorted { sort.compare($0, $1, dataStore.skillLookup) }
+        let sortContext = SortContext(skills: dataStore.skillLookup, updatedDates: dataStore.cardUpdatedDates)
+        let ascending = specialFiltered.sorted { sort.compare($0, $1, sortContext) }
         return isDescending ? ascending.reversed() : ascending
     }
 }

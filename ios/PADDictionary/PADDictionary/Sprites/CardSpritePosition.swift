@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 
 struct CardSpritePosition: Equatable {
     let sheetFile: String
@@ -36,8 +36,16 @@ enum AttributeFramePosition {
 }
 
 enum AwakeningSprite {
-    static func yOffset(forAwakeningId id: Int) -> Double? {
-        guard id >= 0, id <= 143 else { return nil }
+    /// Row count used when the sprite sheet hasn't loaded yet (matches the sheet as of this writing).
+    static let fallbackRowCount = 148
+
+    /// Sprite sheet cells are 32px tall, one awakening id per row.
+    static func rowCount(of sheet: UIImage) -> Int {
+        max(1, Int(sheet.size.height / 32))
+    }
+
+    static func yOffset(forAwakeningId id: Int, rowCount: Int) -> Double? {
+        guard id >= 0, id < rowCount else { return nil }
         return -32 * Double(id)
     }
 }

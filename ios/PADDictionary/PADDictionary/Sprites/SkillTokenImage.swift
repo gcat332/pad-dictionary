@@ -25,8 +25,8 @@ enum SkillTokenImage {
                   let overlay = SpriteCrop.rect(from: sheet, x: 36, y: 72, w: 36, h: 36) else { return nil }
             return SpriteCrop.composite(base: orb, over: overlay)
         case .awoken(let id):
-            guard let y = AwakeningSprite.yOffset(forAwakeningId: id),
-                  let sheet = SpriteSheetCache.shared.image(relativePath: "images/awoken.png") else { return nil }
+            guard let sheet = SpriteSheetCache.shared.image(relativePath: "images/awoken.png"),
+                  let y = AwakeningSprite.yOffset(forAwakeningId: id, rowCount: AwakeningSprite.rowCount(of: sheet)) else { return nil }
             return SpriteCrop.cell(from: sheet, x: 0, y: Int(-y), size: 32)  // yOffset is negative (-32*id)
         case .type(let id):
             return TypeIconCache.shared.icon(forType: id)
