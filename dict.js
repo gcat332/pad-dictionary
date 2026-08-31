@@ -64,7 +64,10 @@ const awkName = n => AWOKEN_NAMES[n] || `Awakening ${n}`;
 const awkSvg = n => `<span class="awk" style="--awk-y:${n}" title="${awkName(n)}"></span>`;
 let MAX_AWK = 143;
 const awkProbe = new Image();
-awkProbe.onload = () => { const m = awkProbe.naturalHeight / 32 - 1; if (m > MAX_AWK) { MAX_AWK = m; if (CARDS.length) applyView(); } };
+// if the sprite grows and finishes loading AFTER the filter UI was already built (slow image vs
+// cached JSON), the awoken filter buttons for the new ids would be stuck on the numeric fallback —
+// rebuild them same as $("clear")/applySnapshot do, so F.awoken selections/counts survive the rebuild.
+awkProbe.onload = () => { const m = awkProbe.naturalHeight / 32 - 1; if (m > MAX_AWK) { MAX_AWK = m; if (CARDS.length) { buildAwokenBtns(); refreshBtnStates(); applyView(); } } };
 awkProbe.src = "images/awoken.png";
 const hasAwkIcon = n => n >= 0 && n <= MAX_AWK;
 const awkToken = n => hasAwkIcon(n) ? awkSvg(n) : `<span class="awk-x" title="${awkName(n)}">${n}</span>`;
