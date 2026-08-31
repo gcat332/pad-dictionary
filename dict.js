@@ -9,12 +9,13 @@ const AWOKEN_ORDER = [63,49,21,46,47,43,61,48,27,60,78,79,80,81,44,51,82,62,58,5
   54,55,45,50,59,19,1,2,3,4,5,6,7,8,9,10,14,15,16,17,18,29,22,23,24,25,26,20,28,30,31,32,33,34,
   35,36,37,38,39,40,41,42,53,56,64,65,66,67,11,12,13,71,72,73,74,75,76,77,83,84,85,86,87,88,89,
   90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,
-  // newer awakenings — real icons come from images/awoken.png (ids 0–143)
+  // newer awakenings — real icons come from images/awoken.png; bound derived from sprite height (see MAX_AWK)
   105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,
-  129,130,131,132,133,134,135,136,137,138,139,140,141,142,143];
+  129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147];
 const SPRITE_PER = 100;
 
 const SORTS = [ // ported from sort_function_list (script-json_data.js:628)
+  {key:"updated",label:"Updated",fn:(a,b)=>{const ua=UPDATED[a.id]||"", ub=UPDATED[b.id]||""; return ua===ub ? a.id-b.id : (ua<ub?-1:1);}},
   {key:"id",label:"Card ID",fn:(a,b)=>a.id-b.id},
   {key:"rarity",label:"Rarity",fn:(a,b)=>a.rarity-b.rarity},
   {key:"cost",label:"Cost",fn:(a,b)=>a.cost-b.cost},
@@ -26,9 +27,10 @@ const SORTS = [ // ported from sort_function_list (script-json_data.js:628)
 ];
 
 let CARDS = [], SKILLS = [], SKILL_EN = [], SKILL_TR = {}, AWOKEN_NAMES = {};
+let UPDATED = {};
 let SPECIAL_ENGINE = null;
 // filter state — attr is 3 positional slots; awoken is an array allowing duplicates (counts)
-const F = {attr:[[],[],[]], type:[], rare:[], awoken:[], inclSuper:true, assist:false, special:[], specialMode:"and", term:"", sortKey:"id", desc:true};
+const F = {attr:[[],[],[]], type:[], rare:[], awoken:[], inclSuper:true, assist:false, special:[], specialMode:"and", term:"", sortKey:"updated", desc:true, sv:3};
 
 const $ = id => document.getElementById(id);
 const grid=$("grid"), q=$("q"), sortSel=$("sort"), dirBtn=$("dir"), countEl=$("count"), dlg=$("detail");
@@ -55,10 +57,16 @@ function resolvedSkill(sid){
     source: enDesc ? "en" : trDesc ? "tr" : "none",
   };
 }
-// awakening icons: images/awoken.png sprite (32px cells, ids 0–143 down column 0). Names from AWOKEN_NAMES.
+// awakening icons: images/awoken.png sprite (32px cells down column 0). Names from AWOKEN_NAMES.
+// bound is derived from the sprite height (probed below) rather than hardcoded, since new awakenings
+// keep getting appended to the sheet.
 const awkName = n => AWOKEN_NAMES[n] || `Awakening ${n}`;
 const awkSvg = n => `<span class="awk" style="--awk-y:${n}" title="${awkName(n)}"></span>`;
-const hasAwkIcon = n => n >= 0 && n <= 143;
+let MAX_AWK = 143;
+const awkProbe = new Image();
+awkProbe.onload = () => { const m = awkProbe.naturalHeight / 32 - 1; if (m > MAX_AWK) { MAX_AWK = m; if (CARDS.length) applyView(); } };
+awkProbe.src = "images/awoken.png";
+const hasAwkIcon = n => n >= 0 && n <= MAX_AWK;
 const awkToken = n => hasAwkIcon(n) ? awkSvg(n) : `<span class="awk-x" title="${awkName(n)}">${n}</span>`;
 // per-card accent = its main attribute's orb colour; theming the detail panel by element
 const ATTR_ACCENT = ["#e8513b","#3b9be8","#4caf50","#f0c400","#a05bd6"];
@@ -611,7 +619,8 @@ function initPresets(){
 /* ---------- state persistence (v2 shape) ---------- */
 const SK="paddict.state2";
 const saveState=()=>localStorage.setItem(SK, JSON.stringify(F));
-function restoreState(){ try{ const s=JSON.parse(localStorage.getItem(SK)); if(s&&Array.isArray(s.attr)&&Array.isArray(s.attr[0])) Object.assign(F,s); }catch{} }
+function restoreState(){ try{ const s=JSON.parse(localStorage.getItem(SK)); if(s&&Array.isArray(s.attr)&&Array.isArray(s.attr[0])){ Object.assign(F,s);
+  if((s.sv||0)<3){ F.sortKey="updated"; F.desc=true; F.sv=3; } } }catch{} }
 
 /* ---------- wiring ---------- */
 let t;
@@ -635,11 +644,13 @@ Promise.all([
   fetch("monsters-info/skill_ja.json").then(r=>r.json()),
   fetch("monsters-info/skill_tr.json").then(r=>r.ok?r.json():{}).catch(()=>({})),
   fetch("monsters-info/awoken_names.json").then(r=>r.ok?r.json():{}).catch(()=>({})),
-]).then(([cards, skillEn, skillJa, skillTr, awokenNames]) => {
+  fetch("monsters-info/card-updates.json").then(r=>r.ok?r.json():{}).catch(()=>({})),
+]).then(([cards, skillEn, skillJa, skillTr, awokenNames, cardUpdates]) => {
   SKILLS=skillJa;
   SKILL_EN=skillEn;
   SKILL_TR=skillTr || {};
   AWOKEN_NAMES=awokenNames || {};
+  UPDATED=cardUpdates || {};
   AWK_BY_NAME = {}; for (const k in AWOKEN_NAMES) AWK_BY_NAME[AWOKEN_NAMES[k].toLowerCase()] = +k;   // name → id (skill-text tokens)
   CARDS=cards.filter(c=>!c.isEmpty&&c.enabled);
   if (!window.PADEngine?.createSpecialSearchEngine) throw new Error("engine.js did not load");
