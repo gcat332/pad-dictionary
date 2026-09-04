@@ -1,0 +1,15 @@
+name: gtx-probe
+on: workflow_dispatch
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe both translate endpoints from this runner
+        run: |
+          Q='%E3%83%86%E3%82%B9%E3%83%88'  # テスト
+          echo "== translate_a/single (primary) =="
+          curl -s -o /tmp/a.json -w 'HTTP %{http_code}\n' "https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=t&q=$Q" || true
+          head -c 120 /tmp/a.json; echo
+          echo "== clients5 (fallback) =="
+          curl -s -o /tmp/b.json -w 'HTTP %{http_code}\n' "https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=ja&tl=en&q=$Q" || true
+          head -c 120 /tmp/b.json; echo
