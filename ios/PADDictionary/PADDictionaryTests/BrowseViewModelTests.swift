@@ -52,13 +52,13 @@ final class BrowseViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func testDefaultSortIsUpdatedNewestFirstWhenDatesAreAvailable() throws {
+    func testUpdatedSortIsNewestFirstWhenDatesAreAvailable() throws {
         try writeCards(#"[{"id":1,"name":"A","attrs":[0],"types":[1],"rarity":1,"cost":1,"maxLevel":1,"isEmpty":false,"enabled":true,"hp":{"min":1,"max":1,"scale":1},"atk":{"min":1,"max":1,"scale":1},"rcv":{"min":1,"max":1,"scale":1},"activeSkillId":0,"leaderSkillId":0,"evoRootId":0,"awakenings":[],"superAwakenings":[],"canAssist":false,"orbSkinOrBgmId":0,"badgeId":0,"feedExp":0,"sellPrice":0,"limitBreakIncr":0,"sellMP":0,"latentAwakeningId":0,"stackable":false,"skillBanner":false,"evoMaterials":[0,0,0,0,0],"isUltEvo":false,"evoBaseId":0},{"id":2,"name":"B","attrs":[0],"types":[1],"rarity":1,"cost":1,"maxLevel":1,"isEmpty":false,"enabled":true,"hp":{"min":1,"max":1,"scale":1},"atk":{"min":1,"max":1,"scale":1},"rcv":{"min":1,"max":1,"scale":1},"activeSkillId":0,"leaderSkillId":0,"evoRootId":0,"awakenings":[],"superAwakenings":[],"canAssist":false,"orbSkinOrBgmId":0,"badgeId":0,"feedExp":0,"sellPrice":0,"limitBreakIncr":0,"sellMP":0,"latentAwakeningId":0,"stackable":false,"skillBanner":false,"evoMaterials":[0,0,0,0,0],"isUltEvo":false,"evoBaseId":0}]"#)
-        // card 1 updated most recently, but has the lower id — Updated (default, descending) should still put it first.
+        // card 1 updated most recently, but has the lower id — Updated (descending) should still put it first.
         try writeCardUpdates(#"{"1":"2024-06-01","2":"2024-01-01"}"#)
         let dataStore = DataStore(documentsDirectory: tempDir, userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
         let viewModel = BrowseViewModel(dataStore: dataStore)
-        XCTAssertEqual(viewModel.sortIndex, 0)
+        viewModel.sortIndex = CardSort.all.firstIndex { $0.id == "updated" }!
         XCTAssertTrue(viewModel.isDescending)
         XCTAssertEqual(viewModel.cards.map(\.id), [1, 2])
     }

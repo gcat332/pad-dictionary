@@ -15,8 +15,8 @@ const AWOKEN_ORDER = [63,49,21,46,47,43,61,48,27,60,78,79,80,81,44,51,82,62,58,5
 const SPRITE_PER = 100;
 
 const SORTS = [ // ported from sort_function_list (script-json_data.js:628)
-  {key:"updated",label:"Updated",fn:(a,b)=>{const ua=UPDATED[a.id]||"", ub=UPDATED[b.id]||""; return ua===ub ? a.id-b.id : (ua<ub?-1:1);}},
   {key:"id",label:"Card ID",fn:(a,b)=>a.id-b.id},
+  {key:"updated",label:"Updated",fn:(a,b)=>{const ua=UPDATED[a.id]||"", ub=UPDATED[b.id]||""; return ua===ub ? a.id-b.id : (ua<ub?-1:1);}},
   {key:"rarity",label:"Rarity",fn:(a,b)=>a.rarity-b.rarity},
   {key:"cost",label:"Cost",fn:(a,b)=>a.cost-b.cost},
   {key:"attr",label:"Attribute",fn:(a,b)=>(a.attrs[0]-b.attrs[0])||((a.attrs[1]??-1)-(b.attrs[1]??-1))},
@@ -30,7 +30,7 @@ let CARDS = [], SKILLS = [], SKILL_EN = [], SKILL_TR = {}, AWOKEN_NAMES = {};
 let UPDATED = {};
 let SPECIAL_ENGINE = null;
 // filter state — attr is 3 positional slots; awoken is an array allowing duplicates (counts)
-const F = {attr:[[],[],[]], type:[], rare:[], awoken:[], inclSuper:true, assist:false, special:[], specialMode:"and", term:"", sortKey:"updated", desc:true, sv:3};
+const F = {attr:[[],[],[]], type:[], rare:[], awoken:[], inclSuper:true, assist:false, special:[], specialMode:"and", term:"", sortKey:"id", desc:true, sv:4};
 
 const $ = id => document.getElementById(id);
 const grid=$("grid"), q=$("q"), sortSel=$("sort"), dirBtn=$("dir"), countEl=$("count"), dlg=$("detail");
@@ -623,7 +623,9 @@ function initPresets(){
 const SK="paddict.state2";
 const saveState=()=>localStorage.setItem(SK, JSON.stringify(F));
 function restoreState(){ try{ const s=JSON.parse(localStorage.getItem(SK)); if(s&&Array.isArray(s.attr)&&Array.isArray(s.attr[0])){ Object.assign(F,s);
-  if((s.sv||0)<3){ F.sortKey="updated"; F.desc=true; F.sv=3; } } }catch{} }
+  // sv 3 briefly defaulted to "updated"; sv 4 restores "id" as the default once,
+  // leaving every other saved filter untouched.
+  if((s.sv||0)<4){ F.sortKey="id"; F.desc=true; F.sv=4; } } }catch{} }
 
 /* ---------- wiring ---------- */
 let t;

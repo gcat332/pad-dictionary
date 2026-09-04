@@ -14,12 +14,12 @@ struct CardSort {
     let compare: (Card, Card, SortContext) -> Bool
 
     static let all: [CardSort] = [
+        CardSort(id: "id", label: "Card ID") { a, b, _ in a.id < b.id },
         CardSort(id: "updated", label: "Updated") { a, b, ctx in
             let ua = ctx.updatedDates[a.id] ?? ""
             let ub = ctx.updatedDates[b.id] ?? ""
             return ua == ub ? a.id < b.id : ua < ub
         },
-        CardSort(id: "id", label: "Card ID") { a, b, _ in a.id < b.id },
         CardSort(id: "rarity", label: "Rarity") { a, b, _ in a.rarity < b.rarity },
         CardSort(id: "cost", label: "Cost") { a, b, _ in a.cost < b.cost },
         CardSort(id: "attr", label: "Attribute") { a, b, _ in
