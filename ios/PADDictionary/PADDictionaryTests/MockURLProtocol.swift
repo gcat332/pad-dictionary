@@ -2,6 +2,9 @@ import Foundation
 
 final class MockURLProtocol: URLProtocol {
     static var requestHandler: ((URLRequest) throws -> (HTTPURLResponse, Data))?
+    /// Every request seen by the mock, in order. Reset this between phases of a test
+    /// (or in tearDown) to scope assertions to a specific window of activity.
+    static var recordedRequests: [URLRequest] = []
 
     static func makeSession() -> URLSession {
         let config = URLSessionConfiguration.ephemeral
@@ -13,6 +16,7 @@ final class MockURLProtocol: URLProtocol {
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
 
     override func startLoading() {
+        MockURLProtocol.recordedRequests.append(request)
         guard let handler = MockURLProtocol.requestHandler else {
             client?.urlProtocol(self, didFailWithError: URLError(.badServerResponse))
             return
