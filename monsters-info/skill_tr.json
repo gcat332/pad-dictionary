@@ -642,5 +642,12 @@
   "65323": "Halves damage received for 7 turns.\nDisables damage absorption and attribute absorption for 3 turns.",
   "65326": "^qs^This assist disappears when using the skill. ^p\n[Sub-attribute change/light] [T-shaped erasing attack] [Block resistance +] [Light drop enhancement +] [Light drop enhancement +] is added. Collect skills other than your own for 1 turn.",
   "65329": "Delays enemy action for 3 turns. for 3 turns,\nDamage cap is 50 billion. The remaining HP of the part is reduced by 50%.",
-  "65333": "For 5 turns, the leader changes to light attribute.\nDisables damage absorption and recovers 40% HP."
+  "65333": "For 5 turns, the leader changes to light attribute.\nDisables damage absorption and recovers 40% HP.",
+  "65337": "For 8 turns, the person on the right changes to fire attribute, dealing damage to yourself and the person on the right.\nThe upper limit is 25 billion. Dramatically reduces damage received for 1 turn.",
+  "65341": "7 combo reduces damage by 82%. [Fire row reinforcement] Increases attack power when activated\n90x, 4 combo additions. Fire attribute recovery power is doubled.",
+  "65361": "Reduces damage by 80% and generates 1 Roulette for 1 turn.\nRecovery power triples for 8 turns. Destroy 2 shields.",
+  "65366": "2 combos of light reduce damage by 82%, attack power 60x,\nFixed 30 million damage. [Dragon type] [God type] recovery power is doubled.",
+  "65369": "Fully recovers indelible drops and awakening immunity. for 3 turns,\nDamage cap is 30 billion. [Lock] is released and the board changes to [Fire], [Wednesday], [Wood], [Light], [Dark] | 5 attributes | [Recovery].",
+  "65375": "Damage reduced by 82% when attacking 4 colors at the same time. [5-color attack enhancement] Increases attack power when activated\n200x, recovery power 3x, 3 combo additions, fixed 20 million damage.",
+  "65379": "Fully recovers indelible drops. Own damage for 1 turn\nThe upper limit is 60 billion. [Lock] is released and the board changes to [Fire], [Wednesday], [Wood], [Light], [Dark] | 5 attributes | [Recovery]."
 }
