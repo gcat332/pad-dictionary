@@ -645,6 +645,10 @@
   "65333": "For 5 turns, the leader changes to light attribute.\nDisables damage absorption and recovers 40% HP.",
   "65337": "For 8 turns, the person on the right changes to fire attribute, dealing damage to yourself and the person on the right.\nThe upper limit is 25 billion. Dramatically reduces damage received for 1 turn.",
   "65341": "7 combo reduces damage by 82%. [Fire row reinforcement] Increases attack power when activated\n90x, 4 combo additions. Fire attribute recovery power is doubled.",
+  "65345": "For 1 turn, all enemies change to wood attribute. For 4 turns,\nRecovers 45% HP and increases your damage limit to 30 billion.",
+  "65350": "[Water Combo Enhancement] When activated, damage is drastically reduced, attack power is increased by 120x, 3 combos\nAdditional, fixed 20 million damage. Water attribute HP is 1.4x.",
+  "65353": "Unlock [Lock] and generate 5 [Recovery] from other than [Tree]. Recovers Awakening Immunity for 5 turns.\nFor 1 turn, your attack power is doubled and your damage cap is 24 billion.",
+  "65358": "[Tree Combo Enhancement] Activates to reduce damage, attack power 120x, recovery power 8x,\n4 combo additions, fixed 10 million damage. Wood attribute HP is 3.6x.",
   "65361": "Reduces damage by 80% and generates 1 Roulette for 1 turn.\nRecovery power triples for 8 turns. Destroy 2 shields.",
   "65366": "2 combos of light reduce damage by 82%, attack power 60x,\nFixed 30 million damage. [Dragon type] [God type] recovery power is doubled.",
   "65369": "Fully recovers indelible drops and awakening immunity. for 3 turns,\nDamage cap is 30 billion. [Lock] is released and the board changes to [Fire], [Wednesday], [Wood], [Light], [Dark] | 5 attributes | [Recovery].",
@@ -770,5 +774,11 @@
   "65934": "^qs^This assist disappears when using the skill. ^p Adds [Fire drop reinforcement +] [Fire drop reinforcement +] [Water drop reinforcement +] [Water drop reinforcement +] [Part destruction bonus].\nThe second row from the left, one vertical row, changes to [Fire], and the second row from the right, one vertical row, changes to [Wednesday].",
   "65937": "Replaces the leader when sub. Use it again to return to sub.\nDisables damage absorption and combo absorption for 3 turns.",
   "65940": "Exchangeable for other specific monsters through\n[Monster Exchange] once you collect 4 of this monster",
-  "65944": "Fixed damage of 46.49 million to all enemies. The remaining HP of the part is reduced by 70%.\nFor 5 turns, your damage cap is 44.4 billion."
+  "65944": "Fixed damage of 46.49 million to all enemies. The remaining HP of the part is reduced by 70%.\nFor 5 turns, your damage cap is 44.4 billion.",
+  "65948": "For 6 turns, your damage cap is 28 billion. For one turn,\nMaximum HP is tripled. Unlock [Lock] and generate 12 each of [Light] and [Recovery].",
+  "65953": "[Light Combo Enhancement] When activated, damage is halved, attack power is 120x, recovery power is 8x,\n4 combo additions, fixed 10 million damage. Light attribute HP is 2.8x.",
+  "65956": "Disables damage absorption and attribute absorption for 1 turn, reduces own damage\nThe upper limit is 80 billion. Unlock [Lock] and generate one row of [Darkness] and [Recovery] from the right end.",
+  "65961": "Damage is halved when attacking simultaneously with dark recovery. [2-target attack] Increases attack power when activated\n100x, 5 combo additions. Dark attribute HP is 2.8x, recovery power is 5x.",
+  "65965": "Maximum HP increases by 4x and 10 combos are added for 1 turn.\nCollect skills other than your own for 2 turns.",
+  "65969": "Unlock [Lock] and change one row on both ends to [Dark]. For one turn,\nDramatically reduces damage. Collect skills other than your own for 2 turns."
 }
