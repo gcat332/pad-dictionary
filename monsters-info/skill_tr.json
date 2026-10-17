@@ -676,6 +676,9 @@
   "65449": "^ff3600^ [Operation time 15 seconds] ^p [Water Combo Enhancement] activates, damage is halved, attack power is 100x,\n4 combo additions, fixed 10 million damage. Water attribute HP is 2.8x.",
   "65452": "For 3 turns, reinforcement drops will fall more easily and maximum HP will be lowered.\n1.5 times. [Lock] is released and the board changes to [Water], [Light], and [Recovery]. Destroy one shield.",
   "65457": "^ff3600^ [7 x 6 squares] ^p[L-shaped erase attack] reduces damage by 81%, attack power 60x,\nDoubles recovery power, adds 2 combos, and deals fixed damage of 15 million.",
+  "65460": "For 5 turns, operation time and recovery power are doubled, 1 roulette is generated,\nMy damage cap is 20 billion. ^qs^ While [Strengthening Drop Awakening] is active, the upper limit is 1.5 times. ^p",
+  "65467": "^ff3600^ [No falling con] ^pDamage is drastically reduced by attacking 4 colors at the same time. [5 color attack enhancement] activated\nAttack power is 180x and 5 combos are added. [Dragon type] HP is 1.4x.",
+  "65471": "^qs^This assist disappears when using the skill. ^p\n[Dragon type added] [Cloud resistance] [Guard break] [Part destruction bonus] added. For 35 turns, [Enhancement Drop Awakening] will fall more easily.",
   "65546": "Unlock [Lock], set the leftmost row to [Water], and set the second vertical row from the right to [Recovery].\nChange. Fully recovers indelible drops. Skills evolve.",
   "65547": "Unlock [Lock], set the leftmost row to [Water], and set the second vertical row from the right to [Recovery].\nChange. Fully recovers indelible drops. Skills evolve.",
   "65551": "For 1 turn, nullifies attribute absorption, doubles own attack power,\nDamage cap is 55 billion. ^qs^When the enemy is wood attribute, the upper limit is doubled. ^p",
@@ -780,5 +783,10 @@
   "65956": "Disables damage absorption and attribute absorption for 1 turn, reduces own damage\nThe upper limit is 80 billion. Unlock [Lock] and generate one row of [Darkness] and [Recovery] from the right end.",
   "65961": "Damage is halved when attacking simultaneously with dark recovery. [2-target attack] Increases attack power when activated\n100x, 5 combo additions. Dark attribute HP is 2.8x, recovery power is 5x.",
   "65965": "Maximum HP increases by 4x and 10 combos are added for 1 turn.\nCollect skills other than your own for 2 turns.",
-  "65969": "Unlock [Lock] and change one row on both ends to [Dark]. For one turn,\nDramatically reduces damage. Collect skills other than your own for 2 turns."
+  "65969": "Unlock [Lock] and change one row on both ends to [Dark]. For one turn,\nDramatically reduces damage. Collect skills other than your own for 2 turns.",
+  "65974": "For 2 turns, your attack power is doubled and your damage limit is increased.\n60 billion. [Lock] is released and the board changes to [Light], [Dark], and [Recovery]. Skills evolve.",
+  "65975": "For 2 turns, your attack power is doubled and your damage limit is increased.\n60 billion. [Lock] is released and the board changes to [Light], [Dark], and [Recovery]. Skills evolve.",
+  "65979": "Fully recovers indelible drops and awakening immunity. For 2 turns,\nPenetrates damage immunity, adds 3 combos, recovers 50% HP.",
+  "65985": "HP and recovery power of light attributes are increased by 2.8 times. 7 combo reduces damage by half.\n[Light Combo Enhancement] When activated, attack power increases by 120x, 4 combos are added, and fixed damage is 10 million.",
+  "65988": "For 13 turns, the damage upper limit of the leader and the neighbor on the left will be\n30 billion. Collect skills other than your own for 2 turns."
 }
