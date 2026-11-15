@@ -938,5 +938,8 @@
   "66520": "Unlock [Lock] and change the top two rows to [Light] and the bottom row to [Recovery].\nFor 3 turns, your damage cap is increased to 60 billion and 5 combos are added.",
   "66525": "For 5 turns, the board passes through 7x6 squares and is immune to damage.\n[Lock] is released and the board changes to [Water], [Wood], [Light], and [Recovery].",
   "66530": "Enemy's remaining HP is reduced by 45%.\nDramatically reduces damage for 2 turns.",
-  "66534": "For 99 turns, 2 combos will be added and [Recovery] will drop a little more easily.\nImmune to indelible drops, bind, awakening, and fully recover HP."
+  "66534": "For 99 turns, 2 combos will be added and [Recovery] will drop a little more easily.\nImmune to indelible drops, bind, awakening, and fully recover HP.",
+  "66550": "The remaining HP of the part is reduced by 20%. For 1 turn, your damage upper limit is\n70 billion. Unlock [Lock] and change the top horizontal row to [Fire] and the bottom horizontal row to [Thursday].",
+  "66555": "[Simultaneous wood and fire attack] reduces damage by half, increases attack power by 35 times,\nFixed 28 million damage. All parameters of [Attack Type] are increased by 2.8 times.",
+  "66558": "Unlock [Lock] and change the top horizontal row to [Fire] and the bottom horizontal row to [Thursday].\nThe second row from the top and the second row from the bottom change to [Recovery]. Generates 15 [Nail Drops]."
 }
